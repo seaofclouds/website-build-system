@@ -1,0 +1,100 @@
+---
+title: A build system that lives in your repo
+description: A small, hackable static site build system designed to be copied into your project and modified, not installed as a dependency.
+template: landing
+---
+
+<section id="tag">
+  <h1>A build system you own.</h1>
+  <h2>
+    Markdown and HTML in, a static website out. About 1,800 lines of commented
+    TypeScript that you copy into your project and then edit until it's yours.
+  </h2>
+  <div class="cta">
+    <a href="/docs/" class="button">Get Started</a>
+    <a href="/docs/macros/">Read the source tour</a>
+  </div>
+</section>
+
+<section id="quickstart">
+  <md>Clone it, then:</md>
+
+<pre><code class="language-bash">npm install
+./site</code></pre>
+
+  <md>
+    That builds the site, watches for changes, and serves it at `localhost:3000` with
+    live reload. There's no compile step and no bundler — the TypeScript runs directly
+    under bun, deno, or node.
+  </md>
+</section>
+
+<h2 class="section-heading">Not a dependency</h2>
+
+<section id="principles">
+
+  <div class="unit">
+    <h4>Part of your site</h4>
+    <p>
+      It ships in your repo, not your <code>node_modules</code>. Nothing is pinned
+      elsewhere, nothing drifts, and what builds your site today builds it identically
+      in five years.
+    </p>
+  </div>
+
+  <div class="unit">
+    <h4>Meant to be edited</h4>
+    <p>
+      No config file, no plugin API, no version number. You add a macro by adding a
+      <code>case</code> to a switch. The extension mechanism is that you have the code.
+    </p>
+  </div>
+
+  <div class="unit">
+    <h4>Small enough to read</h4>
+    <p>
+      Six dev dependencies, all build-time. Nothing ships to your visitors. You can
+      read the whole thing in an afternoon and hold it in your head afterwards.
+    </p>
+  </div>
+
+  <div class="unit">
+    <h4>Content like an FTP server</h4>
+    <p>
+      Put a file in <code>content</code>, it appears on the site at that path. Every
+      clever behaviour beyond that is opt-in via frontmatter — and an HTML file with no
+      frontmatter is copied through untouched.
+    </p>
+  </div>
+
+  <div class="unit">
+    <h4>Catches its own mistakes</h4>
+    <p>
+      Every internal link and anchor is checked against the pages just generated, so
+      renaming a heading someone linked to gets caught at build time rather than by a
+      reader two years later.
+    </p>
+  </div>
+
+  <div class="unit">
+    <h4>Fonts, feeds, and redirects</h4>
+    <p>
+      Automatic font subsetting cuts a typeface down to just the characters you use.
+      RSS, sitemaps, <code>llms.txt</code> and redirect pages are generated for you, and
+      each one is a file you can delete.
+    </p>
+  </div>
+
+</section>
+
+<section id="closing">
+  <md>
+It began as the build system for [automerge.org](https://automerge.org), written by
+[Ivy](https://github.com/ivanreese), and was pulled out as a starting point for other
+sites. It's a ship of Theseus: replace a plank at a time until none of the original
+remains, and it's still your site's build system throughout.
+  </md>
+  <div class="cta">
+    <a href="/docs/" class="button">Get Started</a>
+  </div>
+</section>

@@ -1,0 +1,22 @@
+Cool URIs don't change. When you move or rename a page that someone might have
+bookmarked, add a line here so the old URL keeps working.
+
+One rule per line, source first, whitespace-separated. The source must start with
+a slash. The destination can be a path or a full URL.
+
+Any line that does not start with a slash is a comment — including this one. Note
+that lines are trimmed before that check, so an indented example still counts as a
+rule. Keep sample rules away from the left margin only if you mean them.
+
+Examples, written without their leading slashes so they stay inert:
+
+    old/busted        ->  new/hotness
+    elsewhere         ->  https://example.com/over-there
+
+Give both paths a file extension and the build hardlinks the file instead, so the
+old URL serves the real asset rather than bouncing through a redirect page:
+
+    old/report.pdf    ->  new/report.pdf
+
+There are no live rules in this file yet. Delete it entirely if you like — the
+build carries on without it.

@@ -1,0 +1,64 @@
+name: Build and Deploy
+
+# Builds the site and publishes it to GitHub Pages on every push to main.
+#
+# To use this: in the repo settings, enable Pages and set the source to "GitHub Actions".
+# For a custom domain, put a CNAME file in content/ containing just the domain name.
+#
+# Deploying somewhere else instead? Delete this file. The build output is a plain folder
+# of static files in public/, which any host will serve.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24.x'
+
+      # Only needed for font subsetting: libharfbuzz-bin provides hb-subset, woff2
+      # provides woff2_compress. The starter ships no fonts, so this does nothing until
+      # you add one — but having it here means the first font you drop into /fonts gets
+      # subsetted in CI, rather than silently falling back to a system font.
+      # Drop this step if you don't use webfonts, or if you commit the generated
+      # content/static/fonts folder instead (see fonts/_README.md).
+      - name: Install font subsetting tools
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libharfbuzz-bin woff2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run check
+
+      - name: Build
+        run: node --disable-warning=ExperimentalWarning system/app.ts build
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

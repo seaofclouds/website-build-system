@@ -1,0 +1,519 @@
+/*
+  Hello! This is the base CSS file used by every page on the site.
+  Here are a few notes to get you started.
+
+  1. Please don't use a formatter (like Prettier). The file has been laid out by hand, with
+     intentional use of whitespace and occasional one-lining to aid readability.
+  2. The focus is on maintainability over elegance or performance. We're hand-authoring this site,
+     so if we end up shipping a few dozen extra bytes on each page, that's okay.
+  3. This is a starting point, not a design system. It's deliberately quiet so that it doesn't
+     fight whatever you replace it with. Start with the custom properties below.
+*/
+
+/* COLORS & THEMES *******************************************************************************/
+
+html {
+  --page-width: 72rem;
+
+  /*
+    The palette is achromatic on purpose — a starter shouldn't pick your brand colour for you.
+    Change --accent first; it's the only hue on the site.
+  */
+  --true-white: #fff;
+  --white: #fcfcfc;
+  --off-white: #f2f2f2;
+  --silver: #ddd;
+  --grey: #888;
+  --smoke: #555;
+  --slate: #222;
+  --deep: #111;
+  --black: #000;
+
+  /* This enables the new light-dark() function in modern browsers */
+  color-scheme: light dark;
+
+  /* Fallback colors for old browsers that don't support light-dark() */
+  --bg: var(--white);
+  --fg: var(--slate);
+  --accent: var(--slate);
+  --current: var(--off-white);
+  --inactive: var(--grey);
+  --separator: var(--silver);
+  --footer-fg: var(--smoke);
+  --stark-bg: var(--true-white);
+  --stark-shadow: var(--off-white);
+  --stark-sep: var(--off-white);
+
+  /* And, somewhat redundantly (sigh), here are the colors for light and dark themes. */
+  --bg: light-dark(var(--white), var(--slate));
+  --fg: light-dark(var(--slate), var(--white));
+  --accent: light-dark(var(--slate), var(--white));
+  --current: light-dark(#eee, #333);
+  --inactive: light-dark(var(--grey), var(--grey));
+  --separator: light-dark(var(--silver), #404040);
+  --footer-fg: light-dark(var(--smoke), var(--grey));
+  --stark-bg: light-dark(var(--true-white), var(--deep));
+  --stark-shadow: light-dark(var(--off-white), transparent);
+  --stark-sep: light-dark(var(--off-white), var(--slate));
+
+  /* Use these colors */
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* In supported browsers, when the dark theme is selected, use it! */
+html[theme="light"] { color-scheme: light; }
+html[theme="dark"] { color-scheme: dark; }
+
+/* TYPOGRAPHY ************************************************************************************/
+
+/*
+  The system font stack. No webfont is downloaded, nothing blocks first paint, and the site
+  looks native on every platform. Change these two variables to change every font on the site.
+*/
+html {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/*
+  Using your own typeface instead? Drop a .ttf or .otf into /fonts, run the build, then
+  uncomment this and point --font-sans at it. See /docs/assets/ for the details.
+
+  @font-face {
+    font-family: "Your Font";
+    src: url("/static/fonts/yourfont.woff2") format("woff2-variations");
+    font-weight: 100 900;
+  }
+*/
+
+/* TYPOGRAPHIC HIERARCHY */
+
+h1   { font: 280 32px / 36px var(--font-sans); }
+h2   { font: 400 24px / 32px var(--font-sans); }
+h3   { font: 500 20px / 24px var(--font-sans); }
+h4   { font: 600 16px / 24px var(--font-sans); }
+body { font: 400 16px / 24px var(--font-sans); }
+code { font: 400 14px / 24px var(--font-mono); }
+strong { font-weight: 650; }
+
+/* ELEMENTS **************************************************************************************/
+
+/* Box sizing reset */
+*, *:before, *:after { box-sizing: border-box; }
+
+/* MAJOR LAYOUT ELEMENTS */
+
+html {
+  /* Long words may be broken and wrapped. (NB: this doesn't affect min-content lengths) */
+  overflow-wrap: break-word;
+
+  /* Prevent iPhone Safari and Android Firefox from inflating text when the phone is landscape. */
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  text-size-adjust: none;
+
+  /* Reserve space for a scroll bar */
+  scrollbar-gutter: stable;
+
+  /* Allow periods and commas to hang — useful when a <code> inline-block renders at the end of a line. */
+  /* Only works in Safari, but that's fine. */
+  hanging-punctuation: allow-end;
+}
+
+body {
+  position: relative;
+  margin: 0;
+}
+
+/* This is the sidebar on most pages, *and* the header on the home page. */
+/* The styling is quite contextual, so there's very little here. */
+aside {
+  padding: 1rem;
+}
+
+/* Hide the nav when burger menu is closed */
+@media (width <= 800px) {
+  #burger-state:not(:checked) + aside nav { display: none }
+}
+
+/* Child of <aside>, contains the logo and burger */
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+/* Bigger font on bigger screens */
+@media (width > 500px) { header { font-size: 18px } }
+
+footer {
+  text-align: center;
+  padding: 2rem 1rem 3rem;
+  color: var(--footer-fg);
+  font-size: 14px;
+}
+
+/* BLOCK-LEVEL TEXT ELEMENTS */
+
+h1, h2, h3, h4 {
+  margin: 0 0 1rem;
+}
+
+h1, h2 {
+  text-wrap: balance;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+blockquote {
+  margin: 0 0 1rem;
+  border-left: 3px solid var(--separator);
+  padding-left: 1rem;
+  color: var(--smoke);
+  font-style: italic;
+}
+
+html[theme="dark"] blockquote { color: var(--silver); }
+
+figure {
+  position: relative;
+  margin: 0 0 1rem;
+}
+
+figcaption {
+  margin-top: .5rem;
+  font-size: 14px;
+  color: var(--inactive);
+}
+
+/* TABLES */
+
+table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: .5rem .75rem .5rem 0;
+  border-bottom: 1px solid var(--separator);
+  vertical-align: top;
+}
+
+th {
+  font-weight: 600;
+}
+
+/* LISTS */
+
+ul, ol {
+  margin-block: 0 1rem;
+  margin-left: 1.3em;
+  padding: 0;
+}
+
+li {
+  margin-top: .5em;
+}
+
+/* LINKS */
+
+a {
+  color: inherit;
+  outline: 0;
+}
+
+a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+a.plain {
+  text-decoration: none;
+}
+
+aside a {
+  text-decoration: none;
+}
+
+aside a:hover {
+  text-decoration: underline;
+}
+
+/* A call-to-action link. Used on the home page. */
+.button {
+  display: inline-block;
+  padding: .6em 1.4em;
+  border-radius: 6px;
+  background: var(--fg);
+  color: var(--bg);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.button:hover {
+  opacity: .85;
+}
+
+/* MEDIA & REPLACED ELEMENTS */
+
+img,
+svg,
+video,
+iframe {
+  /*
+    To make your element responsive while avoiding layout shift:
+    a) set width and height attributes on the tag, or
+    b) set width and aspect-ratio properties in CSS.
+    (There are other more advanced options, but the above are the simplest best practice.)
+    The following rules make (a) and (b) do the right thing.
+  */
+  max-width: 100%;
+  height: auto;
+
+  /* Removes a tiny bit of added space at the bottom of images */
+  vertical-align: middle;
+}
+
+video,
+iframe {
+  width: 100%;
+}
+
+/* MISC ELEMENTS */
+
+hr {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 2px solid var(--separator);
+}
+
+/* CALLOUTS */
+
+/* These class names come from the {{info:}} and {{caution:}} macros in system/macros.ts */
+
+.info {
+  --callout-bg: light-dark(var(--off-white), #2e2e2e);
+  --callout-edge: light-dark(var(--silver), #454545);
+}
+
+.caution {
+  --callout-bg: light-dark(#fff8e0, #33301f);
+  --callout-edge: light-dark(#e8d48a, #6b5f2e);
+}
+
+.info, .caution {
+  background: var(--callout-bg);
+  border-left: 3px solid var(--callout-edge);
+  border-radius: 0 4px 4px 0;
+  padding: 1em;
+  margin-bottom: 1rem;
+}
+
+.info *:last-child,
+.caution *:last-child {
+  margin-bottom: 0;
+}
+
+/* HEADER LOGO */
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo svg {
+  width: 32px;
+  height: auto;
+  margin-right: .5em;
+}
+
+.logo:focus-visible { outline: 0; }
+.logo:focus-visible span {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (max-width: 500px) {
+  .logo svg { width: 26px; }
+}
+
+/* BURGER MENU */
+
+/* Checkbox that stores whether the burger menu is open */
+#burger-state {
+  display: none;
+}
+
+/* <label> that toggles the burger state checkbox */
+#burger {
+  border-radius: 24px;
+  stroke: var(--fg);
+  cursor: pointer;
+}
+
+/* Only show when narrow */
+@media (width > 800px) {
+  #burger { display: none; }
+}
+
+#burger:hover {
+  stroke: var(--bg);
+  background: var(--fg);
+}
+
+#burger svg {
+  width: 30px;
+  padding: 5px;
+}
+
+/* Toggle between the show (burger) and hide (X) icons */
+#burger-state:checked       + * .show { display: none }
+#burger-state:not(:checked) + * .hide { display: none }
+
+/* THEME TOGGLE */
+
+#theme-toggle {
+  padding: 4px;
+  border: 0;
+  border-radius: 24px;
+  color: inherit;
+  outline: 0;
+  background: none;
+  cursor: pointer;
+}
+
+@supports not (color: light-dark(#fff, #000)) {
+  #theme-toggle { display: none }
+}
+
+#theme-toggle:hover,
+#theme-toggle:focus-visible {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+#theme-toggle .dark { display: none; }
+html[theme="dark"] #theme-toggle .dark { display: inherit; }
+html[theme="dark"] #theme-toggle .light { display: none; }
+
+/* CODE *****************************************************************************************/
+
+code {
+  display: inline-block;
+}
+
+pre, .code-title {
+  overflow: auto;
+  border-radius: 4px;
+  background: var(--stark-bg);
+  border: 1px solid var(--stark-shadow);
+  border-bottom-width: 2px;
+  padding-block: 1rem;
+}
+
+.code-title {
+  padding: .5rem 1rem;
+  border-radius: 4px 4px 0 0;
+  border-bottom: 1px solid var(--stark-sep);
+  color: var(--inactive);
+  font: 400 13px / 16px var(--font-mono);
+}
+
+.code-title + pre {
+  margin-top: 0;
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+pre code[class*="language-"] {
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Prism wraps each line in its own element, and the padding goes there so that a
+   highlighted line's background runs the full width of the block. */
+pre code > * {
+  padding-inline: 1rem;
+}
+
+/* A hand-written <pre><code> has no per-line wrappers, so it needs the padding itself. */
+pre > code:not(:has(> *)) {
+  padding-inline: 1rem;
+}
+
+.token.comment       { color: light-dark(#6a737d, #6a9955) }
+.token.keyword       { color: light-dark(#d73a49, #569cd6) }
+.token.string        { color: light-dark(#22863a, #ce9178) }
+.token.number        { color: light-dark(#005cc5, #b5cea8) }
+.token.function      { color: light-dark(#6f42c1, #dcdcaa) }
+.token.class-name    { color: light-dark(#6f42c1, #4ec9b0) }
+.token.operator      { color: light-dark(#24292e, #d4d4d4) }
+.token.variable      { color: light-dark(#e36209, #9cdcfe) }
+.token.tag,
+.token.selector      { color: light-dark(#005cc5, #d7ba7d) }
+.token.attr-name     { color: light-dark(#6f42c1, #9cdcfe) }
+.token.attr-value    { color: light-dark(#22863a, #ce9178) }
+.token.inserted      { color: light-dark(#22863a, #81b88b); background: light-dark(#e6ffed, transparent) }
+.token.deleted       { color: light-dark(#d73a49, #c24038); background: light-dark(#ffeef0, transparent) }
+
+.highlighted-line {
+  background: #00f1;
+}
+
+.highlighted-red-line {
+  background: light-dark(#ffeef0, #3d1c1c);
+}
+
+:not(pre) > code {
+  border: 1px solid var(--stark-shadow);
+  padding: .1em .2em 0em;
+  border-radius: 1px;
+  background: var(--stark-bg);
+}
+
+/* BLOG BITS ************************************************************************************/
+
+a.blog-link {
+  display: flex; /* Remove tiny gap between text rows which causes the underline to flicker when mousing */
+  flex-flow: column;
+  max-width: max-content; /* Make :focus outlines look nicer */
+  margin-bottom: 1rem;
+}
+
+a.blog-link:hover {
+  text-decoration: none;
+}
+
+a.blog-link:hover .title {
+  text-decoration: underline;
+}
+
+.micro {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--inactive);
+}
+
+/* FOOTNOTES ************************************************************************************/
+
+.footnotes {
+  margin-top: 3rem;
+  font-size: 14px;
+  color: var(--smoke);
+}
+
+html[theme="dark"] .footnotes { color: var(--silver); }
+
+.footnotes hr {
+  border-top-width: 1px;
+}

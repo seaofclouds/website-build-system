@@ -1,0 +1,29 @@
+---
+Wide pages with no sidebar — the home page, the blog index, the 404.
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  {{include: head-stuff}}
+  <link rel="stylesheet" href="/static/landing.css">
+</head>
+<body>
+  <input type="checkbox" id="burger-state" />
+  <aside>
+    <header>
+      {{include: logo}}
+      {{include: burger}}
+    </header>
+    <nav>
+      <div>{{include: nav}}</div>
+      {{include: theme-toggle}}
+      <a href="/docs/" class="get-started">Get Started</a>
+    </nav>
+  </aside>
+  <main>
+    {{content}}
+    <footer>{{include: footer}}</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,12 @@
+.DS_Store
+node_modules
+
+# The built site. Regenerated from scratch on every build.
+public
+
+# Subsetted webfonts, generated from whatever is in /fonts.
+# See fonts/_README.md before deciding to commit these instead.
+content/static/fonts
+
+# Screenshots from local browser testing.
+.playwright-mcp

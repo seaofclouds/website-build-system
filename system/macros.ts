@@ -1,0 +1,292 @@
+// Macros
+// The build system supports a special {{ macro }} syntax in Markdown and HTML.
+// This file contains all the rewrite rules to apply when a macro is encountered.
+
+import { Env } from "./env.ts"
+import { exists, read } from "./io.ts"
+import { green, log, logError, yellow } from "./logging.ts"
+import { Markdown } from "./markdown.ts"
+import type { Page } from "./types.ts"
+import { compact, compare, flatJoin, getValuesOfAttributes, plainify, splitAfter, splitBefore, toFullUrl } from "./util.ts"; // prettier-ignore
+
+// Expand all macros found in text, in the context of the given page
+export function expandMacros(text: string, page: Page, pages: Page[]) {
+  let { frontmatter, path } = page
+  let limit = 100
+
+  // We expand repeatedly, because a macro's output can itself contain macros — that's how
+  // {{index:…}} renders an include for each child page. We stop when a pass changes nothing,
+  // rather than when no braces remain, because braces can legitimately survive a pass inside
+  // a code sample. The limit catches a macro that keeps producing itself.
+  while (true) {
+    if (limit-- <= 0) {
+      log(`Detected an infinite loop of nested macros while compiling ${green(path)}`)
+      break
+    }
+    try {
+      const before = text
+      text = expandAllMacros(text, (macro, spaces): string => {
+        // If there's a problem expanding the macro, print a msg and inject a red `{{ macro }}` into the HTML
+        let bail = (msg: string, str?: string) => {
+          log(msg)
+          return `<b style='color:red'>${str ?? `&#123;&#123;${macro}&#125;&#125;`}</b>`
+        }
+
+        switch (macro) {
+          // {{content}} — marks where page content should be inserted into the template
+          case "content":
+            return page.compiledBody // Note: don't change indentation, because that messes up <pre> tags
+
+          // {{include:FILENAME}} — replaced with the content of /template/includes/FILENAME.{html,md}
+          // {{include:FILENAME.md inline}} — same as above, but using Markdown.renderInline()
+          case macro.startsWith("include") && macro: {
+            let [name, flag] = stripName(macro, "include").split(" ")
+
+            let mdFile = `template/includes/${name}.md`
+            let htmlFile = `template/includes/${name}.html`
+
+            try {
+              let isMd = exists(mdFile)
+              let content = isMd ? read(mdFile) : read(htmlFile)
+              if (isMd) content = flag == "inline" ? Markdown.renderInline(content) : Markdown.render(content)
+              // We prepend spaces so that inline includes (eg: {{contact-info}}) don't slam into the text right before them.
+              return spaces + content
+            } catch (err: any) {
+              if (err?.code == "ENOENT") log(`Missing include ${yellow(name)}, referenced in page ${green(path)}`)
+              else logError(`Unexpected error loading include ${yellow(name)} in page ${green(path)}`, err)
+              return ""
+            }
+          }
+
+          // {{ index:FILENAME }} — generate an index of all child pages of the current page, using a FILENAME include to render each child
+          // {{ index:FILENAME reverse }} — the default is chronological, so specify "reverse" for reverse-chronological
+          case macro.startsWith("index:") && macro: {
+            let [template, reverse] = stripName(macro, "index").split(" ")
+            // In practice, it doesn't seem to matter whether the children are fully compiled or not when we do this.
+            // But in theory it *might* matter, so we might want to somehow guarantee that children are compiled before parents.
+            let children = page.children.toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
+            if (reverse) children = children.reverse()
+            // Cool trick — we expand an include macro in the context of each child page to generate the html for each item in the index
+            return children.map((child) => expandMacros(`{{include:${template}}}`, child, pages)).join("\n")
+          }
+
+          // {{figure ![](src.ext)}} — A <figure> with some media (image or video)
+          // {{figure wide frame ![](src.ext) }} — with class="wide frame"
+          // {{figure autoplay ![](src.mp4) }} — the "autoplay" class is special, and adds "autoplay loop muted" to the <video>
+          // {{figure ![Photograph of a brown dog on a grassy field](src.ext)}} — with alt text
+          // {{figure ![](src.ext) *This* image is, as they say, "cute"}} — with caption, which can be multiline and contain md/html
+          case macro.startsWith("figure") && macro: {
+            macro = stripName(macro, "figure")
+
+            // Macro expansion happens after markdown conversion, so at this point prop will look like:
+            // `classes <img src="src.ext" alt="alt text"> caption <b>text</b> etc etc`
+            // But, if the macro was nested inside some HTML, it'll still be raw markdown, so we must convert it:
+            if (macro.includes("![")) macro = Markdown.renderInline(macro)
+
+            // If the macro includes any words before the image, we use them as CSS classes
+            let [classes, rest] = splitBefore(macro, "<")
+            let cls = classes ? ` class="${classes.trim()}"` : ""
+            macro = rest
+
+            // Extract the image tag
+            let [img, caption] = splitAfter(macro, ">")
+
+            // Check if src is a video
+            let src = getValuesOfAttributes(img, "src")[0]
+            let ext = splitAfter(src, ".")[1]
+            let isVideo = ["mov", "mp4", "webm"].includes(ext)
+            if (isVideo) {
+              let alt = getValuesOfAttributes(img, "alt")[0] ?? ""
+              // We preload the whole video, not just the metadata, because otherwise browsers don't render the poster frame!
+              // Our videos are all rather small, so this is fine — akin to loading a few images.
+              let attrs = "controls playsinline preload"
+              if (classes.includes("autoplay")) attrs += " autoplay loop muted"
+              img = `<video ${attrs} src="${src}" alt="${alt}"></video>`
+            }
+
+            // Remove empty alt text attrs, which signal "this image doesn't need alt text".
+            // TODO: I suspect we should almost always add alt text, and it definitely shouldn't be the same as the caption.
+            img = img.replace(` alt=""`, "")
+
+            // If there's a caption, add a <figcaption> element
+            let figcaption = caption ? `<figcaption>\n${Markdown.render(caption).trim()}\n</figcaption>` : null
+
+            return compact([`<figure${cls}>`, img, figcaption, "</figure>"]).join("\n")
+          }
+
+          case macro.startsWith("info:") && macro: {
+            return flatJoin([`<div class="info">`, stripName(macro, "info"), "</div>"])
+          }
+
+          case macro.startsWith("caution:") && macro: {
+            return flatJoin([`<div class="caution">`, stripName(macro, "caution"), "</div>"])
+          }
+
+          // {{# SOME COMMENT}} — a comment that's removed at compile time
+          case macro.startsWith("#") && macro:
+            return ""
+
+          case "month-year":
+            if (!frontmatter.date) return bail(`This page's template requires a date: ` + green(path))
+            return new Date(frontmatter.date).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })
+
+          case "href":
+            return page.url.pathname
+
+          case "head-title": {
+            let title = frontmatter.title || Env.title
+            let subtitle = frontmatter.subtitle ? `: ${frontmatter.subtitle}` : ""
+            return title + subtitle
+          }
+
+          // The whole <meta> tag, not just the URL — so that a site with no share
+          // image emits nothing at all, rather than an empty content="".
+          case "og-image-tag": {
+            const image = frontmatter.image || Env.ogImage
+            return image ? `<meta property="og:image" content="${toFullUrl(image)}">` : ""
+          }
+
+          case "og-description":
+            return plainify(frontmatter.description || Env.description)
+
+          case "og-type":
+            return ["blog"].includes(frontmatter.template) ? "article" : "website"
+
+          case "og-url":
+            return page.url.toString()
+
+          case "domain":
+            return Env.domain
+
+          case "site-title":
+            return Env.title
+
+          // ─── SITE-SPECIFIC MACROS ───────────────────────────────────────────────────────
+          //
+          // Everything below this line exists to serve one particular website's structure —
+          // a blog whose posts are children of /blog, and a docs section whose running order
+          // is defined by the sidebar include. They are examples of the kind of thing this
+          // system is for, not features of it.
+          //
+          // Adapt them, or delete them and write your own. That's the point.
+
+          // The list of every blog post, for the sidebar on a blog page.
+          case "blog-sidebar": {
+            // No parent means this page isn't nested under a blog index, so there's no sibling
+            // list to build. We return nothing rather than failing the build.
+            let children = (page.parent?.children ?? []).toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date)).reverse()
+            // Cool trick — we expand an include macro in the context of each child page to generate the html for each item in the index
+            return children.map((child) => expandMacros(`{{include:blog-post-sidebar-item}}`, child, pages)).join("\n")
+          }
+
+          // The URL of the newest post, so a nav link can point at the blog's freshest content.
+          case "most-recent-blog-post": {
+            let mostRecentPost = pages
+              .filter((p) => p.frontmatter.template == "blog")
+              .toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
+              .at(-1)
+            if (!mostRecentPost) {
+              log(`No page uses ${yellow("template: blog")}, so ${yellow("{{most-recent-blog-post}}")} has nothing to link to: ${green(path)}`)
+              return "#"
+            }
+            return mostRecentPost.url.pathname
+          }
+
+          // Previous/next links that follow the running order of the docs sidebar include.
+          case "prev-in-docs": {
+            let html = expandMacros(`{{include:${Env.docsIndex}}}`, page, pages)
+            let hrefs = getValuesOfAttributes(html, "href")
+            let idx = hrefs.indexOf(page.url.pathname)
+            if (idx < 1) return ""
+            let href = hrefs[idx - 1]
+            let nextPage = pages.find((p) => p.url.pathname == href)
+            if (!nextPage) return ""
+            return `<a class="prev-page" href="${href}"><span>Previous page</span> ${nextPage.frontmatter.title}</a>`
+          }
+
+          case "next-in-docs": {
+            let html = expandMacros(`{{include:${Env.docsIndex}}}`, page, pages)
+            let hrefs = getValuesOfAttributes(html, "href")
+            let idx = hrefs.indexOf(page.url.pathname)
+            if (idx < 0 || idx == hrefs.length - 1) return ""
+            let href = hrefs[idx + 1]
+            let nextPage = pages.find((p) => p.url.pathname == href)
+            if (!nextPage) return ""
+            return `<a class="right" href="${href}"><span>Next page</span> ${nextPage.frontmatter.title}</a>`
+          }
+
+          // Previous/next links that follow the publish dates of sibling blog posts.
+          case "newer-in-blog":
+            if (page.parent) {
+              let children = page.parent.children.toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
+              let next = children[children.indexOf(page) + 1]
+              if (next) return `<a href="${next.url.pathname}"><span>Newer post</span> ${next.frontmatter.title}</a>`
+            }
+            return ""
+
+          case "older-in-blog":
+            if (page.parent) {
+              let children = page.parent.children.toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
+              let prev = children[children.indexOf(page) - 1]
+              if (prev) return `<a class="right" href="${prev.url.pathname}"><span>Older post</span> ${prev.frontmatter.title}</a>`
+            }
+            return ""
+
+          // ─── END OF SITE-SPECIFIC MACROS ────────────────────────────────────────────────
+
+          // If the macro ends with a question mark, that's an optional frontmatter prop
+          case macro.endsWith("?") && macro: {
+            let value = frontmatter[macro.slice(0, -1)]
+            return value ? spaces + value : ""
+          }
+
+          // If the macro matches a frontmatter key, indent and return that value
+          case frontmatter[macro] && macro:
+            return spaces + frontmatter[macro]
+
+          // If all else fails, display an error in the terminal and the rendered page
+          default:
+            return bail(`The page ${green(path)} is missing required frontmatter: ${yellow(macro.split(":").at(-1) ?? macro)}`)
+        }
+      })
+
+      // Nothing changed, so there's nothing left to expand.
+      if (text === before) break
+    } catch (err) {
+      logError("An unhandled error occurred while expanding macros in " + green(page.path), err)
+      break
+    }
+  }
+
+  return text.trim()
+}
+
+// HELPERS ////////////////////////////////////////////////////////////////////////////////////////
+
+type ReplaceHbarFn = (contents: string, spaces: string) => string
+
+// Code samples are the one place where {{ braces }} usually mean themselves rather than a
+// macro — most obviously in documentation about this build system, but equally in any page
+// showing a template language, a shell variable, or Handlebars.
+const CODE_REGIONS = /<pre[\s\S]*?<\/pre>|<code[\s\S]*?<\/code>/g
+
+const MACRO = /( *){{(.+?)}}/gs
+
+const expandAllMacros = (html: string, cb: ReplaceHbarFn) => {
+  // Work out where the code samples are, so we can tell whether a given {{ sits inside one.
+  const codeSpans: [number, number][] = []
+  for (const region of html.matchAll(CODE_REGIONS)) codeSpans.push([region.index, region.index + region[0].length])
+  const startsInsideCode = (i: number) => codeSpans.some(([from, to]) => i >= from && i < to)
+
+  return html.replaceAll(MACRO, (match, spaces, macro, offset) => {
+    // We test where the macro *opens*, not whether it overlaps a code sample at all. A macro
+    // shown as an example opens inside the sample, and should stay exactly as written. But a
+    // real macro can perfectly well have code in its arguments — {{caution: run `./site build`}}
+    // opens in the prose and merely happens to contain a <code> — and that must still expand.
+    if (startsInsideCode(offset + spaces.length)) return match
+    return cb(macro.trim(), spaces)
+  })
+}
+
+const stripName = (macro: string, name: string) => stripColon(macro.replace(name, "").trim())
+const stripColon = (macro: string) => (macro.trim().startsWith(":") ? macro.trim().replace(":", "").trim() : macro)

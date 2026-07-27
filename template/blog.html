@@ -1,0 +1,38 @@
+---
+Blog posts, with a sidebar listing every post by date.
+Headings become linkable anchors, so people can link to a section of a long post.
+header_anchors: true
+styles: /static/docs.css
+---
+
+<!doctype html>
+<html lang="en">
+<head>{{include: head-stuff}}</head>
+<body>
+  <input type="checkbox" id="burger-state" />
+  <aside>
+    <header>
+      <a href="#content" class="skip">Skip to Content</a>
+      {{include: logo}}
+      {{include: burger}}
+    </header>
+    <nav>
+      <div class="nav">
+        {{include: nav}}
+        {{include: theme-toggle}}
+      </div>
+      <div class="subscribe"><strong>Subscribe via</strong> <a href="/index.xml">RSS</a></div>
+      {{ blog-sidebar }}
+    </nav>
+  </aside>
+  <main id="content">
+    <h1>{{title?}}</h1>
+    {{content}}
+    <div class="page-nav">
+      {{newer-in-blog}}
+      {{older-in-blog}}
+    </div>
+    <footer>{{include: footer}}</footer>
+  </main>
+</body>
+</html>

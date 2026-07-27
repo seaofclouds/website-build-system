@@ -1,0 +1,191 @@
+aside {
+  position: fixed;
+  top: 0;
+  left: calc((100vw - var(--page-width)) / 2);
+  width: 18.5rem;
+  padding-right: 1.5rem;
+  height: 100%;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+@media (pointer:fine) {
+  html * { scrollbar-width: thin; }
+}
+
+aside p {
+  color: var(--inactive);
+  margin-bottom: .5rem;
+}
+
+aside a {
+  position: relative;
+  display: block;
+  color: var(--fg);
+}
+
+aside p + p {
+  margin-top: 1rem;
+}
+
+aside li {
+  list-style-type: none;
+}
+
+@media (max-width: 72em) {
+  aside {
+    left: 0em;
+  }
+}
+
+aside nav {
+  padding-top: 1.5rem;
+  padding-left: .75rem;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+}
+
+#theme-toggle {
+  margin-top: -3px;
+}
+
+.nav {
+  margin-bottom: .8rem;
+  padding-bottom: .7rem;
+  margin-left: -.5em;
+  padding-inline: .5em;
+  width: calc(100% + 1em);
+  border-bottom: 2px solid var(--separator);
+}
+
+.subscribe {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: start;
+  align-items: baseline;
+  gap: .7em;
+  margin-left: -.5em;
+  padding-inline: .5em;
+  width: calc(100% + 1em);
+  margin-bottom: .8rem;
+  padding-bottom: .7rem;
+  border-bottom: 2px solid var(--separator);
+}
+
+.subscribe strong {
+  font: 500 14px / 14px var(--font-mono);
+  color: var(--inactive);
+}
+
+
+@media (max-width: 800px) {
+  aside {
+    position: relative;
+    width: auto;
+    overscroll-behavior: auto;
+  }
+
+  aside nav {
+    max-width: 24rem;
+    margin-inline: auto;
+    padding-left: 0;
+  }
+
+  input#burger-state:checked + aside {
+    border-bottom: 2px solid var(--separator);
+    padding-bottom: 1rem;
+    margin-bottom: 2.5rem;
+  }
+}
+
+
+a.skip {
+  position: absolute;
+  top: 0;
+  padding: 2rem 4rem;
+  border-radius: 0 0 8px 8px;
+  color: var(--bg);
+  background: var(--fg);
+  translate: 0 -100%;
+}
+
+a.skip:focus-visible {
+  translate: 0;
+  outline: 0;
+}
+
+
+
+
+main {
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding-inline: 20rem 2rem;
+}
+
+@media (width > 800px) {
+  main { margin-top: 5.8rem; }
+}
+
+@media (width <= 800px) {
+  main { padding-inline: 2rem; }
+}
+
+@media (width <= 500px) {
+  main { padding-inline: 1rem }
+}
+
+
+
+
+
+
+a[is-current]::before {
+  content: "";
+  position: absolute;
+  top: -.3em;
+  left: -.5em;
+  width: calc(100% + 1em);
+  height: calc(100% + .4em);
+  border-radius: 2px;
+  background: var(--current);
+  z-index: -1;
+}
+
+.nav a[is-current]::before {
+  display: none;
+}
+
+
+.page-nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.page-nav a {
+  flex: 0 1 50%;
+  padding: 1rem;
+  border: 2px solid var(--separator);
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.page-nav a:hover {
+  outline: 2px solid currentColor;
+  outline-offset: -1px;
+}
+
+.page-nav span {
+  display: block;
+  color: var(--inactive);
+}
+
+.page-nav .right {
+  margin-left: auto;
+}
