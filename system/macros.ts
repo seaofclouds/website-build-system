@@ -161,6 +161,9 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case "site-title":
             return Env.title
 
+          case "repo-url":
+            return Env.repo
+
           // ─── SITE-SPECIFIC MACROS ───────────────────────────────────────────────────────
           //
           // Everything below this line exists to serve one particular website's structure —

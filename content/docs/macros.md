@@ -41,6 +41,11 @@ Use `{{title?}}` in a template when some pages have a title and some don't. Use
 an include. `{{index: item-template reverse}}` for newest first. This is how the blog
 index works.
 
+Children are ordered by their `date` frontmatter. Pages sharing a date keep their
+relative file order, which is alphabetical by path — so a set of same-day posts sorts by
+filename, and `reverse` flips that too. Worth knowing before you publish several things
+on one day and wonder why they came out backwards.
+
 `{{figure ![alt](image.png) A caption}}` builds a `<figure>`. Point it at an `.mp4`,
 `.webm`, or `.mov` and you get a `<video>` instead. Words before the image become CSS
 classes, and the class `autoplay` also makes the video loop and mute.

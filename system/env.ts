@@ -31,6 +31,11 @@ export const Env = {
   // sidebar. It's read to generate llms.txt. Leave blank to skip those files.
   docsIndex: "docs",
 
+  // Where this repo lives, for links from the site back to the source.
+  // Kept here rather than written into a page, so that moving the repo to a
+  // different owner is a one-line change. No trailing slash.
+  repo: "https://github.com/seaofclouds/website-build-system",
+
   // ─── CONFIGURABLE CONSTANTS ───────────────────────────────────────────────
 
   // When these folders change, the watcher triggers a build.

@@ -1,7 +1,7 @@
 ---
 title: A Build System You're Meant to Modify
 description: Why this one lives in your repo instead of your node_modules.
-date: 2026-02-20
+date: 2026-07-27
 template: blog
 ---
 

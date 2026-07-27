@@ -324,15 +324,18 @@ hr {
 
 /* HEADER LOGO */
 
-.logo {
-  display: flex;
-  align-items: center;
-}
-
+/*
+  Deliberately not a flex container. The surrounding header aligns its items on the text
+  baseline, and a flex container exposes its *first item's* baseline — here the <svg>,
+  which has no text in it, so the browser synthesises one from the box edge and the
+  wordmark ends up sitting higher than the nav links beside it.
+  Left as an inline box, the <a> reports the baseline of its own text, which is what we want.
+*/
 .logo svg {
   width: 32px;
   height: auto;
   margin-right: .5em;
+  vertical-align: -.45em; /* optically centre the mark against the wordmark */
 }
 
 .logo:focus-visible { outline: 0; }
