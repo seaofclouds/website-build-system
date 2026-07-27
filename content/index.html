@@ -25,64 +25,79 @@ template: landing
 
   <md>
     That builds the site, watches for changes, and serves it at `localhost:3000` with
-    live reload. There's no compile step and no bundler — the TypeScript runs directly
-    under bun, deno, or node.
+    live reload. No compile step and no bundler — the TypeScript runs directly under
+    bun, deno, or node.
   </md>
 </section>
 
-<h2 class="section-heading">Not a dependency</h2>
+<section id="quote">
+  <blockquote>
+    <p>
+      I really don't want the build system to be a dependency. It was designed and built
+      around the idea of being part of the website that it's building. It should be a
+      ship of Theseus.
+    </p>
+    <cite>Ivy Reese, who wrote it for <a href="https://automerge.org">automerge.org</a></cite>
+  </blockquote>
+  <md>
+Replace a plank at a time until none of the original remains, and it's still your site's
+build system throughout. Everything below follows from that.
+  </md>
+</section>
 
 <section id="principles">
 
   <div class="unit">
-    <h4>Part of your site</h4>
-    <p>
-      It ships in your repo, not your <code>node_modules</code>. Nothing is pinned
-      elsewhere, nothing drifts, and what builds your site today builds it identically
-      in five years.
-    </p>
-  </div>
-
-  <div class="unit">
     <h4>Meant to be edited</h4>
     <p>
-      No config file, no plugin API, no version number. You add a macro by adding a
-      <code>case</code> to a switch. The extension mechanism is that you have the code.
+      No config file, no plugin API, no version number. Settings are variables at the top
+      of one file. You add a macro by adding a <code>case</code> to a switch. The
+      extension mechanism is that you have the code.
     </p>
   </div>
 
   <div class="unit">
     <h4>Small enough to read</h4>
     <p>
-      Six dev dependencies, all build-time. Nothing ships to your visitors. You can
-      read the whole thing in an afternoon and hold it in your head afterwards.
+      Six packages do the work — <code>markdown-it</code>, <code>markdown-it-footnote</code>,
+      <code>prismjs</code>, <code>chokidar</code>, <code>glob</code>, <code>ws</code> — all
+      at build time. Nothing ships to your visitors.
     </p>
   </div>
 
   <div class="unit">
-    <h4>Content like an FTP server</h4>
+    <h4>Content is just files</h4>
     <p>
-      Put a file in <code>content</code>, it appears on the site at that path. Every
-      clever behaviour beyond that is opt-in via frontmatter — and an HTML file with no
-      frontmatter is copied through untouched.
+      Put a file in <code>content</code>, it appears on the site at that path. Everything
+      beyond that is opt-in through frontmatter, and an HTML file with none is copied
+      through untouched.
     </p>
   </div>
 
   <div class="unit">
-    <h4>Catches its own mistakes</h4>
+    <h4>It checks its own work</h4>
     <p>
-      Every internal link and anchor is checked against the pages just generated, so
-      renaming a heading someone linked to gets caught at build time rather than by a
+      Every internal link and every anchor is verified against the pages just generated,
+      so renaming a heading someone linked to is caught at build time instead of by a
       reader two years later.
     </p>
   </div>
 
   <div class="unit">
-    <h4>Fonts, feeds, and redirects</h4>
+    <h4>Batteries, all removable</h4>
     <p>
-      Automatic font subsetting cuts a typeface down to just the characters you use.
-      RSS, sitemaps, <code>llms.txt</code> and redirect pages are generated for you, and
-      each one is a file you can delete.
+      RSS, sitemaps, <code>llms.txt</code>, redirects, drafts, dark mode, and font
+      subsetting that cuts a typeface down to the characters you actually use. Each one
+      is a file you can delete.
+    </p>
+  </div>
+
+  <div class="unit">
+    <h4>Hosts anywhere</h4>
+    <p>
+      The output is a folder of static files. Node 24, bun, or deno to build it; any
+      static host to serve it. <a href="/docs/deploying/">GitHub Pages, Cloudflare, and
+      Netlify</a> are a build command and an output directory.
     </p>
   </div>
 
@@ -90,10 +105,8 @@ template: landing
 
 <section id="closing">
   <md>
-It began as the build system for [automerge.org](https://automerge.org), written by
-[Ivy](https://github.com/ivanreese), and was pulled out as a starting point for other
-sites. It's a ship of Theseus: replace a plank at a time until none of the original
-remains, and it's still your site's build system throughout.
+Pulled out of the [automerge.org](https://automerge.org) website so other sites could
+start from it. The [changelog](/blog/) records what changed on the way out.
   </md>
   <div class="cta">
     <a href="{{repo-url}}/generate" class="button">Use this template</a>

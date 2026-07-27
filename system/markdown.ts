@@ -13,6 +13,7 @@ import "prismjs/components/prism-css.js"
 import "prismjs/components/prism-json.js"
 import "prismjs/components/prism-jsx.js" // We don't use jsx, but need to import it for tsx to work
 import "prismjs/components/prism-markup.js" // html, xml, svg
+import "prismjs/components/prism-toml.js"
 import "prismjs/components/prism-tsx.js"
 import "prismjs/components/prism-typescript.js"
 import "prismjs/components/prism-yaml.js" // also registers the "yml" alias

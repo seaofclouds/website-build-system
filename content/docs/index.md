@@ -25,9 +25,12 @@ Clone the repo, then:
 npm install
 ```
 
-Six small npm packages, all dev-only: `markdown-it` and `markdown-it-footnote` for
-Markdown, `prismjs` for syntax highlighting, `chokidar` and `glob` for watching and
+Six packages do the work, all of them dev-only: `markdown-it` and `markdown-it-footnote`
+for Markdown, `prismjs` for syntax highlighting, `chokidar` and `glob` for watching and
 matching files, and `ws` for live reload. Nothing ships to your visitors.
+
+The rest of `devDependencies` is TypeScript itself and the `@types/*` packages for the
+six above — needed to typecheck, never imported at build time.
 
 ## Run
 

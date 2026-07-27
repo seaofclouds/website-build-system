@@ -161,6 +161,40 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
   text-align: left;
 }
 
+/* The pull quote that carries the whole argument */
+
+#quote {
+  max-width: 46rem;
+  margin-bottom: 5rem;
+  text-align: center;
+}
+
+#quote blockquote {
+  margin: 0 0 1.5rem;
+  padding: 0;
+  border: 0;
+  font-style: normal;
+  color: var(--fg);
+}
+
+#quote blockquote p {
+  font: 280 26px / 1.45 var(--font-sans);
+}
+
+#quote cite {
+  display: block;
+  margin-top: 1rem;
+  font-size: 14px;
+  font-style: normal;
+  color: var(--inactive);
+}
+
+#quote > p {
+  color: var(--smoke);
+}
+
+html[theme="dark"] #quote > p { color: var(--silver); }
+
 .section-heading {
   margin-bottom: 3rem;
 }

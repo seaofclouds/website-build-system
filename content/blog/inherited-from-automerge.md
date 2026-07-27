@@ -9,8 +9,9 @@ Written by [Ivy Reese](https://github.com/ivanreese) for
 [automerge.org](https://automerge.org). Not built to be reused — it was built to be part
 of that one website.
 
-About 1,800 lines of TypeScript, six dev dependencies, no compile step and no bundler.
-`system/app.ts` runs directly under bun, deno, or node.
+About 1,800 lines of TypeScript, no compile step and no bundler — `system/app.ts` runs
+directly under bun, deno, or node. Six packages do the work: `markdown-it`,
+`markdown-it-footnote`, `prismjs`, `chokidar`, `glob`, `ws`.
 
 The pipeline, in `compile-everything.ts`:
 

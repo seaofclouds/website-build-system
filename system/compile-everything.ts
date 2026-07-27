@@ -120,7 +120,13 @@ export const compileEverything = () => {
   // Now we take everything that's not a page and hardlink it into the public folder.
   // We use hardlinks, rather than copying, because it's much faster.
   // We use path.replace(), rather than the replace({}) helper, because there can be subfolders named "content"
-  glob("content/**/*.!(md|html)", "content/CNAME").forEach((path) => linkFile(path, path.replace("content/", "public/")))
+  //
+  // The glob needs a file extension to match, so the extensionless files that various hosts
+  // look for have to be named individually: CNAME for GitHub Pages, _redirects and _headers
+  // for Netlify and Cloudflare Pages. Add yours here if your host wants something else.
+  glob("content/**/*.!(md|html)", "content/CNAME", "content/_redirects", "content/_headers").forEach((path) =>
+    linkFile(path, path.replace("content/", "public/"))
+  )
 
   // Now that the public folder is fully populated, we can run a few validity checks
   runValidityChecks(pages)

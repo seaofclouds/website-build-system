@@ -2,8 +2,10 @@
 
 A small, hackable static site build system. Markdown and HTML in, a finished website out.
 
-About 1,800 lines of commented TypeScript and six dev dependencies. No compile step, no
-bundler, nothing shipped to your visitors.
+About 1,800 lines of commented TypeScript. Six packages do the work — `markdown-it`,
+`markdown-it-footnote`, `prismjs`, `chokidar`, `glob`, `ws` — and everything else in
+`devDependencies` is TypeScript and its type definitions. No compile step, no bundler,
+nothing shipped to your visitors.
 
 It's a starting point, in the spirit of HTML5 Boilerplate — you copy it into your project
 and then make it yours.
