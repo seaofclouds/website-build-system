@@ -8,19 +8,19 @@ styles: /static/docs.css
 <!doctype html>
 <html lang="en">
 <head>{{include: head-stuff}}</head>
-<body>
+<body data-section="{{section}}">
   <input type="checkbox" id="burger-state" />
+  <header class="site-header">
+    <a href="#content" class="skip">Skip to Content</a>
+    {{include: logo}}
+    <div class="nav">
+      {{include: nav}}
+      {{include: theme-toggle}}
+    </div>
+    {{include: burger}}
+  </header>
   <aside>
-    <header>
-      <a href="#content" class="skip">Skip to Content</a>
-      {{include: logo}}
-      {{include: burger}}
-    </header>
     <nav>
-      <div class="nav">
-        {{include: nav}}
-        {{include: theme-toggle}}
-      </div>
       <div class="subscribe"><strong>Subscribe via</strong> <a href="/index.xml">RSS</a></div>
       {{ blog-sidebar }}
     </nav>

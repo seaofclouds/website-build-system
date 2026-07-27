@@ -1,7 +1,5 @@
 ---
-Documentation pages, with a sidebar table of contents and previous/next links.
-The running order comes from template/includes/docs.md.
-Headings become linkable anchors, because docs pages get linked to section by section.
+All our reference pages use this template, and we want them to have clickable links for each header.
 header_anchors: true
 styles: /static/docs.css
 ---
@@ -9,19 +7,19 @@ styles: /static/docs.css
 <!doctype html>
 <html lang="en">
 <head>{{include: head-stuff}}</head>
-<body>
+<body data-section="{{section}}">
   <input type="checkbox" id="burger-state" />
+  <header class="site-header">
+    <a href="#content" class="skip">Skip to Content</a>
+    {{include: logo}}
+    <div class="nav">
+      {{include: nav}}
+      {{include: theme-toggle}}
+    </div>
+    {{include: burger}}
+  </header>
   <aside>
-    <header>
-      <a href="#content" class="skip">Skip to Content</a>
-      {{include: logo}}
-      {{include: burger}}
-    </header>
     <nav>
-      <div class="nav">
-        {{include: nav}}
-        {{include: theme-toggle}}
-      </div>
       {{include: docs}}
     </nav>
   </aside>

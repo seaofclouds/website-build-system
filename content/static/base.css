@@ -132,9 +132,10 @@ aside {
   padding: 1rem;
 }
 
-/* Hide the nav when burger menu is closed */
+/* Hide the nav when burger menu is closed.
+   General sibling, not adjacent — on pages with a masthead it sits between the two. */
 @media (width <= 800px) {
-  #burger-state:not(:checked) + aside nav { display: none }
+  #burger-state:not(:checked) ~ aside nav { display: none }
 }
 
 /* Child of <aside>, contains the logo and burger */

@@ -1,10 +1,55 @@
+/*
+  The masthead runs across the top: wordmark on the left, section links and the theme
+  toggle on the right. That leaves the sidebar below it for page links only.
+*/
+
+html { --masthead-height: 5.25rem; }
+
+.site-header {
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding: 1.5rem 1.375rem;
+  gap: 1rem;
+}
+
+/* Pushes everything after it to the right */
+.site-header .logo {
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.site-header .logo:hover span {
+  text-decoration: underline;
+}
+
+.site-header .nav a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header .nav a:hover {
+  text-decoration: underline;
+}
+
+/*
+  Mark the section you're in. The is-current attribute the build system adds only matches
+  an exact URL — right for the table of contents below, wrong here, where /docs/ should
+  stay lit while you're reading /docs/pages/. So <body> carries the section instead.
+*/
+body[data-section="docs"] .site-header .nav-docs,
+body[data-section="blog"] .site-header .nav-blog {
+  text-decoration: underline;
+  text-underline-offset: .35em;
+  text-decoration-thickness: 2px;
+}
+
 aside {
   position: fixed;
-  top: 0;
+  top: var(--masthead-height);
   left: calc((100vw - var(--page-width)) / 2);
   width: 18.5rem;
   padding-right: 1.5rem;
-  height: 100%;
+  height: calc(100% - var(--masthead-height));
   overflow: hidden auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
@@ -40,28 +85,27 @@ aside li {
 }
 
 aside nav {
-  padding-top: 1.5rem;
   padding-left: .75rem;
 }
 
+/* The section links and theme toggle, up in the masthead */
 .nav {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  gap: 1.75rem;
   font-size: 18px;
+  flex: none;
 }
 
-#theme-toggle {
-  margin-top: -3px;
+.nav #theme-toggle {
+  align-self: center;
+  flex: none; /* otherwise it gets squashed before the wordmark gives up any width */
 }
 
-.nav {
-  margin-bottom: .8rem;
-  padding-bottom: .7rem;
-  margin-left: -.5em;
-  padding-inline: .5em;
-  width: calc(100% + 1em);
-  border-bottom: 2px solid var(--separator);
+/* When the masthead runs out of room, the wordmark goes before anything else does */
+@media (width <= 560px) {
+  .site-header .logo span { display: none }
+  .nav { gap: 1.25rem }
 }
 
 .subscribe {
@@ -87,7 +131,9 @@ aside nav {
 @media (max-width: 800px) {
   aside {
     position: relative;
+    top: 0;
     width: auto;
+    height: auto;
     overscroll-behavior: auto;
   }
 
@@ -97,7 +143,8 @@ aside nav {
     padding-left: 0;
   }
 
-  input#burger-state:checked + aside {
+  /* General sibling, not adjacent — the masthead sits between the checkbox and the aside */
+  input#burger-state:checked ~ aside {
     border-bottom: 2px solid var(--separator);
     padding-bottom: 1rem;
     margin-bottom: 2.5rem;
@@ -129,9 +176,8 @@ main {
   padding-inline: 20rem 2rem;
 }
 
-@media (width > 800px) {
-  main { margin-top: 5.8rem; }
-}
+/* The masthead used to live inside the fixed sidebar, so main needed a top margin to
+   clear it. It's in normal flow now and pushes main down by itself. */
 
 @media (width <= 800px) {
   main { padding-inline: 2rem; }

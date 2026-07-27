@@ -133,6 +133,14 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case "href":
             return page.url.pathname
 
+          // The first segment of this page's URL — "docs" for /docs/pages/, blank for the
+          // home page. Templates put it on <body> so CSS can mark which section you're in.
+          // The built-in is-current attribute only matches an exact URL, which is right for
+          // a table of contents and wrong for a nav link that should stay lit across a
+          // whole section.
+          case "section":
+            return page.url.pathname.split("/")[1] ?? ""
+
           case "head-title": {
             let title = frontmatter.title || Env.title
             let subtitle = frontmatter.subtitle ? `: ${frontmatter.subtitle}` : ""
