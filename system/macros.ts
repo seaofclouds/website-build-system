@@ -173,13 +173,12 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           //
           // Adapt them, or delete them and write your own. That's the point.
 
-          // The list of every blog post, for the sidebar on a blog page.
-          // Ordered oldest first, to match the index on this site's blog page. Add .reverse()
-          // if you'd rather have newest first, which is the more usual choice for a blog.
+          // The list of every blog post, newest first, for the sidebar on a blog page.
+          // This sidebar is the blog's only index — there's no separate listing page.
           case "blog-sidebar": {
             // No parent means this page isn't nested under a blog index, so there's no sibling
             // list to build. We return nothing rather than failing the build.
-            let children = (page.parent?.children ?? []).toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
+            let children = (page.parent?.children ?? []).toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date)).reverse()
             // Cool trick — we expand an include macro in the context of each child page to generate the html for each item in the index
             return children.map((child) => expandMacros(`{{include:blog-post-sidebar-item}}`, child, pages)).join("\n")
           }

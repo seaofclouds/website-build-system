@@ -38,13 +38,16 @@ Use `{{title?}}` in a template when some pages have a title and some don't. Use
 `{{include: name}}` pulls in a snippet — see [Templates](/docs/templates/).
 
 `{{index: item-template}}` lists the current page's children, rendering each one through
-an include. `{{index: item-template reverse}}` for newest first. This is how the blog
-index works.
+an include — so `{{index: card}}` renders `template/includes/card.html` once per child,
+each in the context of that child. Add `reverse` for newest first.
 
 Children are ordered by their `date` frontmatter. Pages sharing a date keep their
 relative file order, which is alphabetical by path — so a set of same-day posts sorts by
 filename, and `reverse` flips that too. Worth knowing before you publish several things
 on one day and wonder why they came out backwards.
+
+This site doesn't use `{{index:}}` anywhere — its blog is navigated by the sidebar rather
+than a listing page — but it's there when you want a section to have one.
 
 `{{figure ![alt](image.png) A caption}}` builds a `<figure>`. Point it at an `.mp4`,
 `.webm`, or `.mov` and you get a `<video>` instead. Words before the image become CSS

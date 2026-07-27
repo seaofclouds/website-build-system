@@ -188,32 +188,6 @@ html[theme="dark"] #principles .unit p { color: var(--silver); }
   text-align: center;
 }
 
-/* BLOG INDEX ***********************************************************************************/
-
-.post-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: 2rem;
-  margin-block: 2rem 3rem;
-  text-align: left;
-}
-
-.post-grid h3 {
-  margin-block: 0 .5rem;
-}
-
-.post-grid h4 {
-  color: var(--inactive);
-  font-weight: 500;
-}
-
-.post-grid p {
-  margin-bottom: .5rem;
-  color: var(--smoke);
-}
-
-html[theme="dark"] .post-grid p { color: var(--silver); }
-
 /* 404 ******************************************************************************************/
 
 #not-found {

@@ -160,6 +160,9 @@ const generateSitemap = (pages: Page[]) => {
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">`,
     ...pages
       .filter(({ frontmatter }) => frontmatter.index != "false")
+      // Redirects aren't destinations. The ones generated from Redirects.txt already opt out
+      // via index: false, but a page can also use the redirect template directly.
+      .filter(({ frontmatter }) => frontmatter.template != "redirect")
       .toSorted((a, b) => compare(a.url.pathname, b.url.pathname))
       .map((page) => [page.url, page.stats.modified.toISOString()])
       .map(([url, modified]) => `<url><loc>${url}</loc><lastmod>${modified}</lastmod></url>`),
