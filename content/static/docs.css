@@ -27,9 +27,22 @@ aside {
   /* Left padding matches the masthead's gutter, so the links line up with the wordmark */
   padding-left: 1.375rem;
   padding-right: 1.5rem;
-  height: calc(100% - var(--masthead-height));
+  /* Room below the last link, so it doesn't sit flush against the bottom of the window */
+  padding-bottom: 2rem;
+
+  /*
+    max-height rather than height: the sidebar is as tall as its links and no taller, so on
+    a normal window it isn't a scroll container at all. It only becomes one when the list
+    genuinely doesn't fit.
+
+    And no overscroll-behavior: contain here. Containing the scroll sounds tidy, but it
+    stops the wheel from reaching the page — so on a short window, where the sidebar does
+    overflow, pointing at it and scrolling moved the sidebar a few pixels and then nothing
+    at all, with the article refusing to move. Chaining to the page is the behaviour people
+    expect.
+  */
+  max-height: calc(100% - var(--masthead-height));
   overflow: hidden auto;
-  overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
 
