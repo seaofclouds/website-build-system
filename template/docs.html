@@ -9,15 +9,7 @@ styles: /static/docs.css
 <head>{{include: head-stuff}}</head>
 <body data-section="{{section}}">
   <input type="checkbox" id="burger-state" />
-  <header class="site-header">
-    <a href="#content" class="skip">Skip to Content</a>
-    {{include: logo}}
-    <div class="nav">
-      {{include: nav}}
-      {{include: theme-toggle}}
-    </div>
-    {{include: burger}}
-  </header>
+  {{include: site-header}}
   <aside>
     <nav>
       {{include: docs}}

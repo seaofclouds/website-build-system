@@ -1,5 +1,5 @@
 ---
-Wide pages with no sidebar — the home page, the blog index, the 404.
+Wide pages with no sidebar — the home page and the 404.
 ---
 
 <!doctype html>
@@ -10,17 +10,8 @@ Wide pages with no sidebar — the home page, the blog index, the 404.
 </head>
 <body data-section="{{section}}">
   <input type="checkbox" id="burger-state" />
-  <aside>
-    <header>
-      {{include: logo}}
-      {{include: burger}}
-    </header>
-    <nav>
-      <div>{{include: nav}}</div>
-      {{include: theme-toggle}}
-    </nav>
-  </aside>
-  <main>
+  {{include: site-header}}
+  <main id="content">
     {{content}}
     <footer>{{include: footer}}</footer>
   </main>

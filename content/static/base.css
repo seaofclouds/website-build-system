@@ -126,28 +126,139 @@ body {
   margin: 0;
 }
 
-/* This is the sidebar on most pages, *and* the header on the home page. */
-/* The styling is quite contextual, so there's very little here. */
-aside {
-  padding: 1rem;
+/* THE MASTHEAD */
+
+/*
+  Every template includes template/includes/site-header.html and it's styled here, rather
+  than per-template, so that it lands in exactly the same place on every page. It used to
+  be styled twice — once for landing pages, once for pages with a sidebar — and the two
+  drifted 6px apart horizontally and 8px vertically, so the header visibly jumped as you
+  moved between sections.
+
+  Wordmark on the left, section links and theme toggle on the right, all sharing a
+  baseline. The gutter matches the one <main> uses, so the wordmark lines up with the
+  content beneath it.
+*/
+html { --masthead-height: 5rem; }
+
+/*
+  Fixed, so the wordmark stays put as you scroll — which is the whole reason the original
+  put it inside the fixed sidebar. The outer element spans the window so its background
+  covers whatever passes underneath; the inner one holds the content to the page width.
+
+  Centred with margin-inline:auto against the inline containing block, which excludes the
+  scrollbar gutter. The sidebar is centred off the same basis, so the two can't drift.
+*/
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: var(--bg);
 }
 
-/* Hide the nav when burger menu is closed.
-   General sibling, not adjacent — on pages with a masthead it sits between the two. */
-@media (width <= 800px) {
-  #burger-state:not(:checked) ~ aside nav { display: none }
-}
-
-/* Child of <aside>, contains the logo and burger */
-header {
+/*
+  The height is set rather than left to the content, because the body reserves exactly
+  --masthead-height above itself and the sidebar hangs from the same number. Letting the
+  content decide meant the bar came out 85px tall against 80px reserved, so the article
+  slipped underneath it — and it would have drifted again at the font-size breakpoint.
+  Padding only on top: the box-sizing reset means the height already accounts for it.
+*/
+.site-header-inner {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  gap: 1rem;
+  height: var(--masthead-height);
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding: 1.5rem 1.375rem 0;
   font-weight: 600;
 }
 
+/* Nothing starts underneath the fixed masthead */
+body {
+  padding-top: var(--masthead-height);
+}
+
+/* Pushes everything after it to the right */
+.site-header .logo {
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.site-header .logo:hover span {
+  text-decoration: underline;
+}
+
+.site-header .nav {
+  display: flex;
+  align-items: baseline;
+  gap: 1.75rem;
+  flex: none;
+}
+
+.site-header .nav a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header .nav a:hover {
+  text-decoration: underline;
+}
+
+.site-header #theme-toggle {
+  align-self: center;
+  flex: none; /* otherwise it's the first thing to get squashed when space runs out */
+}
+
+/*
+  Mark the section you're in. The is-current attribute the build system adds only matches
+  an exact URL — right for a table of contents, wrong here, where /docs/ should stay lit
+  while you're reading /docs/pages/. So <body> carries the section instead.
+*/
+body[data-section="docs"] .site-header .nav-docs,
+body[data-section="blog"] .site-header .nav-blog {
+  text-decoration: underline;
+  text-underline-offset: .35em;
+  text-decoration-thickness: 2px;
+}
+
 /* Bigger font on bigger screens */
-@media (width > 500px) { header { font-size: 18px } }
+@media (width > 500px) { .site-header-inner { font-size: 18px } }
+
+/* When the masthead runs out of room, the wordmark goes before anything else does */
+@media (width <= 560px) {
+  .site-header .logo span { display: none }
+  .site-header .nav { gap: 1.25rem }
+}
+
+/*
+  The skip link lives in the masthead, so it's styled here alongside it. It sits offscreen
+  above the page until focused. This has to be in base.css, not in the stylesheet for pages
+  with a sidebar — otherwise a landing page renders it as an ordinary visible link, and it
+  takes up space in the header and shoves the wordmark sideways.
+*/
+a.skip {
+  position: absolute;
+  top: 0;
+  padding: 2rem 4rem;
+  border-radius: 0 0 8px 8px;
+  color: var(--bg);
+  background: var(--fg);
+  translate: 0 -100%;
+}
+
+a.skip:focus-visible {
+  translate: 0;
+  outline: 0;
+}
+
+/* Hide the sidebar's contents when the burger is closed.
+   General sibling, not adjacent — the masthead sits between the checkbox and the aside. */
+@media (width <= 800px) {
+  #burger-state:not(:checked) ~ aside nav { display: none }
+}
 
 footer {
   text-align: center;
@@ -357,16 +468,15 @@ hr {
   display: none;
 }
 
-/* <label> that toggles the burger state checkbox */
+/* <label> that toggles the burger state checkbox.
+   Hidden by default: it only earns its place on a narrow screen that has a sidebar to
+   open, so docs.css is what reveals it. The masthead is shared by every template, and a
+   landing page has nothing for it to toggle. */
 #burger {
+  display: none;
   border-radius: 24px;
   stroke: var(--fg);
   cursor: pointer;
-}
-
-/* Only show when narrow */
-@media (width > 800px) {
-  #burger { display: none; }
 }
 
 #burger:hover {
@@ -379,9 +489,10 @@ hr {
   padding: 5px;
 }
 
-/* Toggle between the show (burger) and hide (X) icons */
-#burger-state:checked       + * .show { display: none }
-#burger-state:not(:checked) + * .hide { display: none }
+/* Toggle between the show (burger) and hide (X) icons.
+   General sibling, not adjacent — the burger sits inside the masthead. */
+#burger-state:checked       ~ * .show { display: none }
+#burger-state:not(:checked) ~ * .hide { display: none }
 
 /* THEME TOGGLE */
 

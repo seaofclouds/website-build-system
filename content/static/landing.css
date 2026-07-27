@@ -53,71 +53,11 @@ p {
   h2   { font: 300 28px / 1.4 var(--font-sans); }
 }
 
-/* HEADER ***************************************************************************************/
-
-aside {
-  position: relative;
-  display: flex;
-  align-items: baseline;
-  max-width: var(--page-width);
-  padding-bottom: 3rem;
-  font-weight: 500;
-}
-
-@media (width > 500px) { aside { font-size: 18px } }
-/* We can't just use margin-inline:auto because when scroll bars are visible,
-   it makes the logo visually shift between the home page and other pages. */
-@media (width > 72em) { aside { left: calc((100vw - var(--page-width)) / 2); } }
-
-header {
-  flex: 1 1 auto;
-}
-
-/*
-  The nav sits at the right-hand end of the header. <header> takes the leftover space,
-  which pushes everything here over; the links then sit on the same text baseline as the
-  wordmark, with the theme toggle spaced a little apart from them.
-*/
-nav {
-  display: flex;
-  align-items: baseline;
-  gap: 1.75rem;
-}
-
-nav div {
-  display: flex;
-  align-items: baseline;
-  gap: 1.75rem;
-}
-
-#theme-toggle {
-  align-self: center;
-}
-
-@media (max-width: 800px) {
-  aside {
-    flex-flow: row wrap;
-    gap: 2rem 1rem;
-  }
-
-  nav {
-    flex: 1 1 100%;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  nav div {
-    gap: 2rem;
-  }
-}
-
-/* Pad the aside more when burger menu is open */
-@media (width <= 800px) {
-  #burger-state:checked + aside {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-  }
+/* The masthead is shared with the other templates and styled in base.css — fixed to the
+   top, so it stays put and lands in the same place on every page. Landing pages just want
+   a little more air beneath it than the body padding alone provides. */
+main {
+  padding-top: 2rem;
 }
 
 /* HOME PAGE ************************************************************************************/
