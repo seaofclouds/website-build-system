@@ -109,7 +109,7 @@ Three constraints worth knowing before editing:
 
 These paths are coupled to particular content. All of them degrade — a missing piece logs or returns empty rather than throwing — so deleting a section is safe, and the build tells you what it couldn't find:
 
-- `macros.ts` `most-recent-blog-post` logs and returns `#` when no page uses `template: blog`. `template/includes/nav.html` calls it on every page, so that log is what you'll see if you delete the blog.
+- `macros.ts` `most-recent-blog-post` logs and returns `#` when nothing lives under `/blog/`. It's keyed on the section rather than on `template: blog`, so a post keeps counting as a post when it moves onto another template. `template/includes/nav.html` calls it on every page, so that log is what you'll see if you delete the blog.
 - `macros.ts` `blog-sidebar` reads `page.parent?.children ?? []`, so a post with no `/blog/` index above it renders an empty sidebar.
 - `llms.ts` returns early unless `Env.docsIndex` names an include, which is the switch for turning `llms.txt` off.
 - `redirects.ts` returns early unless `Redirects.txt` exists (a comments-only file is also fine).

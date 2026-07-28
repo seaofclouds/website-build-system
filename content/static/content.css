@@ -172,6 +172,56 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   color: var(--inactive);
 }
 
+/* TABLE OF CONTENTS *****************************************************************************/
+
+/*
+  Emitted by {{toc}} from the page's own h2s — see macros.ts. The essay template puts it at
+  the top, above the first paragraph, which is where a reader decides whether to read the
+  thing or skim it.
+
+  Held to the measure rather than lifted into the gutter, even though it looks like the sort
+  of thing that belongs out there. The gutter is for notes *about* a passage, and a contents
+  list isn't about a passage — it's the shape of the whole page. It would also land on top
+  of the byline, which is already the topmost thing in the band.
+
+  It's the same object as a sidebar — a flat list of links to somewhere else — so it's
+  styled the same way, quiet until you point at it. See .site-nav in layout.css.
+*/
+.toc {
+  max-width: var(--measure);
+  margin-block: var(--space-lg) var(--space-xl);
+  padding-left: var(--space-md);
+
+  /* A rule rather than a box. A boxed contents list reads as a callout, which is the one
+     thing it isn't — nothing here is being said, it's all pointing elsewhere. */
+  border-left: 2px solid var(--separator);
+}
+
+.toc h6 {
+  margin: 0;
+}
+
+/* Flat, like the sidebars: a list's marker and indent would buy hierarchy that a handful of
+   section links doesn't have, and cost the alignment with the paragraph below. */
+.toc ul {
+  margin: 0;
+  list-style-type: none;
+}
+
+.toc li {
+  margin-top: 0;
+}
+
+.toc a {
+  display: block;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.toc a:hover {
+  text-decoration: underline;
+}
+
 /* MARGINALIA ************************************************************************************/
 
 /*

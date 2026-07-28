@@ -32,7 +32,7 @@ The starter ships five templates plus one for redirects:
 | `landing` | wide, no sidebar. The home page and the 404 |
 | `docs` | a sidebar with a table of contents |
 | `blog` | a sidebar listing posts by date |
-| `essay` | a gutter down the right, for asides and figure captions |
+| `essay` | a gutter down the right, for asides and figure captions, and a `{{toc}}` at the top instead of previous/next links |
 
 They're a starting point, not a set — add and remove freely.
 

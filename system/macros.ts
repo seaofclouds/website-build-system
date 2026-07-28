@@ -189,6 +189,24 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case "section":
             return page.url.pathname.split("/")[1] ?? ""
 
+          // {{toc}} — a table of contents for this page, built from its own <h2> headings.
+          // For a long page someone might want to skim, or link into a section of.
+          //
+          // Put it in a *template*, not in a page. It reads page.compiledBody after the
+          // header-anchor pass has run over it, which is true when the template is expanded
+          // and not while the page's own body is still compiling — so {{toc}} written into
+          // a page's markdown quietly returns nothing. It also needs `header_anchors: true`
+          // on the template, since without ids there is nothing to link to.
+          //
+          // Fewer than two headings gets you nothing, because a contents list of one item
+          // is a heading you have written out twice.
+          case "toc": {
+            const headings = Array.from(page.compiledBody.matchAll(/<h2[^>]*\sid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g))
+            if (headings.length < 2) return ""
+            const items = headings.map(([, id, inner]) => `  <li><a href="#${id}">${plainify(inner).trim()}</a></li>`)
+            return flatJoin([`<nav class="toc">`, `<h6>Contents</h6>`, `<ul>`, items, `</ul>`, `</nav>`])
+          }
+
           case "head-title": {
             let title = frontmatter.title || Env.title
             let subtitle = frontmatter.subtitle ? `: ${frontmatter.subtitle}` : ""
@@ -205,8 +223,11 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case "og-description":
             return plainify(frontmatter.description || Env.description)
 
+          // A page with a publish date is a post — the same signal the RSS feed reads to decide
+          // what belongs in it. Keyed on the date rather than on a template name, so that a post
+          // keeps its type when you move it onto a different template.
           case "og-type":
-            return ["blog"].includes(frontmatter.template) ? "article" : "website"
+            return frontmatter.date ? "article" : "website"
 
           case "og-url":
             return page.url.toString()
@@ -240,13 +261,19 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           }
 
           // The URL of the newest post, so a nav link can point at the blog's freshest content.
+          //
+          // Keyed on the /blog/ section rather than on `template: blog`, because which template
+          // a post uses is a presentation choice and shouldn't decide whether it counts as a
+          // post — the reading-layout post is on `essay`, and a link to "the blog" that skipped
+          // it because of that would be wrong. The redirect sitting at /blog/ is excluded: it is
+          // the section, not something in it.
           case "most-recent-blog-post": {
             let mostRecentPost = pages
-              .filter((p) => p.frontmatter.template == "blog")
+              .filter((p) => p.url.pathname.startsWith("/blog/") && p.frontmatter.template != "redirect")
               .toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
               .at(-1)
             if (!mostRecentPost) {
-              log(`No page uses ${yellow("template: blog")}, so ${yellow("{{most-recent-blog-post}}")} has nothing to link to: ${green(path)}`)
+              log(`No posts found under ${yellow("/blog/")}, so ${yellow("{{most-recent-blog-post}}")} has nothing to link to: ${green(path)}`)
               return "#"
             }
             return mostRecentPost.url.pathname

@@ -5,6 +5,12 @@ This is the shape Ink & Switch essays use, and the one the figure vocabulary in
 content.css was designed against — see /styleguide/ for everything it can do.
 
 Requires a `date` in the page's frontmatter, for the byline. `authors` is optional.
+
+Where the docs and blog templates put previous/next links at the foot of the page, this one
+puts a table of contents at the head of it. An essay is a thing you decide whether to read,
+not a step in a running order, so what helps is seeing its shape before you start rather
+than being handed the next one when you finish. {{toc}} builds it from the page's own h2s
+and emits nothing at all if there are fewer than two of them.
 header_anchors: true
 ---
 
@@ -19,6 +25,7 @@ header_anchors: true
   <main id="content">
     <h1>{{title?}}</h1>
     {{include: byline}}
+    {{toc}}
     {{content}}
     <footer>{{include: footer}}</footer>
   </main>

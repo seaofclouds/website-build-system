@@ -426,6 +426,6 @@ Below 800px the navigation stacks above the content too, and from there the body
 
 At that same width the page's edge margin steps from `1rem` to `2rem`, because `<main>` now runs to both edges and text against the glass reads as cramped. It steps back to `1rem` below 500px, where `2rem` a side would be a sixth of the screen. That's `--page-padding`, and the masthead reads it too — so the wordmark stays lined up with the first line of text at every width, on every layout.
 
-This page is `layout-nav`, so narrowing it demonstrates the second row and not the first — nothing in the starter uses `layout-margin`, and `template/essay.html` ships unused. Put a page on it before you rely on the essay column.
+This page is `layout-nav`, so narrowing it demonstrates the second row and not the first. For `layout-margin`, narrow [the reading layout post](/blog/the-reading-layout/) instead — it's the one page in the starter on the `essay` template, and it's there partly so this row isn't a claim nothing tests.
 
 Nothing here needs a separate mobile class. If a layout looks wrong narrow, check it against this list before adding one.

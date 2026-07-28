@@ -444,8 +444,15 @@ main {
 }
 
 /* Below the breakpoint there's no room for a gutter, so everything falls back to block
-   flow. 46rem is a literal here and in content.css, and has to stay one — see above. */
-@media (width <= 46rem) {
+   flow. 46rem is a literal here and in content.css, and has to stay one — see above.
+
+   Strictly less-than, for the same reason the nav layout's is: content.css positions
+   marginalia on `min-width: 46rem`, so a `<=` here would make both apply at exactly 736px —
+   the gutter closed, and asides still absolutely positioned into it, sitting on top of the
+   body text. That is the identical off-by-one already fixed at 72em for .layout-nav, and it
+   survived here only because nothing in the starter rendered .layout-margin to show it.
+   Measured before the fix at 736px: the byline spanned x 448-704 over a body of 32-704. */
+@media (width < 46rem) {
   .layout-margin main {
     --content-gutter: 0rem;
     padding-left: var(--page-padding);

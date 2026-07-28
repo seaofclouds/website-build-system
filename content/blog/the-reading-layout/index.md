@@ -2,7 +2,7 @@
 title: The reading layout
 description: A measure to read at, a gutter beside it, and notes that line up with the sentence they annotate.
 date: 2026-07-27
-template: blog
+template: essay
 ---
 
 The oldest part of Theseus is the shape of a page you read. It comes from the
@@ -32,9 +32,11 @@ eleven 2rem gaps. Every region is a whole number of those columns, so the masthe
 navigation, the body and the marginalia all hang off one set of vertical lines.
 
 The band that holds the marginalia is three columns. Mirror it to the left and it's the
-documentation sidebar — one `--band` token for both, so the two can't drift apart. An
-essay is body 1–8, space, marginalia 10–12; a docs page is the same arrangement reflected.
-`./site --fluid` paints the guides over any page if you want to check what lines up.
+documentation sidebar — one `--band` token for both, so the two can't drift apart. This
+page is body 1–8, a space column, then marginalia in 10–12. A docs page keeps the band in
+the same place and spends three more columns on the sidebar, which leaves no room for a
+space column, so its body is six columns rather than eight. `./site --fluid` paints the
+guides over any page if you want to check what lines up.
 
 ## Figures break out by name
 

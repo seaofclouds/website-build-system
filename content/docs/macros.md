@@ -41,6 +41,7 @@ Use `{{title?}}` in a template when some pages have a title and some don't. Use
 | `{{figure …}}` | Builds a `<figure>` around an image or a video. The everyday way to put a picture on a page — see the [styleguide](/docs/styleguide/#the-figure-classes) for the classes it takes. |
 | `{{aside …}}` | A note in the marginalia band, level with the paragraph after it. For what a reader can skip without losing the thread. |
 | `{{info: …}}`, `{{caution: …}}` | A callout in the flow of the text. For what a reader *can't* skip — that's the whole difference from an aside. |
+| `{{toc}}` | A table of contents built from the page's own `h2` headings. Put it in a template, not a page — see below. The `essay` template uses it in place of previous/next links. |
 | `{{# …}}` | A comment. Disappears at build time, so use it to explain a template to whoever edits it next. |
 | `{{site-title}}`, `{{domain}}`, `{{href}}`, `{{head-title}}`, `{{og-description}}`, `{{og-image-tag}}`, `{{og-type}}`, `{{og-url}}` | Values you'd otherwise repeat by hand. Mostly used once each, in `head-stuff.html`. |
 | `{{month-year}}`, `{{full-date}}` | The page's `date`, as `July 2026` or `2026·07·27`. The long one for a byline, where the date is part of a sentence; the short one for a label above a title, where it's a fact. |
@@ -55,6 +56,20 @@ several things on one day and wonder why they came out backwards.
 
 This site doesn't use `{{index:}}` anywhere — its blog is navigated by the sidebar rather
 than a listing page — but it's there when you want a section to have one.
+
+### Contents lists
+
+`{{toc}}` reads the page's own `h2` headings and emits a list of links to them. It needs
+two things, and fails quietly rather than loudly if it doesn't get them:
+
+It belongs in a **template**, not in a page. It reads the compiled body after headings have
+been turned into anchors, which has happened by the time a template expands but not while
+the page's own body is still compiling — so `{{toc}}` written into markdown returns nothing.
+
+And the template needs `header_anchors: true`, since without ids there's nothing to link to.
+
+Fewer than two headings also gets you nothing, on the grounds that a contents list of one
+item is a heading you've written out twice.
 
 ### Figures and asides
 
