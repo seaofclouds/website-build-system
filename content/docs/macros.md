@@ -45,7 +45,7 @@ Use `{{title?}}` in a template when some pages have a title and some don't. Use
 | `{{excerpt}}` | The page's opening paragraph. For a listing — the blog index shows one per post, under the title. Skips a leading figure or aside to find actual prose. |
 | `{{# …}}` | A comment. Disappears at build time, so use it to explain a template to whoever edits it next. |
 | `{{site-title}}`, `{{domain}}`, `{{href}}`, `{{head-title}}`, `{{og-description}}`, `{{og-image-tag}}`, `{{og-type}}`, `{{og-url}}` | Values you'd otherwise repeat by hand. Mostly used once each, in `head-stuff.html`. |
-| `{{month-year}}`, `{{full-date}}` | The page's `date`, as `July 2026` or `2026·07·27`. The long one for a byline, where the date is part of a sentence; the short one for a label above a title, where it's a fact. |
+| `{{full-date}}` | The page's `date`, as `2026·07·27`. The site's one date format — a post's byline and each row of the blog index both use it, so a date reads the same wherever you meet it. |
 
 ### Ordering, for `{{index:}}`
 

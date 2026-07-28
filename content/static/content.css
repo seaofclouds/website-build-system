@@ -157,26 +157,11 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   color: var(--accent);
 }
 
-/*
-  The date on a row of the blog index. A <p> rather than an <h5>, because a heading there
-  puts the document outline out of order for anything reading it as a structure — but the
-  type is base.css's h5/h6 label, copied rather than shared. Adding .post-date to that
-  selector list would teach the reset what a blog post is, and the reset doesn't get to
-  know that. Four declarations you can diff is the cheaper trade.
-*/
-.post-date {
-  margin-bottom: var(--space-sm);
-  font: 500 13px / 24px var(--font-sans);
-  letter-spacing: .03em;
-  text-transform: uppercase;
-  color: var(--inactive);
-}
-
 /* THE BLOG INDEX ********************************************************************************/
 
 /*
-  The list at /blog/, built by {{index:blog-item reverse}}. Each row is a date label, the
-  title as a link, and the post's opening paragraph.
+  The list at /blog/, built by {{index:blog-item reverse}}. Each row is a title, its date,
+  and the post's opening paragraph — a post in miniature, in a post's own order.
 
   Flat, like the sidebars and the contents list: a marker and an indent would set three
   stacked blocks a third of a column off the line the title starts on, and a list of two
@@ -200,10 +185,18 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   margin-top: var(--space-xl);
 }
 
+/* The date belongs to the title above it rather than to the paragraph below, so it sits
+   nearer the one than the other. Left at base.css's 16px it lands equidistant and reads as
+   belonging to neither — the same failure the byline's move-up exists to avoid. */
+.post-index h1 {
+  margin-bottom: var(--space-sm);
+}
+
 /*
-  Nothing here styles the title or the excerpt, and that's the point. The row is a real <h1>
-  at the size base.css says an h1 is, the excerpt is a paragraph, and the link carries
-  base.css's `plain` class so it isn't underlined — the same class the header anchors use.
+  Nothing else here styles the title, the date or the excerpt, and that's the point. The row
+  is a real <h1> at the size base.css says an h1 is, the date is base.css's h6 label — the
+  same element and the same rule the byline on a post uses — the excerpt is a paragraph, and
+  the link carries base.css's `plain` class so it isn't underlined.
   The accent-on-hover comes from the prose rule at the top of this file, which already covers
   a link inside an <li>.
 

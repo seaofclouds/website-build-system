@@ -2,19 +2,26 @@
     once per post, with that post as the context, so {{href}}, {{title}}, {{full-date}} and
     {{excerpt}} all refer to the post being listed rather than to the index itself.
 
+    Title, then date, then the opening lines — the same order a post itself uses, where the
+    byline follows the <h1> and only *looks* like it sits beside it because the essay layout
+    lifts it into the gutter. A row here is a post in miniature, so it reads in the same
+    order as one.
+
     An <h1> rather than a styled link. Each row is a post announcing itself, and the index
     has no title of its own for them to sit under, so h1 is the honest level — a screen
     reader gets a list of posts rather than a run of links starting at level three. Several
     h1s on one page is fine: browsers never implemented the outline algorithm, so heading
     levels are flat and the level is a statement about rank, not nesting.
 
+    An <h6> for the date, which is the element the byline on a post uses, so both take the
+    same small-caps label rule out of base.css and neither needs one of its own. It can be a
+    heading here because it sits *under* the h1 — above one it would have put the document
+    outline out of order, which is why this used to be a <p> with the type hand-copied.
+
     `plain` is base.css's class for a link that shouldn't be underlined — the same one the
     header anchors use. With it, content.css needs no rule for this title at all. }}
-
-{{# The date is the same .post-date label a post used to carry above its own title — a fact
-    rather than a sentence, which is what that macro is for. }}
 <li>
-  <p class="post-date">{{full-date}}</p>
   <h1><a class="plain" href="{{href}}">{{title}}</a></h1>
+  <h6>{{full-date}}</h6>
   <p>{{excerpt}}</p>
 </li>

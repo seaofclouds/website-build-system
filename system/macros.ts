@@ -161,13 +161,10 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case macro.startsWith("#") && macro:
             return ""
 
-          case "month-year":
-            if (!frontmatter.date) return bail(`This page's template requires a date: ` + green(path))
-            return new Date(frontmatter.date).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })
-
-          // 2026·07·27 — for the label above a post title, where a date is a fact rather
-          // than a sentence. en-CA because it's the locale that formats year-first; the
-          // middots are a separator you don't read aloud.
+          // 2026·07·27 — the site's one date format, used by the byline on a post and by each
+          // row of the blog index. A date is a fact here rather than a sentence, so it's set as
+          // a label and not written out. en-CA because it's the locale that formats year-first;
+          // the middots are a separator you don't read aloud.
           //
           // toLocaleDateString rather than toISOString: an unparseable date gives back the
           // string "Invalid Date" here, and throws a RangeError there. A bad date in one
