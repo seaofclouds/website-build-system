@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A small, hackable static site build system written in TypeScript, run directly (no compile step, no bundler) by bun/deno/node. It is called **Theseus**, after the governing constraint below — the name lives in `Env.title` (`system/env.ts`), the README heading, and `package.json`. The git repo and `Env.repo` are still named `website-build-system`.
 
-It began as the build system for [automerge.org](https://automerge.org), originally written by Ivy Reese. **It is being transformed into a starter build system** — the html5-boilerplate / normalize.css of website build systems — intended for adoption by seaofclouds-website, inkandswitch.com, and other sites. When you find Automerge-specific content, that is legacy to be generalized, not a pattern to follow.
+It grew up inside the [Ink & Switch](https://www.inkandswitch.com) website and then [automerge.org](https://automerge.org), written throughout by Ivy Reese; this repo is taken from the Automerge version. **It is being transformed into a starter build system** — the html5-boilerplate / normalize.css of website build systems — intended for adoption by seaofclouds-website, inkandswitch.com, and other sites. When you find Automerge-specific content, that is legacy to be generalized, not a pattern to follow.
 
 ### The governing constraint
 

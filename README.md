@@ -126,9 +126,11 @@ these until you add one.
 
 ## Credits
 
-The build system was written by [Ivy Reese](https://ivy.boo) for the
-[Automerge website](https://github.com/automerge/website). This repository generalises it
-into a starting point for other sites; the design, and the philosophy above, are Ivy's.
+The build system was written by [Ivy Reese](https://ivy.boo). It grew up inside the
+[Ink & Switch](https://www.inkandswitch.com) website and then the
+[Automerge website](https://github.com/automerge/website), which is where this repository
+takes it from and generalises it into a starting point for other sites. The design, and
+the philosophy above, are Ivy's.
 
 The live-reload server is adapted from
 [please-reload](https://github.com/ivyreese/please-reload), also Ivy's.
