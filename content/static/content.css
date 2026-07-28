@@ -48,13 +48,19 @@
   A reference table is two columns of unequal appetite: a class name, which has a fixed
   width, and a sentence about when to use it, which wants every pixel left. At the measure
   the sentence column came out around forty characters on a docs page, which reads as a
-  column of fragments. So a table takes the marginalia band as well, the same way an
-  arrangement or a gallery does — and carries the same constraint: don't put an aside
-  beside one, because the aside is positioned into that band and nothing pushes it out.
+  column of fragments. So a table takes the marginalia band as well, the way an
+  arrangement or a gallery does. Nothing is lost: a table is declarative, and a reader
+  doesn't annotate one from the margin.
+
+  Note that this widens by `width` and NOT by the negative margin the figures use. A table
+  carries `width: 100%` from base.css, and a block box with a specified width plus a
+  specified margin is over-constrained — CSS resolves that by ignoring margin-right
+  outright, so the negative-margin idiom silently does nothing here. Percentages resolve
+  against <main>'s content box, which *is* the measure, so the width has to say so.
 */
 @media (min-width: 46rem) {
   :is(.layout-nav, .layout-margin) main > table {
-    margin-right: calc(-1 * var(--content-gutter));
+    width: calc(100% + var(--content-gutter));
   }
 }
 
