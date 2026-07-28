@@ -2,14 +2,19 @@
     once per post, with that post as the context, so {{href}}, {{title}}, {{full-date}} and
     {{excerpt}} all refer to the post being listed rather than to the index itself.
 
-    An <h3> rather than a styled link: each row *is* a heading, and taking the real element
-    means base.css already has the size right and a screen reader gets an outline of the
-    section rather than a run of links.
+    An <h1> rather than a styled link. Each row is a post announcing itself, and the index
+    has no title of its own for them to sit under, so h1 is the honest level — a screen
+    reader gets a list of posts rather than a run of links starting at level three. Several
+    h1s on one page is fine: browsers never implemented the outline algorithm, so heading
+    levels are flat and the level is a statement about rank, not nesting.
+
+    content.css sets the type back to h3's size. Same split .post-date makes, for the same
+    reason: the element says what the thing is, the type says how loud it is here.
 
     The date is the same .post-date label a post used to carry above its own title — a fact
     rather than a sentence, which is what that macro is for. }}
 <li>
   <p class="post-date">{{full-date}}</p>
-  <h3><a href="{{href}}">{{title}}</a></h3>
+  <h1><a href="{{href}}">{{title}}</a></h1>
   <p>{{excerpt}}</p>
 </li>

@@ -452,7 +452,12 @@ main {
      7 columns, to open the rail — see variables.css. */
   padding-left: var(--page-padding);
   padding-right: calc(var(--page-padding) + var(--content-gutter));
-  padding-top: var(--space-lg);
+
+  /* No padding-top: an essay's <h1> starts on the same line a docs page's does, flush under
+     the masthead, with the empty half of the masthead's own box as the air above it. This
+     used to add a --space-lg and put the two 32px apart on pages that sit side by side in
+     the same navigation. */
+  padding-top: 0;
 }
 
 /*

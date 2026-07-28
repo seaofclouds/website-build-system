@@ -200,19 +200,26 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   margin-top: var(--space-xl);
 }
 
-/* Nothing sets a size here — the row is a real <h3> and base.css has already said what that
-   is. Underlined only on hover: a permanent rule under every title reads as a table of
-   contents that's been switched on. */
-.post-index h3 {
+/*
+  The row is a real <h1> — see blog-item.html for why — but it reads at h3's size, because a
+  list of posts is not a stack of page titles. The declaration is base.css's h3 rule copied,
+  the same trade .post-date makes above: adding .post-index to the reset's selector list
+  would teach the reset what a blog index is, and the reset doesn't get to know that.
+
+  Underlined only on hover. A permanent rule under every title reads as a table of contents
+  that's been switched on.
+*/
+.post-index h1 {
   margin-bottom: var(--space-sm);
+  font: 500 20px / 24px var(--font-sans);
 }
 
-.post-index h3 a {
+.post-index h1 a {
   color: var(--fg);
   text-decoration: none;
 }
 
-.post-index h3 a:hover {
+.post-index h1 a:hover {
   text-decoration: underline;
 }
 
