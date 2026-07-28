@@ -17,7 +17,7 @@ export const Env = {
 
   // The name of your site. Used for the RSS channel title, and as the fallback
   // <title> for any page that doesn't set one in its frontmatter.
-  title: "Website Build System",
+  title: "Theseus",
 
   // Used for the RSS channel description, and as the fallback meta description
   // for any page that doesn't set one.

@@ -1,5 +1,5 @@
 {
-  "name": "website-build-system",
+  "name": "theseus",
   "description": "A small, hackable static site build system that lives in the repo it builds.",
   "license": "MIT",
   "private": true,

@@ -5,9 +5,8 @@ date: 2026-07-27
 template: blog
 ---
 
-Written by [Ivy Reese](https://github.com/ivanreese) for
-[automerge.org](https://automerge.org). Not built to be reused — it was built to be part
-of that one website.
+Written by [Ivy Reese](https://ivy.boo) for [automerge.org](https://automerge.org). Not
+built to be reused — it was built to be part of that one website.
 
 About 1,800 lines of TypeScript, no compile step and no bundler — `system/app.ts` runs
 directly under bun, deno, or node. Six packages do the work: `markdown-it`,
@@ -24,6 +23,6 @@ The pipeline, in `compile-everything.ts`:
 - RSS, sitemap, `llms.txt`, and redirect pages are generated
 - Fonts in `/fonts` are subset to the characters the site actually uses
 - A live-reloading dev server, adapted from
-  [please-reload](https://github.com/ivanreese/please-reload)
+  [please-reload](https://github.com/ivyreese/please-reload)
 
 None of that changed in the extraction. See the [docs](/docs/) for how each part works.

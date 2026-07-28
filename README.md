@@ -1,8 +1,11 @@
-# Website Build System
+# Theseus
 
 A small, hackable static site build system. Markdown and HTML in, a finished website out.
 
-About 1,800 lines of commented TypeScript. Six packages do the work — `markdown-it`,
+Named for the ship — you replace a plank at a time until none of the original remains, and
+it's still your site's build system throughout. See [Not a dependency](#not-a-dependency).
+
+About 2,000 lines of commented TypeScript. Six packages do the work — `markdown-it`,
 `markdown-it-footnote`, `prismjs`, `chokidar`, `glob`, `ws` — and everything else in
 `devDependencies` is TypeScript and its type definitions. No compile step, no bundler,
 nothing shipped to your visitors.
@@ -123,12 +126,12 @@ these until you add one.
 
 ## Credits
 
-The build system was written by [Ivy Reese](https://github.com/ivanreese) for the
+The build system was written by [Ivy Reese](https://ivy.boo) for the
 [Automerge website](https://github.com/automerge/website). This repository generalises it
 into a starting point for other sites; the design, and the philosophy above, are Ivy's.
 
 The live-reload server is adapted from
-[please-reload](https://github.com/ivanreese/please-reload).
+[please-reload](https://github.com/ivyreese/please-reload), also Ivy's.
 
 MIT licensed. See [LICENSE](LICENSE) — note that it retains the original Automerge
 copyright notice, as MIT requires, and you should keep it when you copy this.

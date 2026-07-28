@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A small, hackable static site build system written in TypeScript, run directly (no compile step, no bundler) by bun/deno/node.
+A small, hackable static site build system written in TypeScript, run directly (no compile step, no bundler) by bun/deno/node. It is called **Theseus**, after the governing constraint below — the name lives in `Env.title` (`system/env.ts`), the README heading, and `package.json`. The git repo and `Env.repo` are still named `website-build-system`.
 
-It began as the build system for [automerge.org](https://automerge.org), originally written by Ivy (`ivanreese`). **It is being transformed into a starter build system** — the html5-boilerplate / normalize.css of website build systems — intended for adoption by seaofclouds-website, inkandswitch.com, and other sites. When you find Automerge-specific content, that is legacy to be generalized, not a pattern to follow.
+It began as the build system for [automerge.org](https://automerge.org), originally written by Ivy Reese. **It is being transformed into a starter build system** — the html5-boilerplate / normalize.css of website build systems — intended for adoption by seaofclouds-website, inkandswitch.com, and other sites. When you find Automerge-specific content, that is legacy to be generalized, not a pattern to follow.
 
 ### The governing constraint
 
@@ -128,4 +128,4 @@ CSS, HTML, and Markdown are in `.prettierignore` — they are formatted by hand 
 
 ## Licensing and attribution
 
-`LICENSE` is MIT, `Copyright (c) 2019-2025 the Automerge contributors`. This repo is a derivative, so MIT **requires** that notice be retained — preserve the Automerge copyright line and add new ones alongside it rather than replacing it. Credit Ivy (`ivanreese`) as the original author. The live-reload server in `system/server.ts` similarly credits its origin (`github.com/ivanreese/please-reload`); follow that precedent.
+`LICENSE` is MIT, `Copyright (c) 2019-2025 the Automerge contributors`. This repo is a derivative, so MIT **requires** that notice be retained — preserve the Automerge copyright line and add new ones alongside it rather than replacing it. Credit **Ivy Reese** as the original author — always by that name, and never by any other name. Link to `https://ivy.boo` or `https://github.com/ivyreese`; those are the only handles to use, in prose or inside a URL. The live-reload server in `system/server.ts` similarly credits its origin (`github.com/ivyreese/please-reload`); follow that precedent.
