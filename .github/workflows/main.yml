@@ -1,9 +1,21 @@
 name: Build and Deploy
 
-# Builds the site and publishes it to GitHub Pages on every push to main.
+# Builds the site and publishes it to Cloudflare Pages on every push to main.
 #
-# To use this: in the repo settings, enable Pages and set the source to "GitHub Actions".
-# For a custom domain, put a CNAME file in content/ containing just the domain name.
+# To use this you need two repository secrets, under Settings → Secrets and variables
+# → Actions:
+#
+#   CLOUDFLARE_API_TOKEN    an API token with the "Cloudflare Pages — Edit" permission
+#   CLOUDFLARE_ACCOUNT_ID   the account ID, shown by `wrangler whoami`
+#
+# and a Pages project to deploy into, which you make once with:
+#
+#   wrangler pages project create <name> --production-branch main
+#
+# Then set PROJECT below to that name. Pages serves it at <name>.pages.dev, at the root
+# of the domain — which this build needs, because it emits root-relative paths like
+# /static/base.css and has no notion of a base path. A host that serves the site from a
+# subdirectory will 404 on every stylesheet and every internal link.
 #
 # Deploying somewhere else instead? Delete this file. The build output is a plain folder
 # of static files in public/, which any host will serve.
@@ -15,11 +27,12 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
+
+env:
+  PROJECT: theseus-build-system
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -44,21 +57,17 @@ jobs:
       - name: Typecheck
         run: npm run check
 
+      # Note: no --draft. `build` is the one command that excludes drafts by default,
+      # which is what you want for the published site.
       - name: Build
         run: node --disable-warning=ExperimentalWarning system/app.ts build
 
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v4
+      # The build reports broken links, missing frontmatter and failed macros by printing
+      # to the terminal — it does not fail. Read the log above this step; a clean build
+      # prints nothing between "Build" and here.
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v4
         with:
-          path: public
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy public --project-name=${{ env.PROJECT }} --branch=${{ github.ref_name }}

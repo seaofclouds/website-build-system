@@ -34,27 +34,56 @@ and the output directory is always `public`.
 for you, which is handy locally and unnecessary on a build server where you've already
 pinned one.}}
 
-## GitHub Pages
-
-The starter ships a workflow at `.github/workflows/main.yml` that builds and deploys on
-every push to `main`. In the repo settings, enable Pages and set the source to
-**GitHub Actions**.
-
-For a custom domain, put a file called `CNAME` in `content/` containing just the domain,
-and point your DNS at GitHub Pages.
-
 ## Cloudflare Pages
 
-Connect the repo, then:
+This is what the starter ships configured for, and there are two ways in.
 
-| Setting | Value |
+**Push it yourself.** Make the project once, then deploy the built folder whenever you
+like — no dashboard, no repo connection:
+
+```bash
+wrangler pages project create my-site --production-branch main
+./site build
+wrangler pages deploy public --project-name=my-site
+```
+
+Pages serves it at `my-site.pages.dev`, and the name has to be free across all of
+Cloudflare — if it's taken you'll be handed a suffixed one like `my-site-7fy`, so check
+the name you get before you rely on it.
+
+**Or let CI do it.** `.github/workflows/main.yml` runs that same build and deploy on every
+push to `main`. Set `PROJECT` at the top of the file to your project name, and add two
+repository secrets under **Settings → Secrets and variables → Actions**:
+
+| Secret | Value |
 | --- | --- |
-| Framework preset | None |
-| Build command | `npm ci && node --disable-warning=ExperimentalWarning system/app.ts build` |
-| Build output directory | `public` |
+| `CLOUDFLARE_API_TOKEN` | An API token with the **Cloudflare Pages — Edit** permission |
+| `CLOUDFLARE_ACCOUNT_ID` | Your account ID, which `wrangler whoami` prints |
 
-Add an environment variable `NODE_VERSION` set to `24`, or the build will run on whatever
-Cloudflare defaults to and the TypeScript won't execute.
+**Connecting the repo in the Cloudflare dashboard** works too, and builds on Cloudflare's
+machines instead of GitHub's. Set the build command to
+`npm ci && node --disable-warning=ExperimentalWarning system/app.ts build`, the output
+directory to `public`, and add an environment variable `NODE_VERSION` of `24` — without it
+the build runs on whatever Cloudflare defaults to and the TypeScript won't execute.
+
+{{info: Whichever route you take, set `domain` in `system/env.ts` to the domain you end up
+on. It's only used where a URL has to be absolute — the sitemap, the RSS feed, the Open
+Graph tags — so getting it wrong doesn't break the site, it just publishes a feed that
+points somewhere else.}}
+
+## GitHub Pages
+
+Works, with one thing to know first: a **project** site is served from
+`<user>.github.io/<repo>/`, and this build emits root-relative paths with no notion of a
+base path. Every stylesheet and every internal link would 404 under that subdirectory.
+
+So it needs a root: either a user site (a repo named `<user>.github.io`) or a custom
+domain. For the custom domain, put a file called `CNAME` in `content/` containing just the
+domain and point your DNS at GitHub Pages.
+
+Then swap the deploy step in `.github/workflows/main.yml` for `actions/upload-pages-artifact`
+and `actions/deploy-pages`, give the job `pages: write` and `id-token: write` permissions,
+and set the Pages source to **GitHub Actions** in the repo settings.
 
 ## Netlify
 
