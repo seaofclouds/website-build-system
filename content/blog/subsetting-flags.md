@@ -1,19 +1,20 @@
 ---
-title: Font subsetting — dropped --layout-features=kern
-description: The flag replaced hb-subset's defaults instead of extending them, silently removing ligatures.
+title: hb-subset replaces its defaults, it doesn't extend them
+description: Passing --layout-features=kern silently dropped ligatures, small caps and every stylistic set.
 date: 2026-07-27
 template: blog
 ---
 
-The subsetting call was:
+The subsetting call used to be:
 
 ```
 hb-subset font.ttf --text-file=chars.txt --layout-features=kern -o out.ttf
 ```
 
 `--layout-features` **replaces** hb-subset's default set of retained features rather than
-adding to it. So `kern` alone was discarding ligatures, contextual alternates, fractions,
-tabular and oldstyle figures, small caps, localised forms, and every stylistic set.
+adding to it. So naming `kern` kept kerning and discarded everything else: ligatures,
+contextual alternates, fractions, tabular and oldstyle figures, small caps, localised
+forms, every stylistic set.
 
 Measured on Overpass, subset to the ~120 characters this site uses:
 
@@ -24,16 +25,12 @@ Measured on Overpass, subset to the ~120 characters this site uses:
 | `*` | 53.2 kB |
 
 `*` isn't free — it retains features whose substitution rules reference glyphs the
-character set doesn't, pulling those glyphs in. A curated
+character set doesn't, which pulls those glyphs in. A curated
 `kern,liga,calt,ccmp,locl,frac,tnum` came to 41.8 kB, within rounding of the default.
 
-The flag is now omitted. Both knobs are named constants at the top of `system/font.ts`
-with the numbers in the comments.
+The flag is omitted now, and both knobs are named constants at the top of
+`system/font.ts` with these numbers beside them.
 
-Also confirmed while in there: variable fonts already worked and kept their axes — both
-Overpass files carry `fvar`/`gvar`/`STAT`, and the output was already loading as
-`woff2-variations` across `font-weight: 100 900`. OTF works too; CFF and CFF2 outlines
-subset fine. Pinning a fixed instance is one line.
-
-`/fonts` now ships empty and the site uses the system stack. `font.ts` returns quietly
-when there are no fonts, so the feature costs nothing until you drop a file in.
+The lesson generalises past the one flag: a subsetter's defaults are a considered set, and
+narrowing them buys bytes at a price that fails silently. The text still renders. It just
+renders without the ligatures you picked the typeface for.
