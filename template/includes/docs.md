@@ -36,4 +36,4 @@ Style
 - [Arrangements](/docs/styleguide/#arrangements)
 - [Gallery and masonry](/docs/styleguide/#gallery-and-masonry)
 - [Callouts](/docs/styleguide/#callouts)
-- [Class vocabulary](/docs/styleguide/#the-class-vocabulary-at-a-glance)
+- [Responsive behaviour](/docs/styleguide/#responsive-behaviour)

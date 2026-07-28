@@ -11,6 +11,8 @@ This page demonstrates every layout pattern the stylesheets support. Use it as a
 
 It's a `docs` page, so it carries the sidebar — and it still has marginalia down the right, because the docs and blog layouts reserve that band too. The `essay` template gives the same vocabulary a wider body and no navigation. Everything below works the same on any of them.
 
+Each section ends with a table of the classes it covers. One rule runs through all of them: **modes are words, numeric modifiers are bare integers** — `wide` and `staggered`, but `tile-3` and `pos-2`. Where a table row reads `num`, substitute the number.
+
 ## Grid
 
 Every region on every page of this site is a whole number of columns on the same grid, so the masthead, the navigation, the body text and the marginalia all hang off one set of vertical lines.
@@ -45,7 +47,19 @@ The byline at the top of this page is an `aside.meta`, emitted by the template. 
 
 The `{{ aside N }}` macro takes an optional body-line count that nudges the aside upward, so it lands beside the line you actually meant. One body line is 24px. Colons are optional — `{{aside: …}}` and `{{aside 2: …}}` both work.
 
-Use `.highlight` on a span to mark the phrase an aside is <span class="highlight">talking about</span>, if the connection isn't obvious from position alone.
+Use `highlight` on a span to mark the phrase an aside is <span class="highlight">talking about</span>, if the connection isn't obvious from position alone.
+
+```
+{{ aside 3 Pulled up three body lines, to sit beside the sentence it annotates. }}
+
+Some body text, with a <span class="highlight">highlighted phrase</span> in it.
+```
+
+| Class | Use case |
+| --- | --- |
+| `move-up` | Positions an aside against the text it belongs to. You don't usually write it — `{{ aside num }}` emits it and puts the count in `--move-up`. Reach for a larger number when the aside has drifted below the sentence it annotates, or when two asides would otherwise overlap. |
+| `highlight` | On a `<span>` in the body, to mark the exact phrase an aside is about. Worth it when position alone doesn't make the link. Use it sparingly — on every aside it stops reading as emphasis. |
+| `meta` | On the byline aside a template emits at the top of a page. Removes the indent an aside otherwise carries, so the byline starts on the same line as the marginalia below it. |
 
 ## Figures
 
@@ -120,6 +134,40 @@ Without it, a pale figure like this one has no edge at all and reads as floating
 
 <br style="clear: both">
 
+### The figure classes
+
+Classes go between the macro name and the image, separated by spaces, and they compose — most figures on a real page carry two or three:
+
+```
+{{ figure wide ratio-16x9 ![A stack of index cards](/cards.webp)
+The caption, which can contain **Markdown**.
+}}
+```
+
+which emits:
+
+```html
+<figure class="wide ratio-16x9">
+  <img src="/cards.webp" alt="A stack of index cards">
+  <figcaption>
+    <p>The caption, which can contain <strong>Markdown</strong>.</p>
+  </figcaption>
+</figure>
+```
+
+Writing that HTML by hand does the same thing — the macro is a convenience, not a requirement.
+
+| Class | Use case |
+| --- | --- |
+| `wide` | Gives the figure the marginalia band as well as the measure. For images whose detail is the point — diagrams, dense screenshots, anything a reader will lean in at. The caption drops below, which makes this the escape hatch when a caption is too long to sit in the gutter. |
+| `caption-below` | Keeps the figure at its normal width but moves the caption underneath. Use when the caption is doing real work — a sentence or two of argument — rather than labelling. A stranded three-line caption in the gutter is the usual reason to reach for it. |
+| `tile-num` | Puts figures side by side within the measure, `num` being 2, 3 or 4. Every figure in the row needs the same class. For images meant to be compared with each other rather than read one at a time. |
+| `float-left`, `float-right` | Text wraps around the figure. Good for a small supporting image that shouldn't interrupt the paragraph. Needs a width fraction alongside it, and enough following text to clear the image's height — otherwise the next heading rides up beside it. |
+| `half`, `third`, `quarter` | The width of a float. Shares denominators with `tile-num`, so a floated image and a tile of the same fraction come out the same visual size. |
+| `ratio-WxH` | Crops the media to a fixed frame — `ratio-1x1`, `ratio-3x2`, `ratio-4x3`, `ratio-16x9`, `ratio-2x3`. Mostly used with `tile-num`, to stop a row of mismatched sources reading as a mistake. Crops from the centre, so check that nothing important is at an edge. |
+| `border` | A hairline edge, for images that would otherwise dissolve into the page — pale diagrams and screenshots with white backgrounds. Not needed on photographs. |
+| `autoplay` | On a figure whose source is a `.mp4`, `.mov` or `.webm`, adds `autoplay loop muted`. For short silent loops that work as moving illustrations. Don't use it on anything with sound or a running time. |
+
 ### Grid — several images, one caption
 
 Multiple images in one `<figure>` sharing one `<figcaption>`. The figure macro emits a single `<img>`, so this pattern needs raw HTML:
@@ -133,7 +181,10 @@ Multiple images in one `<figure>` sharing one `<figcaption>`. The figure macro e
   <figcaption>Three images, one caption. Composes with <code>wide</code> for a full-width row.</figcaption>
 </figure>
 
-Available column counts: `grid-columns-2`, `grid-columns-3`, `grid-columns-4`. All collapse to a single column below 46rem.
+| Class | Use case |
+| --- | --- |
+| `grid` | On a `<div>` wrapping the images inside a `<figure>`. Use it when the images are one thing — three views of the same object, a before and after — and one caption covers all of them. If each image needs its own caption, use `tile-num` instead. |
+| `grid-columns-num` | How many per row, `num` being 2, 3 or 4. All collapse to a single column below 46rem. |
 
 ### A nested aside in a caption
 
@@ -151,6 +202,10 @@ Vertical breathing room in body-line increments, so extra space still lands on t
 {{ figure space-top-4 ![](/static/placeholder-d.svg)
 `space-top-4` — four body lines, 96px, of extra room above.
 }}
+
+| Class | Use case |
+| --- | --- |
+| `space-top-num`, `space-bottom-num` | Extra room above or below any element, `num` being 1, 2, 3, 4, 6 or 8 body lines. For the occasional place where the default rhythm reads as cramped — around a full-width figure, or before a section that starts a new argument. If you find yourself putting the same one on every figure, change the default in `content.css` instead. |
 
 ## Arrangements
 
@@ -238,6 +293,17 @@ The portrait image below carries `vertical`, so it sits at two-thirds of its slo
 {{ figure pos-2 horizontal ![](/static/placeholder-b.svg) `horizontal` — fills its slot.}}
 </div>
 
+| Class | Use case |
+| --- | --- |
+| `arrangement` | On the container. Reclaims the marginalia band, so don't put an aside next to one. |
+| `staggered`, `diagonal` | Compositions for three and two images. For a sequence where the order matters and you want the eye to travel — a process, a series of states. |
+| `primary-left`, `primary-right`, `primary-top` | One dominant image with a companion. Reach for these when one image is the point and the other is supporting evidence. |
+| `organic-a`, `organic-b`, `mixed-organic` | A loose scatter of four, or eight for `mixed-organic`. For a set with no argument in it — process shots, a mood board. Deliberately irregular, so don't use it where a reader is meant to compare. |
+| `narrative-left`, `narrative-right` | An image beside a block of text rather than beside another image. Keep the text short; if it's growing past a couple of paragraphs you want a floated figure instead. |
+| `pos-num` | Which slot a child takes, 1 to 8. Anything can take a slot, not just a figure. Slots a composition doesn't name fall into normal flow, so an extra unlabelled child won't break the layout. |
+| `vertical`, `square`, `horizontal` | Caps a figure's width by its shape, so a portrait photograph doesn't tower over a landscape one beside it. Different job from `ratio-WxH`: those crop, these restrain. |
+| `primary`, `secondary`, `tertiary` | Stacking order, for the compositions whose slots overlap. Only needed when one image is being clipped by its neighbour and you want the other one on top. |
+
 ## Gallery and masonry
 
 Two containers for sets with no particular composition. `gallery` is an even grid that reflows by available width — use it when the images are peers and only the order matters.
@@ -272,28 +338,33 @@ In an arrangement the slots are explicit, so `pos-1` is already the dominant one
 {{ figure ![](/static/placeholder-c.svg) Another.}}
 </div>
 
+| Class | Use case |
+| --- | --- |
+| `gallery` | An even grid that reflows by available width. Use it when the images are peers and only their order matters — the case an arrangement would over-design. |
+| `masonry` | Columns rather than a grid, so items of different heights pack without being cropped. Use it when the shapes vary and cropping them to match would lose something. Note that it fills column by column, so reading order goes down, not across. |
+| `primary` | On one item in a gallery, to give it the room of two. For the one image that carries the set — a cover shot. In an arrangement this class means stacking order instead, because the slots are already explicit there. |
+
 ## Callouts
 
 Two, from the `{{ info: }}` and `{{ caution: }}` macros.
 
-{{ info: An aside for something worth knowing but not worth interrupting for. }}
+{{ info: Frontmatter is optional. An HTML file without any is copied through untouched — no template, no macros, not even the clean-URL rewrite. }}
 
-{{ caution: And one for something that will bite you. Use it sparingly, or it stops meaning anything. }}
+{{ caution: `./site build` exits 0 even when the build is broken. A clean build means zero warnings printed, not a zero exit code. }}
 
-## The class vocabulary, at a glance
+| Class | Use case |
+| --- | --- |
+| `info` | Something worth knowing but not worth interrupting the sentence for. Emitted by `{{ info: … }}`. |
+| `caution` | Something that will bite you — a step that fails silently, an option that's hard to undo. Emitted by `{{ caution: … }}`. Use it sparingly, or it stops meaning anything. |
 
-- **Figure modes** — `wide`, `tile-2`, `tile-3`, `tile-4`, `float-left`, `float-right`, `caption-below`
-- **Width fractions**, pair with `float-*` — `half`, `third`, `quarter`
-- **Aspect ratios**, pair with anything — `ratio-1x1`, `ratio-3x2`, `ratio-4x3`, `ratio-16x9`, `ratio-2x3`
-- **Image styling** — `border`
-- **Grid columns**, inside a raw-HTML `<figure><div class="grid">` — `grid-columns-2`, `grid-columns-3`, `grid-columns-4`
-- **Spacing**, on any element — `space-top-1..8`, `space-bottom-1..8`
-- **Arrangements** — `arrangement` plus one of `staggered`, `diagonal`, `primary-left`, `primary-right`, `primary-top`, `organic-a`, `organic-b`, `mixed-organic`, `narrative-left`, `narrative-right`
-- **Arrangement slots** — `pos-1` … `pos-8`
-- **Arrangement modifiers** — `vertical`, `square`, `horizontal`, `primary`, `secondary`, `tertiary`
-- **Other containers** — `gallery`, `masonry`
-- **Text** — `highlight`
+Unlike an aside, a callout sits in the flow of the text rather than in the gutter, so it interrupts. That's the whole difference, and it's how you choose between them: an aside is for what a reader can skip, a callout is for what they can't.
 
-One rule governs the naming: **modes are words, numeric modifiers are bare integers.** `wide` and `staggered` and `float-left`, but `tile-3` and `pos-2` and `space-top-4`.
+## Responsive behaviour
 
-Everything is responsive. Below 46rem the gutter closes, figure layouts collapse to natural block flow, and arrangements become a single column.
+Below 46rem there is no gutter to work with, so the vocabulary collapses rather than shrinking:
+
+- Asides and figure captions return to normal flow beneath the thing they annotate, and `move-up` stops applying.
+- Tiles, floats and `wide` all fall back to full-width block flow.
+- Arrangements and galleries become a single column, in source order — which is why `pos-num` should follow the order you'd want them read.
+
+Nothing here needs a separate mobile class. If a layout looks wrong narrow, check it against this list before adding one.
