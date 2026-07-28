@@ -70,10 +70,14 @@ lands beside the line you actually meant:
 {{aside 2 The same, two body lines higher.}}
 ```
 
-Colons are optional, so `{{aside: …}}` and `{{aside 2: …}}` both work. The gutter exists
-on the `essay`, `docs` and `blog` templates; on `default` and `landing` there's no band to
-put an aside in, so it stays in normal flow with an indent. That's a reasonable fallback
-rather than a bug.
+Colons are optional, so `{{aside: …}}` and `{{aside 2: …}}` both work.
+
+Where the aside actually lands depends on whether the page has a gutter to put it in. The
+`essay`, `docs` and `blog` templates reserve one at full width; `default` and `landing`
+never do, and every layout gives it up on a narrow screen. With no gutter the aside stays
+in normal flow below the paragraph, indented and ruled so it still reads as an aside, and
+the leading integer stops applying — there's nothing beside it to line up with. That's the
+designed fallback rather than a bug, and it's the same markup either way.
 
 ## The site-specific half
 

@@ -105,15 +105,17 @@ Three constraints worth knowing before editing:
 
 `content/docs/styleguide.md` exercises the whole vocabulary and is the regression test — check it after any change to `content.css`. Each of its sections ends with a class table, so a new class needs a row there as well as a demo. `./site --fluid` / `--fixed` paint the column guides.
 
-### Fragile spots when changing content
+### Where the system knows about this site's shape
 
-Several code paths assume the Automerge site's shape and will **throw or ENOENT**, not warn, if that content is removed:
+These paths are coupled to particular content. All of them degrade — a missing piece logs or returns empty rather than throwing — so deleting a section is safe, and the build tells you what it couldn't find:
 
-- `macros.ts` `most-recent-blog-post` throws when no page has `template: blog` — and `template/includes/nav.html` calls it, so deleting the blog breaks every page.
-- `macros.ts` `blog-sidebar` dereferences `page.parent!` — deleting `content/blog/index.md` breaks blog pages.
-- `llms.ts` unconditionally reads `template/includes/docs.md` and `api.md`.
-- `redirects.ts` unconditionally reads `Redirects.txt` (a comments-only file is fine).
-- `compile-everything.ts` hardcodes `content/CNAME` in its asset glob.
+- `macros.ts` `most-recent-blog-post` logs and returns `#` when no page uses `template: blog`. `template/includes/nav.html` calls it on every page, so that log is what you'll see if you delete the blog.
+- `macros.ts` `blog-sidebar` reads `page.parent?.children ?? []`, so a post with no `/blog/` index above it renders an empty sidebar.
+- `llms.ts` returns early unless `Env.docsIndex` names an include, which is the switch for turning `llms.txt` off.
+- `redirects.ts` returns early unless `Redirects.txt` exists (a comments-only file is also fine).
+- `compile-everything.ts` names `content/CNAME`, `content/_redirects` and `content/_headers` in its asset glob, because extensionless files can't be matched by extension. Add yours there if your host wants one.
+
+Check this list against the code before relying on it — an earlier version of this file described all five as throwing, long after they'd been made to degrade.
 
 ### Fonts
 

@@ -4,8 +4,8 @@ description: A small, hackable static site build system that lives inside the we
 template: docs
 ---
 
-This is a static site build system of about 1,800 lines of TypeScript. It turns Markdown
-and HTML in `content/` into a finished website in `public/`.
+Theseus is a static site build system of about 2,000 lines of TypeScript. It turns
+Markdown and HTML in `content/` into a finished website in `public/`.
 
 It is not a framework and it is not a dependency. You copy it into your project, and from
 that moment it's yours — you're expected to read it, change it, and delete the parts you

@@ -45,17 +45,25 @@ the file itself.
 | `--page-width` | The whole grid plus its padding, `72rem`. Change this and every region follows, because they're all derived from it. |
 | `--grid-col`, `--grid-gap` | One column and one gutter, `4rem` and `2rem`. Use them when a width has to land on the grid — a table's first column, a figure that spans a known number of columns. |
 | `--grid-step` | A column plus its gap, `6rem`. This is the unit of *offset*: a region three steps in starts on column 4. |
-| `--measure` | How wide text is allowed to get. Eight columns on an essay, six on a docs page. A layout class sets it; nothing else should. |
+| `--measure` | How wide text is allowed to get. Eight columns on an essay, six on a docs page, and `100%` on any page narrow enough to have stacked its navigation. A layout class sets it; nothing else should. |
 | `--band` | The three columns that hold the marginalia — and, mirrored, the navigation. One token on purpose, so the two can't drift apart. |
-| `--content-gutter` | The space `<main>` reserves for the band. Reclaim it with `margin-right: calc(-1 * var(--content-gutter))` to make something span the full width. Collapses to `0` below `46rem`, which is how the whole vocabulary goes responsive without a second set of rules. |
+| `--content-gutter` | The space `<main>` reserves for the band. Reclaim it with `margin-right: calc(-1 * var(--content-gutter))` to make something span the full width. It collapses to `0` once the layout can no longer afford the band, which is how the whole vocabulary goes responsive without a second set of rules — and it's why that `margin-right` is a no-op rather than a bug at narrow widths. |
 | `--baseline` | One body line, `24px`. For anything that has to land on the text rhythm — an aside's `move-up`, the spacing utilities. |
 | `--space-xs` … `--space-3xl` | The general spacing ramp, for everything that doesn't. |
 | `--accent` | The only hue on the site. Change this first. |
 
-{{info: The `46rem` breakpoint is written as a literal in eleven places, and has to be.
-A media query can't read a custom property. You *can* assign one inside a media query,
-though, which is how `--content-gutter` collapses at that breakpoint without the
-geometry being duplicated.}}
+Each layout gives the band up at its own width, because they aren't spending the same
+amount. The essay layout reserves four columns on the right and none on the left, so it
+holds until `46rem`. A docs or blog page reserves three on each side — half the grid —
+so it gives the marginalia band up below `72em`, and below `800px` the navigation stacks
+above the content and the body takes all twelve columns.
+
+{{info: Those widths are written as literals — sixteen media queries use `46rem` alone —
+because a media query can't read a custom property. It *can* assign one, which is how
+`--content-gutter` collapses at each breakpoint without the geometry being duplicated.
+Each width appears twice, once where the gutter closes in `layout.css` and once where
+marginalia stops being positioned into it in `content.css`. Change one, change the other,
+or asides get placed into a band that isn't there.}}
 
 ## Layouts
 

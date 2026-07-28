@@ -96,7 +96,7 @@ Some body text, with a <span class="highlight">highlighted phrase</span> in it.
 
 | Class | Use case |
 | --- | --- |
-| `move-up` | Positions an aside against the text it belongs to. You don't usually write it — `{{ aside num }}` emits it and puts the count in `--move-up`. Reach for a larger number when the aside has drifted below the sentence it annotates, or when two asides would otherwise overlap. |
+| `move-up` | Positions an aside against the text it belongs to. You don't usually write it — `{{ aside num }}` emits it and puts the count in `--move-up`. Reach for a larger number when the aside has drifted below the sentence it annotates, or when two asides would otherwise overlap. It applies only while the aside is out in the gutter; in normal flow there's nothing to line up against, so it's ignored. |
 | `highlight` | On a `<span>` in the body, to mark the exact phrase an aside is about. Worth it when position alone doesn't make the link. Use it sparingly — on every aside it stops reading as emphasis. |
 | `meta` | On the byline aside a template emits at the top of a page. Removes the indent an aside otherwise carries, so the byline starts on the same line as the marginalia below it. |
 
