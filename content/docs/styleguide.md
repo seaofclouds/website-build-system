@@ -409,10 +409,21 @@ Vertical breathing room in body-line increments, so extra space still lands on t
 
 ## Responsive behaviour
 
-Below 46rem there is no gutter to work with, so the vocabulary collapses rather than shrinking:
+Once there's no gutter to work with, the vocabulary collapses rather than shrinking:
 
-- Asides and figure captions return to normal flow beneath the thing they annotate, and `move-up` stops applying.
+- Asides and figure captions return to normal flow beneath the thing they annotate. They take an indent and a left rule there, because position is no longer saying what they are, and `move-up` stops applying — pulling a note up by two lines only means something while it's beside the text.
 - Tiles, floats and `wide` all fall back to full-width block flow.
 - Arrangements and galleries become a single column, in source order — which is why `pos-num` should follow the order you'd want them read.
+
+The width that happens at depends on how much the layout was spending:
+
+| Layout | Gutter closes | Why |
+| --- | --- | --- |
+| `layout-margin` | below 46rem | Four columns on the right and none on the left, so it fits until the measure itself won't. |
+| `layout-nav` | below 72em | Three columns each side is half the grid, and the grid is 72rem of fixed units. Below that the body was absorbing every pixel the two bands wouldn't give up — at 900px it had 292px, about 35 characters. |
+
+Below 800px the navigation stacks above the content too, and from there the body takes all twelve columns: no measure, no reserved bands, the viewport is what's left.
+
+This page is `layout-nav`, so narrowing it demonstrates the second row and not the first — nothing in the starter uses `layout-margin`, and `template/essay.html` ships unused. Put a page on it before you rely on the essay column.
 
 Nothing here needs a separate mobile class. If a layout looks wrong narrow, check it against this list before adding one.

@@ -324,9 +324,31 @@ main {
   padding-right: calc(var(--page-padding) + var(--content-gutter));
 }
 
-/* Once the page is narrower than it is wide, the sidebar can't hang off the centred box */
-@media (width <= 72em) {
+/*
+  Once the page is narrower than it is wide, the sidebar can't hang off the centred box —
+  and the marginalia band stops being affordable at the same moment.
+
+  The grid is 72rem of fixed rem units, so a viewport narrower than that can't hold all
+  twelve columns. Everything the layout reserves keeps its width anyway, and the body is
+  the only region left to absorb the loss: at 900px, nav (288px) + gutter (288px) +
+  padding took 608 of 900 and left the prose 292px, about 35 characters. A column of
+  fragments beside two full-width bands.
+
+  So the marginalia band is the one that gives. Below 72em asides drop into normal flow
+  (content.css gates that on the same width) and the body grows back to its measure. The
+  nav band stays until 800px, because a sidebar you can still read is worth more than the
+  three columns it costs.
+*/
+/* Strictly less-than, and content.css uses min-width: 72em, so the two never both apply.
+   72em is 1152px exactly — the page width — so at that one pixel `<=` here and `min-width`
+   there would close the gutter and go on positioning asides into it. */
+@media (width < 72em) {
   .layout-nav .site-nav { left: 0 }
+
+  .layout-nav main {
+    --content-gutter: 0rem;
+    padding-right: var(--page-padding);
+  }
 }
 
 /* The burger exists to open this sidebar, so it only appears where there is one */
@@ -353,7 +375,32 @@ main {
     margin-bottom: 2.5rem;
   }
 
-  .layout-nav main { padding-inline: var(--space-lg) }
+  /*
+    The sidebar has stacked, so nothing is spending columns any more and the body takes all
+    twelve. --measure is what holds it back: the nav layout caps it at six columns, and it
+    kept that cap long after the six columns stopped meaning anything — prose ended at
+    34rem with the rest of the page empty to its right. 100% rather than a larger fixed
+    measure, so the cap follows the width it's given instead of naming one.
+
+    Note that --measure caps more than paragraphs — asides, figures and the footnotes read
+    it too — so 100% means "all of whatever contains me" and not literally the viewport.
+    That's the intent in each case, but it isn't one number any more.
+
+    --content-gutter is already 0 from the 72em block above; it's restated because this is
+    the width where its absence became load-bearing. This is also where the table rule
+    (min-width: 46rem) turns on, and the two together are what made the page scroll
+    sideways: a table asked for 100% + 18rem of a main that was already full width. Put the
+    gutter back at 760px and the styleguide overflows on `wide` figures, arrangements,
+    galleries and masonry too — everything that reaches right by a negative margin of it.
+
+    .layout-margin does the same at its own breakpoint, below. The two have to stay in
+    step: a layout that stops spending the columns has to stop advertising them.
+  */
+  .layout-nav main {
+    --measure: 100%;
+    --content-gutter: 0rem;
+    padding-inline: var(--space-lg);
+  }
 }
 
 @media (width <= 500px) {

@@ -79,6 +79,45 @@ main :is(th, td):first-child {
 }
 
 /*
+  Below the breakpoint there is no grid for a cell to land on, so it stops asking for two
+  columns of one — and a long token is allowed to break rather than push the page wide.
+
+  The break is the part that matters. A table can't get narrower than its widest
+  unbreakable word, and a docs table holds things like
+  `npm ci && node --disable-warning=ExperimentalWarning`, which is one 380px `<code>` token
+  with nowhere to wrap. On a phone that made the *page* scroll sideways, not the table.
+  `anywhere` rather than `break-word`, because only `anywhere` shrinks min-content and
+  min-content is exactly what the table was sizing itself to.
+
+  Scoped twice over, and both scopes are load-bearing.
+
+  To <code>: applied to the whole cell it breaks ordinary prose too, and the browser then
+  had licence to squeeze the first column to one character — "Setting" came out as
+  "Settin / g". Code is the only thing in a table that can't wrap on its own, so it's the
+  only thing that may break mid-token.
+
+  And away from the first column, because a column's min-content is what the table
+  guarantees it. Let the name break anywhere and its min-content is one character, so auto
+  layout hands almost everything to the sentence column and breaks the name to fit whatever
+  is left — `template` came out as `templat / e` at 735px, with room to spare. Keeping the
+  name unbreakable makes its longest token the floor, which is exactly the guarantee it
+  needs. Nothing in the first column of a docs table is long enough for that floor to be a
+  problem; the long tokens are all on the right.
+
+  Kept off the wide layouts on purpose: up there the column has room, and breaking
+  `grid-columns-num` across two lines to save space nobody needed reads as a typo.
+*/
+@media (width <= 46rem) {
+  main :is(th, td):first-child {
+    width: auto;
+  }
+
+  main :is(th, td):not(:first-child) code {
+    overflow-wrap: anywhere;
+  }
+}
+
+/*
   Figures are held to the measure too, so a default figure lines up with the text above it
   rather than running past it. This is also what makes `wide` mean the same thing on every
   layout: without the cap, a figure on a nav layout already filled the content box and
@@ -177,6 +216,28 @@ body:not(.layout-margin, .layout-nav) main aside {
   border-left: 2px solid var(--separator);
 }
 
+/*
+  The same treatment on the gutter layouts, at the widths where their gutter has closed and
+  the aside has fallen back into flow. "In the gutter it doesn't need an indent" is a
+  statement about position, not about which layout you're on, so these widths mirror the
+  ones in PLACING THINGS IN THE GUTTER exactly — change one, change the other.
+
+  Not .meta: the byline is deliberately flush, and it has its own padding rule below.
+*/
+@media (width < 46rem) {
+  .layout-margin main > aside:not(.meta) {
+    padding-left: var(--space-md);
+    border-left: 2px solid var(--separator);
+  }
+}
+
+@media (width < 72em) {
+  .layout-nav main > aside:not(.meta) {
+    padding-left: var(--space-md);
+    border-left: 2px solid var(--separator);
+  }
+}
+
 main aside p {
   margin: 0 0 var(--space-md);
 }
@@ -227,12 +288,13 @@ main aside.meta h6 {
   correction, one without — in two files loaded in an order that means the correction never
   applies. Kept here without it: it's the newer of the two, and it's the one that has
   actually been rendering on their site for two years.
+
+  The declaration itself lives in the two gutter blocks below rather than here, because
+  pulling an aside up N lines only makes sense while it's out of flow beside the text. In
+  flow it has nothing to align to and the negative margin just slides it under the
+  paragraph above — which is what it did, on every layout without a gutter and on the nav
+  layout at every width below 72em.
 */
-@media (min-width: 46rem) {
-  .move-up {
-    margin-top: calc(-1 * var(--baseline) * var(--move-up));
-  }
-}
 
 /* PLACING THINGS IN THE GUTTER ******************************************************************/
 
@@ -256,30 +318,78 @@ main aside.meta h6 {
   zeroed. And gated on a literal 46rem, because a media query can't read a custom property.
 */
 
+/*
+  The two layouts open their gutter at different widths, so they lift things into it at
+  different widths, and the condition has to be written twice rather than shared.
+
+  The essay layout spends four columns on the right and nothing on the left, so it fits
+  from 46rem. The nav layout spends three on each side — half the grid — and only fits when
+  the whole 72rem of it does; layout.css closes its gutter below that.
+
+  Getting this wrong is not subtle, and it was wrong: the positioning was gated on 46rem
+  for both, so between 736px and 800px a nav-layout aside was still absolutely positioned
+  at `right: --page-padding` into a gutter that had already closed. The aside sat on top of
+  the body text — measured on the styleguide at 799px, the aside spanned x 527-783 and the
+  paragraph 32-576.
+*/
 @media (min-width: 46rem) {
-  :is(.layout-margin, .layout-nav) main {
+  .layout-margin main {
     position: relative;
   }
 
-  :is(.layout-margin, .layout-nav) main > aside,
-  :is(.layout-margin, .layout-nav) figcaption {
+  .layout-margin main > aside,
+  .layout-margin figcaption {
     position: absolute;
     width: var(--band);
   }
 
   /* Columns 10-12. Positioned against <main>, whose padding box ends one page-padding
      past the grid's right edge. */
-  :is(.layout-margin, .layout-nav) main > aside {
+  .layout-margin main > aside {
     right: var(--page-padding);
   }
 
   /* Also columns 10-12, but positioned against its own <figure>, which sits in the body
      columns — so the offset is the whole reserved gutter, and it lands on the same line
      as the asides above. */
-  :is(.layout-margin, .layout-nav) figcaption {
+  .layout-margin figcaption {
     top: 0;
     right: calc(-1 * var(--content-gutter));
   }
+
+  /* See the {{ aside N }} note above — only meaningful out of flow. */
+  .layout-margin .move-up {
+    margin-top: calc(-1 * var(--baseline) * var(--move-up));
+  }
+}
+
+@media (min-width: 72em) {
+  .layout-nav main {
+    position: relative;
+  }
+
+  .layout-nav main > aside,
+  .layout-nav figcaption {
+    position: absolute;
+    width: var(--band);
+  }
+
+  .layout-nav main > aside {
+    right: var(--page-padding);
+  }
+
+  .layout-nav figcaption {
+    top: 0;
+    right: calc(-1 * var(--content-gutter));
+  }
+
+  /* See the {{ aside N }} note above — only meaningful out of flow. */
+  .layout-nav .move-up {
+    margin-top: calc(-1 * var(--baseline) * var(--move-up));
+  }
+}
+
+@media (min-width: 46rem) {
 
   /*
     A gutter caption is a light recessed box — it needs an edge, because it's floating in
