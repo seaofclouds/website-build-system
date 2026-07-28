@@ -82,7 +82,7 @@ Braces are matched by **counting**, in `findMacroEnd`, not by regex. Macros nest
 
 `{{content}}` marks template insertion. `{{include:name}}` inlines `template/includes/name.md` if it exists, else `name.html` — name it without the extension, because the build appends one. `{{index:name}}` renders each child page through an include — note the trick it uses: it recursively calls `expandMacros` with the *child* page as context.
 
-Macros like `blog-sidebar`, `prev-in-docs`, `next-in-docs`, `newer-in-blog`, `older-in-blog`, `figure`, `aside`, `info`, and `caution` are **site-specific examples**, not framework features. Keep them in a clearly marked section; adopters adapt or delete them.
+Macros like `prev-in-docs`, `next-in-docs`, `newer-in-blog`, `older-in-blog`, `figure`, `aside`, `info`, and `caution` are **site-specific examples**, not framework features. Keep them in a clearly marked section; adopters adapt or delete them.
 
 ### Stylesheets
 
@@ -109,8 +109,8 @@ Three constraints worth knowing before editing:
 
 These paths are coupled to particular content. All of them degrade — a missing piece logs or returns empty rather than throwing — so deleting a section is safe, and the build tells you what it couldn't find:
 
-- `macros.ts` `most-recent-blog-post` logs and returns `#` when nothing lives under `/blog/`. It's keyed on the section rather than on `template: blog`, so a post keeps counting as a post when it moves onto another template. `template/includes/nav.html` calls it on every page, so that log is what you'll see if you delete the blog.
-- `macros.ts` `blog-sidebar` reads `page.parent?.children ?? []`, so a post with no `/blog/` index above it renders an empty sidebar.
+- `content/blog/index.html` calls `{{index:blog-item reverse}}`, which lists `page.children` — so it has to sit at `/blog/` for the posts to be its children rather than the home page's. That's structural, not decorative: delete it and the index lists the whole site.
+- `macros.ts` `older-in-blog` / `newer-in-blog` read `page.parent.children`, so a post with no `/blog/` index above it gets no links rather than an error.
 - `llms.ts` returns early unless `Env.docsIndex` names an include, which is the switch for turning `llms.txt` off.
 - `redirects.ts` returns early unless `Redirects.txt` exists (a comments-only file is also fine).
 - `compile-everything.ts` names `content/CNAME`, `content/_redirects` and `content/_headers` in its asset glob, because extensionless files can't be matched by extension. Add yours there if your host wants one.

@@ -54,8 +54,9 @@ date keep their relative file order, which is alphabetical by path — so a set 
 posts sorts by filename, and `reverse` flips that too. Worth knowing before you publish
 several things on one day and wonder why they came out backwards.
 
-This site doesn't use `{{index:}}` anywhere — its blog is navigated by the sidebar rather
-than a listing page — but it's there when you want a section to have one.
+`/blog/` is the one page in the starter that uses it: `content/blog/index.html` is little
+more than a `<ul>` around `{{index:blog-item reverse}}`, and `blog-item.html` is the four
+lines that make one row of it.
 
 ### Contents lists
 
@@ -96,9 +97,8 @@ designed fallback rather than a bug, and it's the same markup either way.
 
 ## The site-specific half
 
-Further down `macros.ts` there's a banner comment, and below it: `{{blog-sidebar}}`,
-`{{most-recent-blog-post}}`, `{{prev-in-docs}}`, `{{next-in-docs}}`, `{{newer-in-blog}}`,
-`{{older-in-blog}}`.
+Further down `macros.ts` there's a banner comment, and below it: `{{prev-in-docs}}`,
+`{{next-in-docs}}`, `{{newer-in-blog}}`, `{{older-in-blog}}`.
 
 Those exist to serve one particular site shape — a blog whose posts are children of
 `/blog/`, and a docs section whose running order comes from the sidebar include. They're

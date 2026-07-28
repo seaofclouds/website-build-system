@@ -1,17 +1,24 @@
 ---
 # This template is used when no template is specified.
 # You can also use it deliberately if you want. `template: default`
-# It's the most unopinionated template — just the base stylesheet.
-# If you want even more control, make an html page with no frontmatter at all.
+# It's the plainest shape the site has — a masthead and content held to the measure,
+# with no sidebar and no gutter. The blog index uses it.
+# If you want more control than that, make an html page with no frontmatter at all:
+# it's copied through untouched, with no template and no macros.
 ---
 
 <!doctype html>
 <html lang="en">
 <head>{{include:head-stuff}}</head>
-<body class="layout-plain">
-  <main>
+<body class="layout-plain" data-section="{{section}}">
+  {{# No sidebar to open, so the burger stays hidden — but the checkbox is kept so that
+      every template has the same shape and the masthead include works unchanged. }}
+  <input type="checkbox" id="burger-state" />
+  {{include: site-header}}
+  <main id="content">
     <h1>{{title?}}</h1>
     {{content}}
+    <footer>{{include: footer}}</footer>
   </main>
 </body>
 </html>

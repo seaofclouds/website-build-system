@@ -36,10 +36,10 @@
   up. Applied per-element rather than to <main>, so that a figure can be wider than a
   paragraph without needing a class for it.
 
-  Only on the layouts that are for reading. A landing page or a gallery sets its own widths
-  and would fight this.
+  Only on the layouts that are for reading — which is all of them except .layout-wide, where
+  a landing page or a gallery sets its own widths and would fight this.
 */
-:is(.layout-nav, .layout-margin) main :is(p, ul, ol, blockquote) {
+:is(.layout-plain, .layout-nav, .layout-margin) main :is(p, ul, ol, blockquote) {
   max-width: var(--measure);
 }
 
@@ -158,9 +158,9 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
 }
 
 /*
-  The date above a post's title. A <p> rather than an <h5>, because a heading above the
-  <h1> puts the document outline out of order for anything reading it as a structure — but
-  the type is base.css's h5/h6 label, copied rather than shared. Adding .post-date to that
+  The date on a row of the blog index. A <p> rather than an <h5>, because a heading there
+  puts the document outline out of order for anything reading it as a structure — but the
+  type is base.css's h5/h6 label, copied rather than shared. Adding .post-date to that
   selector list would teach the reset what a blog post is, and the reset doesn't get to
   know that. Four declarations you can diff is the cheaper trade.
 */
@@ -170,6 +170,56 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   letter-spacing: .03em;
   text-transform: uppercase;
   color: var(--inactive);
+}
+
+/* THE BLOG INDEX ********************************************************************************/
+
+/*
+  The list at /blog/, built by {{index:blog-item reverse}}. Each row is a date label, the
+  title as a link, and the description.
+
+  Flat, like the sidebars and the contents list: a marker and an indent would set three
+  stacked blocks a third of a column off the line the title starts on, and a list of two
+  things doesn't need to announce that it's a list.
+
+  Site-specific, like everything it's built from. Delete it with the blog.
+*/
+.post-index {
+  margin-left: 0;
+  list-style-type: none;
+}
+
+.post-index li + li {
+  margin-top: var(--space-xl);
+}
+
+/* The title carries the row, so it takes the h3 size rather than body size. Underlined only
+   on hover — at this size a permanent rule under every title reads as a table of contents
+   that has been switched on. */
+.post-index li > a {
+  font: 500 20px / 24px var(--font-sans);
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.post-index li > a:hover {
+  text-decoration: underline;
+}
+
+.post-index li > p:last-child {
+  margin-top: var(--space-sm);
+  color: var(--footer-fg);
+}
+
+/*
+  The feed link, below the list. Ruled off, because it's the one thing on the page that
+  isn't a post.
+*/
+.subscribe {
+  display: inline-block;
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-md);
+  border-top: 2px solid var(--separator);
 }
 
 /* TABLE OF CONTENTS *****************************************************************************/

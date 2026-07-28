@@ -1,8 +1,0 @@
-{{# One row of the blog sidebar. {{blog-sidebar}} in macros.ts expands this once per post,
-    with that post as the context, so {{href}} and {{title}} refer to the post being listed
-    rather than the page being built.
-
-    It's an <li> because the docs sidebar is a list of links and this is the same thing —
-    keeping the markup identical is what lets both share every rule in layout.css. The
-    <ul> around it lives in template/blog.html. }}
-<li><a href="{{href}}">{{title}}</a></li>

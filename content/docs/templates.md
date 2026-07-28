@@ -24,17 +24,20 @@ Here's the whole of `template/default.html`:
 
 `{{content}}` is where the page goes. Everything else is ordinary HTML.
 
-The starter ships five templates plus one for redirects:
+The starter ships four templates plus one for redirects:
 
-| Template | Shape |
-| --- | --- |
-| `default` | bare — content held to the measure, nothing else |
-| `landing` | wide, no sidebar. The home page and the 404 |
-| `docs` | a sidebar with a table of contents |
-| `blog` | a sidebar listing posts by date |
-| `essay` | a gutter down the right, for asides and figure captions, and a `{{toc}}` at the top instead of previous/next links |
+| Template | Shape | Used by |
+| --- | --- | --- |
+| `default` | masthead and content held to the measure, nothing else | the blog index |
+| `landing` | wide, no sidebar | the home page and the 404 |
+| `docs` | a sidebar with a table of contents | everything under `/docs/` |
+| `essay` | a gutter down the right for asides and captions, a `{{toc}}` at the top, older/newer at the foot | the blog posts |
 
-They're a starting point, not a set — add and remove freely.
+They're a starting point, not a set — add and remove freely. There was a fifth, `blog`,
+which was `docs` with a sidebar generated from the posts instead of written by hand; it
+went when the posts moved onto `essay` and `/blog/` got a real index page. Shipping a
+template nothing renders is how layout bugs survive, so the rule here is that every
+template in the table has a page on it.
 
 Each one sets a `layout-*` class on `<body>`, which is what actually decides the page's
 shape. See [Stylesheets](/docs/styles/) for what the classes do and how to add one.

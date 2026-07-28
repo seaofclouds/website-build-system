@@ -6,11 +6,14 @@ content.css was designed against — see /styleguide/ for everything it can do.
 
 Requires a `date` in the page's frontmatter, for the byline. `authors` is optional.
 
-Where the docs and blog templates put previous/next links at the foot of the page, this one
-puts a table of contents at the head of it. An essay is a thing you decide whether to read,
-not a step in a running order, so what helps is seeing its shape before you start rather
-than being handed the next one when you finish. {{toc}} builds it from the page's own h2s
-and emits nothing at all if there are fewer than two of them.
+Two kinds of navigation, at the two ends. {{toc}} at the head builds a contents list from
+the page's own h2s, and emits nothing if there are fewer than two — that answers "where am
+I inside this". Older/newer at the foot answer "what else is near this one".
+
+Note they aren't the same claim as the docs template's previous/next, which follow a
+running order you're meant to read in sequence. These follow dates, which is only a
+statement that more of these exist. An essay is a thing you decide whether to read, not a
+step in a sequence, so it gets its own shape at the top and a nudge sideways at the bottom.
 header_anchors: true
 ---
 
@@ -27,6 +30,10 @@ header_anchors: true
     {{include: byline}}
     {{toc}}
     {{content}}
+    <div class="page-nav">
+      {{older-in-blog}}
+      {{newer-in-blog}}
+    </div>
     <footer>{{include: footer}}</footer>
   </main>
 </body>

@@ -1,0 +1,23 @@
+---
+title: Blog
+description: Notes on the build system, and on the ideas it was built out of.
+---
+
+{{# The blog's index. It uses the default template — no sidebar, content held to the
+    measure — which is the shape a list of links wants, and it's the only page in the
+    starter on .layout-plain.
+
+    {{index:NAME}} renders template/includes/NAME.html once per child page, each in the
+    context of that child, so {{title}} and {{href}} inside the include refer to the post
+    being listed. `reverse` because the default order is chronological and a blog reads
+    newest first.
+
+    This page also has to exist for a structural reason: the parent/child tree is built
+    from URL nesting, so with nothing at /blog/ the posts would attach themselves to the
+    home page — and {{index:}} here would list the whole site. }}
+
+<ul class="post-index">
+{{index:blog-item reverse}}
+</ul>
+
+<a class="subscribe" href="/index.xml">Subscribe via RSS</a>

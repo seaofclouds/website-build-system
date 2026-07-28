@@ -250,35 +250,6 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           //
           // Adapt them, or delete them and write your own. That's the point.
 
-          // The list of every blog post, newest first, for the sidebar on a blog page.
-          // This sidebar is the blog's only index — there's no separate listing page.
-          case "blog-sidebar": {
-            // No parent means this page isn't nested under a blog index, so there's no sibling
-            // list to build. We return nothing rather than failing the build.
-            let children = (page.parent?.children ?? []).toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date)).reverse()
-            // Cool trick — we expand an include macro in the context of each child page to generate the html for each item in the index
-            return children.map((child) => expandMacros(`{{include:blog-post-sidebar-item}}`, child, pages)).join("\n")
-          }
-
-          // The URL of the newest post, so a nav link can point at the blog's freshest content.
-          //
-          // Keyed on the /blog/ section rather than on `template: blog`, because which template
-          // a post uses is a presentation choice and shouldn't decide whether it counts as a
-          // post — the reading-layout post is on `essay`, and a link to "the blog" that skipped
-          // it because of that would be wrong. The redirect sitting at /blog/ is excluded: it is
-          // the section, not something in it.
-          case "most-recent-blog-post": {
-            let mostRecentPost = pages
-              .filter((p) => p.url.pathname.startsWith("/blog/") && p.frontmatter.template != "redirect")
-              .toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
-              .at(-1)
-            if (!mostRecentPost) {
-              log(`No posts found under ${yellow("/blog/")}, so ${yellow("{{most-recent-blog-post}}")} has nothing to link to: ${green(path)}`)
-              return "#"
-            }
-            return mostRecentPost.url.pathname
-          }
-
           // Previous/next links that follow the running order of the docs sidebar include.
           case "prev-in-docs": {
             let html = expandMacros(`{{include:${Env.docsIndex}}}`, page, pages)

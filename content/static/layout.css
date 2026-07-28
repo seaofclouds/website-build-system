@@ -250,8 +250,17 @@ main {
 
 /* PLAIN — content only, held to the measure. The most unopinionated shape. */
 
+/*
+  No max-width of its own. It used to cap <main> at the measure plus its padding, which
+  centred a 48rem box inside the viewport while the masthead stayed centred on the 72rem
+  page box — so on a wide screen the content sat 192px to the right of the wordmark above
+  it. That went unseen because no page rendered this layout until the blog index did.
+
+  Instead it takes the page box like every other layout, and content.css caps the text at
+  --measure the same way it does on the nav and margin layouts. One mechanism for "how wide
+  is a line of text" rather than two, and the left edge lines up with the masthead.
+*/
 .layout-plain main {
-  max-width: calc(var(--measure) + var(--page-padding) * 2);
   padding-top: var(--space-lg);
 }
 
@@ -540,15 +549,6 @@ main {
 }
 
 /*
-  The one place the two sidebars differ, and the content is what asks for it: docs labels
-  are a word or two and never wrap, post titles are sentences and usually do. At the li
-  spacing docs uses, two wrapped titles sit 8px apart and read as one paragraph.
-*/
-.site-nav .post-list li {
-  margin-top: var(--space-md);
-}
-
-/*
   Highlight the page you're on, and the section within it. is-current is written by the
   build (it knows every URL); is-here is written by nav.js as you scroll, because the
   build can't know which heading you're looking at.
@@ -566,17 +566,6 @@ main {
   border-radius: 2px;
   background: var(--current);
   z-index: -1;
-}
-
-/*
-  The feed link, below the posts. It's an ordinary sidebar link — the rule above it is the
-  only thing saying it isn't another post. Nothing here touches type or colour, because a
-  second treatment for one link is how the two sidebars drifted apart in the first place.
-*/
-.subscribe {
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
-  border-top: 2px solid var(--separator);
 }
 
 /* PREVIOUS / NEXT *******************************************************************************/

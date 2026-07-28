@@ -2,7 +2,7 @@
 title: Where Theseus comes from
 description: A build system that grew up inside two websites, and now ships as a starting point for a third.
 date: 2026-07-26
-template: blog
+template: essay
 ---
 
 Theseus is a static site build system. Markdown and HTML go into `content/`, a finished
