@@ -42,6 +42,7 @@ Use `{{title?}}` in a template when some pages have a title and some don't. Use
 | `{{aside …}}` | A note in the marginalia band, level with the paragraph after it. For what a reader can skip without losing the thread. |
 | `{{info: …}}`, `{{caution: …}}` | A callout in the flow of the text. For what a reader *can't* skip — that's the whole difference from an aside. |
 | `{{toc}}` | A table of contents built from the page's own `h2` headings. Put it in a template, not a page — see below. The `essay` template uses it in place of previous/next links. |
+| `{{excerpt}}` | The page's opening paragraph. For a listing — the blog index shows one per post, under the title. Skips a leading figure or aside to find actual prose. |
 | `{{# …}}` | A comment. Disappears at build time, so use it to explain a template to whoever edits it next. |
 | `{{site-title}}`, `{{domain}}`, `{{href}}`, `{{head-title}}`, `{{og-description}}`, `{{og-image-tag}}`, `{{og-type}}`, `{{og-url}}` | Values you'd otherwise repeat by hand. Mostly used once each, in `head-stuff.html`. |
 | `{{month-year}}`, `{{full-date}}` | The page's `date`, as `July 2026` or `2026·07·27`. The long one for a byline, where the date is part of a sentence; the short one for a label above a title, where it's a fact. |
@@ -71,6 +72,12 @@ And the template needs `header_anchors: true`, since without ids there's nothing
 
 Fewer than two headings also gets you nothing, on the grounds that a contents list of one
 item is a heading you've written out twice.
+
+`{{excerpt}}` has the mirror-image constraint and so takes the opposite approach: it reads
+the **raw** body rather than the compiled one, and renders it itself. It has to, because
+`{{index:}}` expands it in the context of a child page that may not have been compiled yet —
+pages compile in glob order, so `/blog/` is built before the posts inside it. The raw source
+is the one thing that's there whoever asks and whenever.
 
 ### Figures and asides
 

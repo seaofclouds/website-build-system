@@ -200,6 +200,22 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           //
           // Fewer than two headings gets you nothing, because a contents list of one item
           // is a heading you have written out twice.
+          // {{excerpt}} — the page's opening paragraph, for a listing.
+          //
+          // Reads page.body, the raw markdown, rather than page.compiledBody — and that isn't an
+          // oversight. {{index:}} expands its include in the context of each child, and pages are
+          // compiled in glob order, so /blog/ is built before the posts nested inside it. At that
+          // moment a child's compiledBody is still just its source. The raw body is the one thing
+          // that's there whoever asks and whenever, so this reads that and renders it itself.
+          //
+          // Skips anything that isn't prose — a leading figure, an aside, a heading, raw HTML — so
+          // that a post opening with an image still gets a sentence into the listing.
+          case "excerpt": {
+            const blocks = page.body.split(/\n\s*\n/).map((block) => block.trim())
+            const prose = blocks.find((b) => b && !b.startsWith("{{") && !b.startsWith("<") && !b.startsWith("#") && !b.startsWith("!["))
+            return prose ? Markdown.renderInline(prose) : ""
+          }
+
           case "toc": {
             const headings = Array.from(page.compiledBody.matchAll(/<h2[^>]*\sid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g))
             if (headings.length < 2) return ""

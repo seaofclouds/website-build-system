@@ -1,11 +1,15 @@
 {{# One row of the blog index. {{index:blog-item}} in content/blog/index.html expands this
     once per post, with that post as the context, so {{href}}, {{title}}, {{full-date}} and
-    {{description}} all refer to the post being listed rather than to the index itself.
+    {{excerpt}} all refer to the post being listed rather than to the index itself.
+
+    An <h3> rather than a styled link: each row *is* a heading, and taking the real element
+    means base.css already has the size right and a screen reader gets an outline of the
+    section rather than a run of links.
 
     The date is the same .post-date label a post used to carry above its own title — a fact
     rather than a sentence, which is what that macro is for. }}
 <li>
   <p class="post-date">{{full-date}}</p>
-  <a href="{{href}}">{{title}}</a>
-  <p>{{description?}}</p>
+  <h3><a href="{{href}}">{{title}}</a></h3>
+  <p>{{excerpt}}</p>
 </li>

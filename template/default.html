@@ -15,8 +15,11 @@
       every template has the same shape and the masthead include works unchanged. }}
   <input type="checkbox" id="burger-state" />
   {{include: site-header}}
+  {{# No <h1> here. The page writes its own heading if it wants one — an index whose rows
+      are already headings doesn't, and a title repeated as the first line of the body is
+      the commonest thing to have to delete from a starter. `title` in the frontmatter still
+      drives <title>, the share tags and the sitemap. Same shape as landing.html. }}
   <main id="content">
-    <h1>{{title?}}</h1>
     {{content}}
     <footer>{{include: footer}}</footer>
   </main>

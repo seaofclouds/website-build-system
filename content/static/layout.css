@@ -260,8 +260,11 @@ main {
   --measure the same way it does on the nav and margin layouts. One mechanism for "how wide
   is a line of text" rather than two, and the left edge lines up with the masthead.
 */
+/* No padding-top either. A docs page starts its <h1> flush against the masthead — the empty
+   half of the masthead's own box is the air above it — and a plain page should start at the
+   same line rather than a --space-lg lower. */
 .layout-plain main {
-  padding-top: var(--space-lg);
+  padding-top: 0;
 }
 
 /* WIDE — the full page width. Landing pages, galleries, anything image-led. */

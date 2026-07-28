@@ -189,25 +189,37 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   list-style-type: none;
 }
 
+/* Zero on the first row, so the list starts flush against the masthead the way a docs page's
+   <h1> does. base.css gives every <li> a top margin, which is right inside prose and wrong
+   for the first item of a page that opens with one. */
+.post-index li {
+  margin-top: 0;
+}
+
 .post-index li + li {
   margin-top: var(--space-xl);
 }
 
-/* The title carries the row, so it takes the h3 size rather than body size. Underlined only
-   on hover — at this size a permanent rule under every title reads as a table of contents
-   that has been switched on. */
-.post-index li > a {
-  font: 500 20px / 24px var(--font-sans);
+/* Nothing sets a size here — the row is a real <h3> and base.css has already said what that
+   is. Underlined only on hover: a permanent rule under every title reads as a table of
+   contents that's been switched on. */
+.post-index h3 {
+  margin-bottom: var(--space-sm);
+}
+
+.post-index h3 a {
   color: var(--fg);
   text-decoration: none;
 }
 
-.post-index li > a:hover {
+.post-index h3 a:hover {
   text-decoration: underline;
 }
 
+/* The opening paragraph of the post, from {{excerpt}}. Quieter than the title it sits under,
+   because it's there to help you decide rather than to be read here. */
 .post-index li > p:last-child {
-  margin-top: var(--space-sm);
+  margin-bottom: 0;
   color: var(--footer-fg);
 }
 
