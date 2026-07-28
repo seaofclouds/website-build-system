@@ -100,7 +100,7 @@ Three constraints worth knowing before editing:
 - **Everything sits on one twelve-column grid**, declared in `variables.css`: page 72rem = 2×1rem padding + 70rem of grid; 70rem = 12 columns × 4rem + 11 gaps × 2rem. `--measure` is 8 columns (46rem), `--band` is 3 (16rem). The essay is `body 1-8 · space 9 · marginalia 10-12`; docs/blog is the mirror, `nav 1-3 · space 4 · body 5-12`. `--band` is one token on purpose — the nav and the marginalia are the same three columns, and naming them separately would let them drift. `--rail` (column 1) is declared but unused: the body absorbs it until something needs section marks.
 - **`layout-nav` and `layout-margin` don't compose** — one spends columns 1-3, the other 10-12, and a page with both leaves nowhere for the body. Left undefined rather than shipped broken.
 
-`content/styleguide.md` exercises the whole vocabulary and is the regression test — check it after any change to `content.css`. `./site --fluid` / `--fixed` paint the column guides.
+`content/docs/styleguide.md` exercises the whole vocabulary and is the regression test — check it after any change to `content.css`. Each of its sections ends with a class table, so a new class needs a row there as well as a demo. `./site --fluid` / `--fixed` paint the column guides.
 
 ### Fragile spots when changing content
 
