@@ -33,47 +33,46 @@ Use `{{title?}}` in a template when some pages have a title and some don't. Use
 
 ## What ships
 
-`{{content}}` marks where a page goes inside its template.
+| Macro | Use case |
+| --- | --- |
+| `{{content}}` | Marks where a page goes inside its template. Every template needs exactly one. |
+| `{{include: name}}` | Pulls in a snippet from `template/includes/`. For anything that appears on more than one page — a header, a byline, a footer. See [Templates](/docs/templates/). |
+| `{{index: name}}` | Lists the current page's children, rendering each through an include. Reach for it when a section wants a landing page that lists what's in it. Add `reverse` for newest first. |
+| `{{figure …}}` | Builds a `<figure>` around an image or a video. The everyday way to put a picture on a page — see the [styleguide](/docs/styleguide/#the-figure-classes) for the classes it takes. |
+| `{{aside …}}` | A note in the marginalia band, level with the paragraph after it. For what a reader can skip without losing the thread. |
+| `{{info: …}}`, `{{caution: …}}` | A callout in the flow of the text. For what a reader *can't* skip — that's the whole difference from an aside. |
+| `{{# …}}` | A comment. Disappears at build time, so use it to explain a template to whoever edits it next. |
+| `{{site-title}}`, `{{domain}}`, `{{href}}`, `{{head-title}}`, `{{og-description}}`, `{{og-image-tag}}`, `{{og-type}}`, `{{og-url}}`, `{{month-year}}` | Values you'd otherwise repeat by hand. Mostly used once each, in `head-stuff.html`. |
 
-`{{include: name}}` pulls in a snippet — see [Templates](/docs/templates/).
+### Ordering, for `{{index:}}`
 
-`{{index: item-template}}` lists the current page's children, rendering each one through
-an include — so `{{index: card}}` renders `template/includes/card.html` once per child,
-each in the context of that child. Add `reverse` for newest first.
-
-Children are ordered by their `date` frontmatter. Pages sharing a date keep their
-relative file order, which is alphabetical by path — so a set of same-day posts sorts by
-filename, and `reverse` flips that too. Worth knowing before you publish several things
-on one day and wonder why they came out backwards.
+`{{index: card}}` renders `template/includes/card.html` once per child, each in the
+context of that child. Children are ordered by their `date` frontmatter. Pages sharing a
+date keep their relative file order, which is alphabetical by path — so a set of same-day
+posts sorts by filename, and `reverse` flips that too. Worth knowing before you publish
+several things on one day and wonder why they came out backwards.
 
 This site doesn't use `{{index:}}` anywhere — its blog is navigated by the sidebar rather
 than a listing page — but it's there when you want a section to have one.
 
-`{{figure ![alt](image.png) A caption}}` builds a `<figure>`. Point it at an `.mp4`,
-`.webm`, or `.mov` and you get a `<video>` instead. Words before the image become CSS
-classes, and the class `autoplay` also makes the video loop and mute. The
-[styleguide](/docs/styleguide/) shows every class it accepts.
+### Figures and asides
 
-`{{aside …}}` builds a note that sits in the right-hand gutter, level with the paragraph
-after it. An optional leading integer pulls it up that many body lines, so it lands
-beside the line you actually meant:
+A figure pointed at an `.mp4`, `.webm`, or `.mov` gives you a `<video>` instead of an
+`<img>`. Words before the image become CSS classes, and `autoplay` additionally makes the
+video loop and mute.
+
+An aside takes an optional leading integer, which pulls it up that many body lines so it
+lands beside the line you actually meant:
 
 ```
 {{aside A note beside the next paragraph.}}
 {{aside 2 The same, two body lines higher.}}
 ```
 
-Colons are optional, so `{{aside: …}}` and `{{aside 2: …}}` both work. The gutter only
-exists on the `essay` template — everywhere else the aside stays in normal flow, which is
-a reasonable fallback rather than a bug.
-
-`{{info: …}}` and `{{caution: …}}` wrap their contents in a callout div.
-
-`{{# a comment}}` disappears at build time.
-
-`{{site-title}}`, `{{domain}}`, `{{href}}`, `{{head-title}}`, `{{og-description}}`,
-`{{og-image-tag}}`, `{{og-type}}`, `{{og-url}}`, and `{{month-year}}` fill in values
-you'd otherwise repeat by hand.
+Colons are optional, so `{{aside: …}}` and `{{aside 2: …}}` both work. The gutter exists
+on the `essay`, `docs` and `blog` templates; on `default` and `landing` there's no band to
+put an aside in, so it stays in normal flow with an indent. That's a reasonable fallback
+rather than a bug.
 
 ## The site-specific half
 

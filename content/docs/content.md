@@ -98,26 +98,17 @@ no types. Wrap a value in double quotes if it needs to contain a `#`.
 
 ### The properties that matter
 
-`template` picks which file in `template/` wraps this page. Defaults to `default`.
-
-`publish` defaults to `true`. Set it to `draft` and the page appears in local builds but
-not in `./site build`. Set it to `false` and it's excluded everywhere. Linking to a draft
-from a non-draft page gets you a warning.
-
-`title` is used for `<title>` and RSS. `description` is used for meta tags and RSS, and
-may contain inline Markdown.
-
-`date` must be `YYYY-MM-DD`. A page with a date is included in the RSS feed, and is
-required to also have a title and description.
-
-`styles` and `scripts` take comma-separated paths, and are injected at the end of
-`<head>`. Both are also accepted in the singular.
-
-`image` sets the preview image for shared links, overriding the site default.
-
-`index: false` keeps a page out of RSS, the sitemap, and the parent/child tree.
-
-`clean: false` skips the `name.html` → `name/index.html` rewrite.
+| Property | Use case |
+| --- | --- |
+| `template` | Which file in `template/` wraps this page, and so which layout it gets. Defaults to `default`. This is how a page says what kind of thing it is. |
+| `publish` | `draft` shows the page locally but keeps it out of `./site build`; `false` excludes it everywhere. Defaults to `true`. Linking to a draft from a published page gets you a warning. |
+| `title` | Used for `<title>` and RSS. Required on anything with a `date`. |
+| `description` | Meta tags and RSS. May contain inline Markdown. Worth writing even where it isn't required — it's what shows up in search results and link previews. |
+| `date` | `YYYY-MM-DD`. Adding one puts the page in the RSS feed and orders it in `{{index:}}`, so leave it off pages that aren't posts. |
+| `styles`, `scripts` | Comma-separated paths, injected at the end of `<head>`. For the one page that needs something the rest of the site doesn't. Both accepted in the singular. |
+| `image` | The preview image for shared links, overriding the site default. |
+| `index: false` | Keeps a page out of RSS, the sitemap, and the parent/child tree. For utility pages — a 404, a thank-you page — that shouldn't show up as a child of anything. |
+| `clean: false` | Skips the `name.html` → `name/index.html` rewrite, for when you need the literal filename in the URL. |
 
 ### Frontmatter is optional
 

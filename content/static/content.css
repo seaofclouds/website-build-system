@@ -37,8 +37,39 @@
   Only on the layouts that are for reading. A landing page or a gallery sets its own widths
   and would fight this.
 */
-:is(.layout-nav, .layout-margin) main :is(p, ul, ol, blockquote, table) {
+:is(.layout-nav, .layout-margin) main :is(p, ul, ol, blockquote) {
   max-width: var(--measure);
+}
+
+/*
+  Tables are the exception, and they're left out of the rule above rather than fighting it
+  later — a `main table` override would tie on specificity and win only by source order.
+
+  A reference table is two columns of unequal appetite: a class name, which has a fixed
+  width, and a sentence about when to use it, which wants every pixel left. At the measure
+  the sentence column came out around forty characters on a docs page, which reads as a
+  column of fragments. So a table takes the marginalia band as well, the same way an
+  arrangement or a gallery does — and carries the same constraint: don't put an aside
+  beside one, because the aside is positioned into that band and nothing pushes it out.
+*/
+@media (min-width: 46rem) {
+  :is(.layout-nav, .layout-margin) main > table {
+    margin-right: calc(-1 * var(--content-gutter));
+  }
+}
+
+/*
+  Both columns land on the grid. The first cell's box is two columns plus the gap — 12rem
+  — of which 2rem is padding, so the class name occupies columns 4-5 on a docs page and
+  the sentence starts on the line of column 6. Widening the name column this way *widens*
+  the sentence too: auto table layout was handing the first column far more than it needed
+  in order to avoid breaking `grid-columns-num` mid-token, and 10rem fits every class name
+  in the vocabulary on one line.
+*/
+main :is(th, td):first-child {
+  /* border-box, so this is 2 columns + 1 gap of content plus a 1 gap of padding. */
+  width: calc(2 * var(--grid-col) + 2 * var(--grid-gap));
+  padding-right: var(--grid-gap);
 }
 
 /*
