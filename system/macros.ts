@@ -219,7 +219,8 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case "toc": {
             const headings = Array.from(page.compiledBody.matchAll(/<h2[^>]*\sid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g))
             if (headings.length < 2) return ""
-            const items = headings.map(([, id, inner]) => `  <li><a href="#${id}">${plainify(inner).trim()}</a></li>`)
+            // class="plain" is base.css's un-underlined link, the same one the header anchors take.
+            const items = headings.map(([, id, inner]) => `  <li><a class="plain" href="#${id}">${plainify(inner).trim()}</a></li>`)
             return flatJoin([`<nav class="toc">`, `<h6>Contents</h6>`, `<ul>`, items, `</ul>`, `</nav>`])
           }
 

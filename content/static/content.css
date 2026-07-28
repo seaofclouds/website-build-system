@@ -176,7 +176,7 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
 
 /*
   The list at /blog/, built by {{index:blog-item reverse}}. Each row is a date label, the
-  title as a link, and the description.
+  title as a link, and the post's opening paragraph.
 
   Flat, like the sidebars and the contents list: a marker and an indent would set three
   stacked blocks a third of a column off the line the title starts on, and a list of two
@@ -191,7 +191,7 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
 
 /* Zero on the first row, so the list starts flush against the masthead the way a docs page's
    <h1> does. base.css gives every <li> a top margin, which is right inside prose and wrong
-   for the first item of a page that opens with one. */
+   on the first row of a page that opens with a list. */
 .post-index li {
   margin-top: 0;
 }
@@ -201,44 +201,18 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
 }
 
 /*
-  The row is a real <h1> — see blog-item.html for why — but it reads at h3's size, because a
-  list of posts is not a stack of page titles. The declaration is base.css's h3 rule copied,
-  the same trade .post-date makes above: adding .post-index to the reset's selector list
-  would teach the reset what a blog index is, and the reset doesn't get to know that.
+  Nothing here styles the title or the excerpt, and that's the point. The row is a real <h1>
+  at the size base.css says an h1 is, the excerpt is a paragraph, and the link carries
+  base.css's `plain` class so it isn't underlined — the same class the header anchors use.
+  The accent-on-hover comes from the prose rule at the top of this file, which already covers
+  a link inside an <li>.
 
-  Underlined only on hover. A permanent rule under every title reads as a table of contents
-  that's been switched on.
-*/
-.post-index h1 {
-  margin-bottom: var(--space-sm);
-  font: 500 20px / 24px var(--font-sans);
-}
-
-.post-index h1 a {
-  color: var(--fg);
-  text-decoration: none;
-}
-
-.post-index h1 a:hover {
-  text-decoration: underline;
-}
-
-/* The opening paragraph of the post, from {{excerpt}}. Quieter than the title it sits under,
-   because it's there to help you decide rather than to be read here. */
-.post-index li > p:last-child {
-  margin-bottom: 0;
-  color: var(--footer-fg);
-}
-
-/*
-  The feed link, below the list. Ruled off, because it's the one thing on the page that
-  isn't a post.
+  The feed link is the one thing on the page that isn't a post, so it gets air above it.
+  display matters because margin-top does nothing to an inline element.
 */
 .subscribe {
   display: inline-block;
   margin-top: var(--space-2xl);
-  padding-top: var(--space-md);
-  border-top: 2px solid var(--separator);
 }
 
 /* TABLE OF CONTENTS *****************************************************************************/
@@ -253,8 +227,9 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   list isn't about a passage — it's the shape of the whole page. It would also land on top
   of the byline, which is already the topmost thing in the band.
 
-  It's the same object as a sidebar — a flat list of links to somewhere else — so it's
-  styled the same way, quiet until you point at it. See .site-nav in layout.css.
+  It's the same object as a sidebar — a flat list of links to somewhere else. The links are
+  styled by nothing here: they carry base.css's `plain` class, and the accent-on-hover comes
+  from the prose rule at the top of this file, which already covers a link inside an <li>.
 */
 .toc {
   max-width: var(--measure);
@@ -277,19 +252,6 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   list-style-type: none;
 }
 
-.toc li {
-  margin-top: 0;
-}
-
-.toc a {
-  display: block;
-  color: var(--fg);
-  text-decoration: none;
-}
-
-.toc a:hover {
-  text-decoration: underline;
-}
 
 /* MARGINALIA ************************************************************************************/
 

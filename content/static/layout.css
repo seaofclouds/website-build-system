@@ -260,12 +260,10 @@ main {
   --measure the same way it does on the nav and margin layouts. One mechanism for "how wide
   is a line of text" rather than two, and the left edge lines up with the masthead.
 */
-/* No padding-top either. A docs page starts its <h1> flush against the masthead — the empty
-   half of the masthead's own box is the air above it — and a plain page should start at the
-   same line rather than a --space-lg lower. */
-.layout-plain main {
-  padding-top: 0;
-}
+/* No rule at all, deliberately. It used to cap <main> at the measure plus its padding and
+   centre that, and to add a --space-lg on top; the first put the content 192px right of the
+   wordmark on a wide screen, the second started the page a line lower than a docs page
+   does. Both are the base `main` rule's job, and it already does them. */
 
 /* WIDE — the full page width. Landing pages, galleries, anything image-led. */
 
@@ -453,11 +451,8 @@ main {
   padding-left: var(--page-padding);
   padding-right: calc(var(--page-padding) + var(--content-gutter));
 
-  /* No padding-top: an essay's <h1> starts on the same line a docs page's does, flush under
-     the masthead, with the empty half of the masthead's own box as the air above it. This
-     used to add a --space-lg and put the two 32px apart on pages that sit side by side in
-     the same navigation. */
-  padding-top: 0;
+  /* No padding-top here either. It used to add a --space-lg, which started an essay 32px
+     lower than a docs page — two shapes you move between in the same navigation. */
 }
 
 /*

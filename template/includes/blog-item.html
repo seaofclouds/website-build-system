@@ -8,13 +8,13 @@
     h1s on one page is fine: browsers never implemented the outline algorithm, so heading
     levels are flat and the level is a statement about rank, not nesting.
 
-    content.css sets the type back to h3's size. Same split .post-date makes, for the same
-    reason: the element says what the thing is, the type says how loud it is here.
+    `plain` is base.css's class for a link that shouldn't be underlined — the same one the
+    header anchors use. With it, content.css needs no rule for this title at all. }}
 
-    The date is the same .post-date label a post used to carry above its own title — a fact
+{{# The date is the same .post-date label a post used to carry above its own title — a fact
     rather than a sentence, which is what that macro is for. }}
 <li>
   <p class="post-date">{{full-date}}</p>
-  <h1><a href="{{href}}">{{title}}</a></h1>
+  <h1><a class="plain" href="{{href}}">{{title}}</a></h1>
   <p>{{excerpt}}</p>
 </li>
