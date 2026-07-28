@@ -76,9 +76,31 @@ Redirects.txt ────────┘
 
 `system/macros.ts` is the main extension point. `{{ name }}` syntax, expanded in a loop (max 100 passes) so macros can produce macros. Resolution order is a `switch` with fallthrough to frontmatter: an unrecognized macro `{{foo}}` returns `frontmatter.foo`; `{{foo?}}` returns it or empty string; an unmatched required macro logs an error and injects red text into the page.
 
+Braces are matched by **counting**, in `findMacroEnd`, not by regex. Macros nest — a figure caption can hold an aside, a comment can quote a macro while explaining it — and a lazy `/{{(.+?)}}/` ends the outer match at the inner macro's closing braces, silently swallowing half of one and leaking the other half into the page. Counting means the outermost macro resolves first, and the inner one expands on the next pass of the loop. Don't reintroduce a regex here.
+
 `{{content}}` marks template insertion. `{{include:name}}` inlines `template/includes/name.{html,md}`. `{{index:name}}` renders each child page through an include — note the trick it uses: it recursively calls `expandMacros` with the *child* page as context.
 
-Macros like `blog-sidebar`, `prev-in-docs`, `next-in-docs`, `newer-in-blog`, `older-in-blog`, `figure`, `info`, and `caution` are **site-specific examples**, not framework features. Keep them in a clearly marked section; adopters adapt or delete them.
+Macros like `blog-sidebar`, `prev-in-docs`, `next-in-docs`, `newer-in-blog`, `older-in-blog`, `figure`, `aside`, `info`, and `caution` are **site-specific examples**, not framework features. Keep them in a clearly marked section; adopters adapt or delete them.
+
+### Stylesheets
+
+Four files in `content/static/`, loaded in this order by `template/includes/head-stuff.html`; later files win ties.
+
+- `variables.css` — every custom property on the site, declared in one place and nowhere else. This is not tidiness: an undefined custom property fails *silently* (the declaration is dropped at computed-value time), so a single declared list is the only thing you can diff "what exists" against "what's used". Adding a `--token` anywhere else defeats the point.
+- `base.css` — the reset and element defaults. Nothing here may know about layout or about the figure vocabulary. If a rule would stop making sense on a page with no `<main>`, it belongs elsewhere.
+- `layout.css` — the page shell, plus every page shape as a `layout-*` class on `<body>`: `layout-plain`, `layout-wide`, `layout-nav`, `layout-margin`. Add a shape by adding a class, not a stylesheet.
+- `content.css` — everything inside the content area: prose, marginalia, figures, arrangements, callouts, code.
+
+Two imported vocabularies live in `content.css` and **must not be merged**: the Ink & Switch reading layout (measure + gutter, `wide`/`tile-N`/`float-*`) and the seaofclouds arrangements (twelve-column compositions). They disagree on bare `figure` and `figcaption`, so those carry only the shared baseline and every arrangement rule is scoped to `.arrangement` / `.gallery` / `.masonry`. Naming rule: **modes are words, numeric modifiers are bare integers** — `wide` and `staggered`, but `tile-3` and `pos-2`.
+
+Three constraints worth knowing before editing:
+
+- **Bare `<aside>` is marginalia**, not the nav sidebar (that's `nav.site-nav`). These collided when both used the element, and the collision is silent.
+- **`46rem` is a literal in eleven places** and has to be — a media query can't read a custom property. It *can* assign one, which is how `--content-gutter` collapses without duplicating the geometry.
+- **Everything sits on one twelve-column grid**, declared in `variables.css`: page 72rem = 2×1rem padding + 70rem of grid; 70rem = 12 columns × 4rem + 11 gaps × 2rem. `--measure` is 8 columns (46rem), `--band` is 3 (16rem). The essay is `body 1-8 · space 9 · marginalia 10-12`; docs/blog is the mirror, `nav 1-3 · space 4 · body 5-12`. `--band` is one token on purpose — the nav and the marginalia are the same three columns, and naming them separately would let them drift. `--rail` (column 1) is declared but unused: the body absorbs it until something needs section marks.
+- **`layout-nav` and `layout-margin` don't compose** — one spends columns 1-3, the other 10-12, and a page with both leaves nowhere for the body. Left undefined rather than shipped broken.
+
+`content/styleguide.md` exercises the whole vocabulary and is the regression test — check it after any change to `content.css`. `./site --fluid` / `--fixed` paint the column guides.
 
 ### Fragile spots when changing content
 
@@ -100,7 +122,7 @@ Two consequences: the generated `content/static/fonts/` folder is committed and 
 
 The code is written to be read and edited by the person who owns the website. Match it: heavy explanatory comments, a file-header comment saying what each file is for, small pure helpers in `util.ts` (which must know nothing about any particular website), and all I/O funnelled through `io.ts` so dependencies stay replaceable. Prettier is configured with no semicolons, double quotes, 150 columns.
 
-CSS, HTML, and Markdown are in `.prettierignore` — they are formatted by hand and must stay that way. `content/static/base.css` opens by saying so explicitly. Respect that.
+CSS, HTML, and Markdown are in `.prettierignore` — they are formatted by hand and must stay that way. Every stylesheet in `content/static/` opens by saying so explicitly. Respect that.
 
 ## Licensing and attribution
 

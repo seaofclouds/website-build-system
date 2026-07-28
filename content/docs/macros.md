@@ -51,7 +51,21 @@ than a listing page — but it's there when you want a section to have one.
 
 `{{figure ![alt](image.png) A caption}}` builds a `<figure>`. Point it at an `.mp4`,
 `.webm`, or `.mov` and you get a `<video>` instead. Words before the image become CSS
-classes, and the class `autoplay` also makes the video loop and mute.
+classes, and the class `autoplay` also makes the video loop and mute. The
+[styleguide](/docs/styleguide/) shows every class it accepts.
+
+`{{aside …}}` builds a note that sits in the right-hand gutter, level with the paragraph
+after it. An optional leading integer pulls it up that many body lines, so it lands
+beside the line you actually meant:
+
+```
+{{aside A note beside the next paragraph.}}
+{{aside 2 The same, two body lines higher.}}
+```
+
+Colons are optional, so `{{aside: …}}` and `{{aside 2: …}}` both work. The gutter only
+exists on the `essay` template — everywhere else the aside stays in normal flow, which is
+a reasonable fallback rather than a bug.
 
 `{{info: …}}` and `{{caution: …}}` wrap their contents in a callout div.
 

@@ -1,14 +1,12 @@
 ---
 Wide pages with no sidebar — the home page and the 404.
+styles: /static/landing.css
 ---
 
 <!doctype html>
 <html lang="en">
-<head>
-  {{include: head-stuff}}
-  <link rel="stylesheet" href="/static/landing.css">
-</head>
-<body data-section="{{section}}">
+<head>{{include: head-stuff}}</head>
+<body class="layout-wide" data-section="{{section}}">
   <input type="checkbox" id="burger-state" />
   {{include: site-header}}
   <main id="content">

@@ -77,6 +77,11 @@ through completely untouched. Clean URLs, templates and includes, a macro system
 drafts, RSS, sitemaps, `llms.txt`, client-side redirects, dark mode, live reload, and
 automatic font subsetting that cuts a typeface down to just the characters you use.
 
+Plus a layout vocabulary: four small stylesheets, four page shapes, marginalia in a
+right-hand gutter, and figures that tile, float, crop and arrange. The
+[styleguide](http://localhost:3000/docs/styleguide/) page demonstrates all of it and doubles
+as the regression test.
+
 Build-time checking of every internal link and every anchor, which is the feature you'll
 end up appreciating most.
 

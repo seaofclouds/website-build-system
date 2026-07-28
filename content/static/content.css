@@ -1,0 +1,862 @@
+/*
+  Everything inside the content area: prose, marginalia, figures, arrangements, callouts,
+  code, footnotes.
+
+  One stylesheet for all content, deliberately. An essay may contain a gallery; a gallery
+  page may contain paragraphs. Splitting "prose" from "gallery" would mean deciding which
+  one a page is, and pages aren't like that. What *does* vary is the shape of the page
+  around the content — where the nav is, whether there's a gutter — and that's layout.css.
+
+  Two vocabularies live here, from two different sites.
+
+    The reading layout comes from Ink & Switch: a measure with a gutter beside it, and
+    figures that break out of the measure in named ways (wide, tile-3, float-left).
+
+    The arrangements come from seaofclouds: twelve-column compositions that place images
+    in deliberate, slightly irregular groupings (staggered, diagonal, organic).
+
+  They are different design languages, not two themes of one. They overlap almost nowhere
+  except that both style <figure> — and they disagree about it, so whichever loaded last
+  would win for every figure on the site. The resolution: bare figure/figcaption carry only
+  the shared baseline (in base.css) plus the reading layout below, and every arrangement
+  rule is scoped to its container. A figure inside .arrangement behaves one way; the same
+  figure in a paragraph behaves the other.
+
+  The governing naming rule, worth keeping: modes are words, numeric modifiers are bare
+  integers. `wide`, `staggered`, `float-left` — but `tile-3`, `pos-2`, `space-top-4`.
+
+  Please don't use a formatter (like Prettier).
+*/
+
+/* THE MEASURE ***********************************************************************************/
+
+/*
+  Text stops at --measure — eight columns, 46rem. Applied per-element rather than to
+  <main>, so that a figure can be wider than a paragraph without needing a class for it.
+
+  Only on the layouts that are for reading. A landing page or a gallery sets its own widths
+  and would fight this.
+*/
+:is(.layout-nav, .layout-margin) main :is(p, ul, ol, blockquote, table) {
+  max-width: var(--measure);
+}
+
+/*
+  Figures are held to the measure too, so a default figure lines up with the text above it
+  rather than running past it. This is also what makes `wide` mean the same thing on every
+  layout: without the cap, a figure on a nav layout already filled the content box and
+  `wide` had nothing left to give it.
+
+  Direct children only — a figure inside an arrangement or a gallery is sized by its
+  container, not by the measure.
+*/
+:is(.layout-nav, .layout-margin) main > figure {
+  max-width: var(--measure);
+}
+
+/* Use <section> to group discrete parts of a page */
+section + section {
+  margin-top: var(--space-xl);
+}
+
+/* Highlight a phrase in the body that an aside is talking about. A class, not bare <i>:
+   Ink & Switch styles the element itself, which catches every italic on the site. */
+.highlight {
+  padding: .15em .1em;
+  border-radius: 2px;
+  background: light-dark(hsl(357, 100%, 94%), hsl(357, 40%, 26%));
+}
+
+/*
+  Links in the content area take --accent on hover. It defaults to the body colour, so
+  this does nothing visible until you set a brand hue in variables.css — which is exactly
+  the point: change one value and every prose link on the site picks it up.
+
+  Scoped to prose so it can't reach the masthead links or the call-to-action buttons,
+  which set their own colours and would be broken by a hover rule that outranks them.
+*/
+main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
+  color: var(--accent);
+}
+
+/* MARGINALIA ************************************************************************************/
+
+/*
+  An <aside> inside <main> is a note in the right-hand gutter. (The navigation sidebar is
+  <nav class="site-nav">, not an aside — see layout.css. The two used to share the bare
+  element, and every rule below applied to the navigation as well.)
+
+  Written with the aside macro:
+
+    {{ aside A note that sits beside the paragraph after it. }}
+    {{ aside 2 The same, pulled up two body lines so it aligns with the line you mean. }}
+
+  Asides and captions share one treatment — same size, same line-height as the body, so
+  their baselines land on the same rhythm as the main column.
+*/
+
+aside,
+figcaption {
+  margin: 0 0 var(--space-md);
+  font-size: 14px;
+  line-height: 24px;
+}
+
+/*
+  Horizontal padding only, so the aside's text aligns with a figcaption's text (both inset
+  1rem from the gutter edge) while still top-aligning with the paragraph that follows it.
+  The byline (.meta) and figcaption-nested asides take full padding instead.
+*/
+main aside {
+  /* On a layout with no gutter the aside stays in normal flow, so hold it to the measure
+     like any other block — otherwise an inline note runs wider than the text it annotates.
+     Harmless in the gutter, where the aside is already held to --band. */
+  max-width: var(--measure);
+}
+
+/* In normal flow an aside needs an indent to read as an aside at all. In the gutter it
+   doesn't — its position says what it is — and an indent there would push its text a
+   rem off column 10, which is the one thing the grid is for. */
+/* body:not(...), not a bare :not(...). `:not(.layout-margin) main aside` reads as "an
+   aside inside a main inside anything that isn't .layout-margin" — and <html> isn't, so
+   it matches on every page including the ones it was meant to exclude. */
+body:not(.layout-margin, .layout-nav) main aside {
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--separator);
+}
+
+main aside p {
+  margin: 0 0 var(--space-md);
+}
+
+/* Zero the last child's bottom margin so the box's bottom padding matches its top —
+   otherwise the inner <p>'s margin-bottom stacks on top of the padding. */
+main aside > *:last-child,
+figcaption > *:last-child {
+  margin-bottom: 0;
+}
+
+main aside ul {
+  list-style: none;
+  margin-inline: 0;
+}
+
+main aside h6 {
+  margin: 0;
+  height: 24px;
+  line-height: 24px;
+}
+
+main aside li + li,
+figcaption li + li {
+  margin-top: 0;
+}
+
+/*
+  The byline aside gets a figcaption's full padding, so its text starts at the same
+  horizontal indent. The h6 is then pulled up by negative margin so its small-cap baseline
+  lands on body line 1, and each <li> (inheriting the 24px line-height) lands on the next.
+*/
+/* No indent: the byline is marginalia like any other, and its text starts on column 10. */
+main aside.meta {
+  padding: 0;
+}
+
+main aside.meta h6 {
+  margin: -14px 0 0;
+}
+
+/*
+  The {{ aside N }} macro emits class="move-up" and sets --move-up (default 0). A positive
+  N pulls the aside up by N body lines so it can annotate text higher up the page than the
+  point it was written at.
+
+  Ink & Switch defines this twice with different values — one with a -13px baseline
+  correction, one without — in two files loaded in an order that means the correction never
+  applies. Kept here without it: it's the newer of the two, and it's the one that has
+  actually been rendering on their site for two years.
+*/
+@media (min-width: 46rem) {
+  .move-up {
+    margin-top: calc(-1 * var(--baseline) * var(--move-up));
+  }
+}
+
+/* PLACING THINGS IN THE GUTTER ******************************************************************/
+
+/*
+  This is the mechanism the whole reading layout turns on, and it's worth reading slowly.
+
+  <main> reserves the gutter as padding — nothing flows into it. Asides and captions are
+  then lifted out of the flow and positioned into it. Because they're absolutely positioned
+  rather than laid out in a grid column, they can sit level with an arbitrary *line* of a
+  paragraph instead of starting their own row. That's what makes marginalia feel like
+  marginalia.
+
+  An aside is positioned against <main>, so `right: --page-padding` puts its right edge on
+  the gutter's outer edge. A figcaption is positioned against its own <figure> (which is
+  position: relative, from base.css), whose right edge is the measure's right edge — hence
+  the negative offset, which lands it on the same line. Both are --band wide — columns
+  10 to 12 — with the empty space column between them and the text.
+
+  Gated on .layout-margin, not just on --content-gutter being non-zero: an absolutely
+  positioned aside at right: 0 would still sit on top of the text if only the token were
+  zeroed. And gated on a literal 46rem, because a media query can't read a custom property.
+*/
+
+@media (min-width: 46rem) {
+  :is(.layout-margin, .layout-nav) main {
+    position: relative;
+  }
+
+  :is(.layout-margin, .layout-nav) main > aside,
+  :is(.layout-margin, .layout-nav) figcaption {
+    position: absolute;
+    width: var(--band);
+  }
+
+  /* Columns 10-12. Positioned against <main>, whose padding box ends one page-padding
+     past the grid's right edge. */
+  :is(.layout-margin, .layout-nav) main > aside {
+    right: var(--page-padding);
+  }
+
+  /* Also columns 10-12, but positioned against its own <figure>, which sits in the body
+     columns — so the offset is the whole reserved gutter, and it lands on the same line
+     as the asides above. */
+  :is(.layout-margin, .layout-nav) figcaption {
+    top: 0;
+    right: calc(-1 * var(--content-gutter));
+  }
+
+  /*
+    A gutter caption is a light recessed box — it needs an edge, because it's floating in
+    whitespace with no image beneath it to belong to. A caption in normal flow doesn't:
+    it sits directly under its image and reads as quiet text. So the box is only here,
+    inside the gutter rules, rather than on figcaption generally.
+
+    Ink & Switch hardcodes this grey as #f2f2f2. Themed here, or every caption on the site
+    is a bright slab in dark mode.
+  */
+  /*
+    Ink & Switch fills the gutter caption with a light grey box, which is what tells you
+    it belongs to the image rather than to the paragraph beside it. On this grid the
+    position already says that, and a box with padding would set the caption's text a rem
+    off column 10 while the asides above it sat on the line. Type and position, no fill.
+  */
+  :is(.layout-margin, .layout-nav) figcaption {
+    margin-top: 0;
+  }
+
+  /*
+    A caption containing a nested aside splits into two stacked boxes rather than one
+    merged one: the figcaption becomes a transparent shell, and its first paragraph and the
+    inner aside each get their own box with matching padding so their text edges line up.
+  */
+  :is(.layout-margin, .layout-nav) figcaption:has(aside) > p {
+    margin: 0;
+  }
+
+  /* A nested aside stops being marginalia — it's already in the gutter — and becomes a
+     second paragraph of the caption, set apart by a rule rather than by a box. */
+  :is(.layout-margin, .layout-nav) figcaption aside {
+    position: static;
+    width: auto;
+    display: block;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--separator);
+  }
+
+  /* The aside macro always emits .move-up; inside a caption we want a normal gap instead. */
+  :is(.layout-margin, .layout-nav) figcaption aside.move-up {
+    margin-top: var(--space-sm);
+  }
+}
+
+/* FIGURES ***************************************************************************************/
+
+/*
+  Every layout mode below works the same way: it releases the caption from the gutter back
+  into normal flow beneath the image. `wide` additionally reclaims the gutter so the figure
+  spans the whole content area.
+
+  Below 46rem none of it applies — there's no gutter to release from, and everything falls
+  back to block flow.
+*/
+
+figure img,
+figure video {
+  border-radius: 3px;
+}
+
+/* The shared "put the caption back in the flow" behaviour. */
+@media (min-width: 46rem) {
+  :is(.layout-margin, .layout-nav) :is(
+    figure.wide,
+    figure.caption-below,
+    figure.tile-2,
+    figure.tile-3,
+    figure.tile-4,
+    figure.float-left,
+    figure.float-right
+  ) > figcaption {
+    position: static;
+    width: auto;
+    right: auto;
+    top: auto;
+    margin-top: var(--space-sm);
+    background: transparent;
+    color: var(--inactive);
+    padding: 0;
+  }
+}
+
+/* WIDE — break out of the measure and take the reserved gutter as well, so the figure
+   spans from the body's left edge to the grid's right edge.
+     {{ figure wide ![](x.webp) A caption, below the image. }}
+   On a layout with no gutter --content-gutter is 0, so `wide` still releases the measure
+   cap and the figure fills whatever the content box gives it. */
+
+/*
+  Releasing the measure cap isn't enough on its own: <main> reserves the gutter as
+  padding, so its content box *is* the measure and a figure can't grow past it however
+  large a max-width you allow. The negative margin is what reclaims that padding.
+
+  Expressed this way it needs no per-layout value. On the essay it reclaims columns 9-12
+  and the figure spans 2-12; on a nav layout --content-gutter is 0, so the figure simply
+  fills the content box out to column 12.
+*/
+@media (min-width: 46rem) {
+  :is(.layout-nav, .layout-margin) main > figure.wide {
+    max-width: none;
+    margin-right: calc(-1 * var(--content-gutter));
+  }
+}
+
+/* TILED ROWS — 2, 3 or 4 figures side by side, each with its own caption.
+     {{ figure tile-3 ![](a.webp) One. }}
+     {{ figure tile-3 ![](b.webp) Two. }}
+     {{ figure tile-3 ![](c.webp) Three. }}
+   For a wide row sharing ONE caption, use the .grid wrapper below.
+
+   Floated, not inline-block. Each figure macro emits its own <figure> with no wrapper
+   around the row, so an inline-block layout has a whitespace character between every
+   pair — and its width depends on the font. Ink & Switch compensates with a literal
+   (.25rem per gap), which is right for Merriweather and wrong here: the system stack's
+   space is 4.19px, so a three-tile row came to 688.35px inside a 688px column and the
+   third tile wrapped to its own line. A third of a pixel.
+
+   Floats ignore that whitespace entirely, so the arithmetic is exact at any font size.
+   The cost is that floats have to be cleared, which the rule below does by targeting the
+   first element after the row. */
+
+@media (min-width: 46rem) {
+  figure.tile-2,
+  figure.tile-3,
+  figure.tile-4 {
+    float: left;
+    margin: 0 0 var(--space-md);
+  }
+
+  figure.tile-2 { width: calc((100% - 1rem) / 2); }
+  figure.tile-3 { width: calc((100% - 2rem) / 3); }
+  figure.tile-4 { width: calc((100% - 3rem) / 4); }
+
+  figure.tile-2 + figure.tile-2,
+  figure.tile-3 + figure.tile-3,
+  figure.tile-4 + figure.tile-4 {
+    margin-left: var(--space-md);
+  }
+
+  /* Whatever follows the last tile ends the row. Scoped to a change of class, so it can't
+     fire between two tiles, and can't touch the float-left / float-right figures, which
+     are meant to have text wrapping around them. */
+  figure.tile-2 + :not(figure.tile-2),
+  figure.tile-3 + :not(figure.tile-3),
+  figure.tile-4 + :not(figure.tile-4) {
+    clear: left;
+  }
+}
+
+/* FLOATED FIGURES — text flows around them. Pair a float with a width fraction:
+     {{ figure float-left third ![](x.webp) A third-width float. }}
+   The fractions share denominators with tile-N, so a float and a tile of the same fraction
+   come out the same visual size. */
+
+@media (min-width: 46rem) {
+  figure.float-left {
+    float: left;
+    margin: 0 var(--space-md) var(--space-md) 0;
+  }
+
+  figure.float-right {
+    float: right;
+    margin: 0 0 var(--space-md) var(--space-md);
+  }
+
+  figure.half    { width: calc((100% - 1rem) / 2); }
+  figure.third   { width: calc((100% - 2rem) / 3); }
+  figure.quarter { width: calc((100% - 3rem) / 4); }
+}
+
+/* ASPECT RATIOS — force a figure's media to a frame, cropping with object-fit: cover.
+   Useful for a tile row whose sources have inconsistent shapes.
+     {{ figure tile-3 ratio-1x1 ![](a.webp) }} */
+
+figure[class*="ratio-"] img,
+figure[class*="ratio-"] video {
+  width: 100%;
+  object-fit: cover;
+}
+
+figure.ratio-1x1  img, figure.ratio-1x1  video { aspect-ratio: 1 / 1;  }
+figure.ratio-3x2  img, figure.ratio-3x2  video { aspect-ratio: 3 / 2;  }
+figure.ratio-4x3  img, figure.ratio-4x3  video { aspect-ratio: 4 / 3;  }
+figure.ratio-16x9 img, figure.ratio-16x9 video { aspect-ratio: 16 / 9; }
+figure.ratio-2x3  img, figure.ratio-2x3  video { aspect-ratio: 2 / 3;  }
+
+/* BORDER — a subtle edge for images that would otherwise blend into the page.
+   A real border rather than an inset box-shadow, because with box-sizing: border-box the
+   line sits inside the declared dimensions (no layout shift) and follows the rounding.
+     {{ figure border ![](white-bg-diagram.svg) }} */
+
+figure.border img,
+figure.border video,
+figure.border .grid > img,
+figure.border .grid > video {
+  border: 1px solid var(--sunken-edge);
+}
+
+/* GRID WRAPPER — several images in ONE <figure> sharing ONE caption. The figure macro emits
+   a single <img>, so this one needs raw HTML in the markdown:
+
+     <figure class="wide">
+       <div class="grid grid-columns-3">
+         <img src="a.webp" alt=""><img src="b.webp" alt=""><img src="c.webp" alt="">
+       </div>
+       <figcaption>One caption for all three.</figcaption>
+     </figure> */
+
+figure .grid {
+  display: grid;
+  gap: var(--space-md);
+}
+
+figure .grid > img,
+figure .grid > video {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+}
+
+figure .grid-columns-2 { grid-template-columns: repeat(2, 1fr); }
+figure .grid-columns-3 { grid-template-columns: repeat(3, 1fr); }
+figure .grid-columns-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 46rem) {
+  figure .grid-columns-2,
+  figure .grid-columns-3,
+  figure .grid-columns-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* SPACING UTILITIES *****************************************************************************/
+
+/*
+  Vertical breathing room in body-line increments, so extra space still lands on the
+  baseline grid. Put the class on whichever block needs it:
+    {{ figure space-top-2 ![](x.webp) }}
+    <p class="space-bottom-2">…</p>
+*/
+
+.space-top-1    { margin-top: calc(var(--baseline) * 1); }
+.space-top-2    { margin-top: calc(var(--baseline) * 2); }
+.space-top-3    { margin-top: calc(var(--baseline) * 3); }
+.space-top-4    { margin-top: calc(var(--baseline) * 4); }
+.space-top-6    { margin-top: calc(var(--baseline) * 6); }
+.space-top-8    { margin-top: calc(var(--baseline) * 8); }
+
+.space-bottom-1 { margin-bottom: calc(var(--baseline) * 1); }
+.space-bottom-2 { margin-bottom: calc(var(--baseline) * 2); }
+.space-bottom-3 { margin-bottom: calc(var(--baseline) * 3); }
+.space-bottom-4 { margin-bottom: calc(var(--baseline) * 4); }
+.space-bottom-6 { margin-bottom: calc(var(--baseline) * 6); }
+.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
+
+/* The layout classes above set margin shorthands on the figure, which outrank a plain
+   .space-* utility on specificity. Matching that specificity with `figure.` lets the
+   utility win on source order instead. */
+figure.space-top-1    { margin-top: calc(var(--baseline) * 1); }
+figure.space-top-2    { margin-top: calc(var(--baseline) * 2); }
+figure.space-top-3    { margin-top: calc(var(--baseline) * 3); }
+figure.space-top-4    { margin-top: calc(var(--baseline) * 4); }
+figure.space-top-6    { margin-top: calc(var(--baseline) * 6); }
+figure.space-top-8    { margin-top: calc(var(--baseline) * 8); }
+
+figure.space-bottom-1 { margin-bottom: calc(var(--baseline) * 1); }
+figure.space-bottom-2 { margin-bottom: calc(var(--baseline) * 2); }
+figure.space-bottom-3 { margin-bottom: calc(var(--baseline) * 3); }
+figure.space-bottom-4 { margin-bottom: calc(var(--baseline) * 4); }
+figure.space-bottom-6 { margin-bottom: calc(var(--baseline) * 6); }
+figure.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
+
+/* ARRANGEMENTS **********************************************************************************/
+
+/*
+  Compositions of images on a twelve-column grid — the seaofclouds vocabulary. Where the
+  figure modes above are about one image's relationship to a column of text, these are
+  about several images' relationship to each other.
+
+  A container class picks the composition; children take a numbered slot:
+
+    <div class="arrangement staggered">
+      <figure class="pos-1">…</figure>
+      <figure class="pos-2">…</figure>
+      <figure class="pos-3">…</figure>
+    </div>
+
+  Slots beyond the ones a composition names fall into the grid's normal flow, so an
+  arrangement doesn't break if you add a figure without labelling it.
+
+  Everything is scoped to .arrangement. A bare <figure> keeps the reading-layout behaviour
+  defined above — that's the whole reason these two systems can share a stylesheet.
+*/
+
+.arrangement {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: minmax(50px, auto);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+/* Arrangements reclaim the gutter, like a wide figure — a composition needs the room. */
+@media (min-width: 46rem) {
+  .arrangement {
+    margin-right: calc(-1 * var(--content-gutter));
+  }
+}
+
+/* A figure inside an arrangement is a block that fills its slot, not a floated or
+   inline-block element sitting in a column of text. */
+.arrangement figure {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+}
+
+.arrangement figure img,
+.arrangement figure video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.arrangement figcaption {
+  position: static;
+  width: auto;
+  background: transparent;
+  padding: 0;
+  margin-top: var(--space-sm);
+  text-align: center;
+}
+
+/* PRIMARY-LEFT / PRIMARY-RIGHT / PRIMARY-TOP — one dominant image with a companion. */
+
+.arrangement.primary-left  .pos-1 { grid-column: 1 / 9;  grid-row: 1 / 4; }
+.arrangement.primary-left  .pos-2 { grid-column: 9 / 13; grid-row: 2 / 3; }
+
+.arrangement.primary-right .pos-1 { grid-column: 5 / 13; grid-row: 1 / 4; }
+.arrangement.primary-right .pos-2 { grid-column: 1 / 5;  grid-row: 2 / 3; }
+
+.arrangement.primary-top   .pos-1 { grid-column: 3 / 11; grid-row: 1 / 3; }
+.arrangement.primary-top   .pos-2 { grid-column: 4 / 10; grid-row: 3 / 4; }
+
+/* DIAGONAL — two images stepping down and across. */
+
+.arrangement.diagonal .pos-1 { grid-column: 2 / 7;  grid-row: 1 / 3; }
+.arrangement.diagonal .pos-2 { grid-column: 7 / 12; grid-row: 2 / 4; }
+
+/* STAGGERED — three images offset left, right, left, overlapping vertically. */
+
+.arrangement.staggered .pos-1 { grid-column: 2 / 8;  grid-row: 1 / 3; }
+.arrangement.staggered .pos-2 { grid-column: 6 / 12; grid-row: 3 / 5; }
+.arrangement.staggered .pos-3 { grid-column: 3 / 9;  grid-row: 5 / 7; }
+
+/* ORGANIC — four images in a loose, deliberately irregular scatter. Two variants, plus a
+   mixed form that runs A then B for a longer sequence. */
+
+.arrangement.organic-a .pos-1 { grid-column: 1 / 9;  grid-row: 1 / 4; }
+.arrangement.organic-a .pos-2 { grid-column: 9 / 13; grid-row: 2 / 3; }
+.arrangement.organic-a .pos-3 { grid-column: 3 / 7;  grid-row: 6 / 8; }
+.arrangement.organic-a .pos-4 { grid-column: 7 / 12; grid-row: 5 / 7; }
+
+.arrangement.organic-b .pos-1 { grid-column: 1 / 4;  grid-row: 2 / 3; }
+.arrangement.organic-b .pos-2 { grid-column: 5 / 13; grid-row: 1 / 4; }
+.arrangement.organic-b .pos-3 { grid-column: 2 / 7;  grid-row: 4 / 6; }
+.arrangement.organic-b .pos-4 { grid-column: 7 / 11; grid-row: 5 / 7; }
+
+.arrangement.mixed-organic .pos-1 { grid-column: 1 / 8;  grid-row: 1 / 4;   }
+.arrangement.mixed-organic .pos-2 { grid-column: 8 / 13; grid-row: 2 / 3;   }
+.arrangement.mixed-organic .pos-3 { grid-column: 3 / 7;  grid-row: 6 / 8;   }
+.arrangement.mixed-organic .pos-4 { grid-column: 7 / 12; grid-row: 5 / 7;   }
+.arrangement.mixed-organic .pos-5 { grid-column: 1 / 4;  grid-row: 8 / 9;   }
+.arrangement.mixed-organic .pos-6 { grid-column: 5 / 13; grid-row: 7 / 10;  }
+.arrangement.mixed-organic .pos-7 { grid-column: 2 / 7;  grid-row: 10 / 12; }
+.arrangement.mixed-organic .pos-8 { grid-column: 7 / 11; grid-row: 11 / 13; }
+
+/* NARRATIVE — an image beside a block of text, rather than beside another image. */
+
+.arrangement.narrative-left  .pos-1 { grid-column: 1 / 6;  grid-row: 1 / 3; }
+.arrangement.narrative-left  .pos-2 { grid-column: 6 / 13; grid-row: 1 / 2; }
+
+.arrangement.narrative-right .pos-1 { grid-column: 1 / 8;  grid-row: 1 / 2; }
+.arrangement.narrative-right .pos-2 { grid-column: 8 / 13; grid-row: 1 / 3; }
+
+/*
+  EMPHASIS — which figure dominates. What that means depends on the container, because the
+  two containers place their children differently.
+
+  In an arrangement the slots are explicit, so pos-1 is already the dominant one and a
+  width modifier would just fight it. What emphasis adds there is stacking order, for
+  compositions whose grid areas overlap.
+
+  In a gallery there are no slots — items flow — so `primary` is what makes one of them
+  take the room of two. (This is where the class came from: it spanned two columns of an
+  auto-fill album grid. On a twelve-column arrangement the same `span 2` would be a sixth
+  of the width, which reads as the opposite of primary.)
+*/
+
+.arrangement figure.primary   { z-index: 2; }
+.arrangement figure.secondary { z-index: 1; }
+.arrangement figure.tertiary  { z-index: 0; }
+
+.gallery figure.primary { grid-column: span 2; }
+
+/* At narrow widths the gallery is a single column, and spanning two would create an
+   implicit second one and overflow the page. */
+@media (max-width: 46rem) {
+  .gallery figure.primary { grid-column: auto; }
+}
+
+/* ORIENTATION — cap an image's width by its shape, so a tall photograph doesn't tower over
+   a wide one placed beside it. Different job from ratio-*: that crops, this restrains. */
+
+:is(.arrangement, .gallery, .masonry) figure:is(.vertical, .square, .horizontal) img {
+  margin-inline: auto;
+  width: auto;
+}
+
+:is(.arrangement, .gallery, .masonry) figure.vertical img   { max-width: 66.67%; }
+:is(.arrangement, .gallery, .masonry) figure.square img     { max-width: 83.33%; }
+:is(.arrangement, .gallery, .masonry) figure.horizontal img { max-width: 100%; width: 100%; }
+
+/* Below the breakpoint every composition collapses to a single column, in source order. */
+@media (max-width: 46rem) {
+  .arrangement {
+    grid-template-columns: 1fr;
+  }
+
+  .arrangement > * {
+    grid-column: 1 / 2 !important;
+    grid-row: auto !important;
+  }
+
+  :is(.arrangement, .gallery, .masonry) figure:is(.vertical, .square) img {
+    max-width: 100%;
+  }
+}
+
+/* GALLERY — an even grid that reflows by available width, for sets with no composition.
+   Use when the images are peers and the order is what matters. */
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+/* MASONRY — column flow, for sets of mixed heights that shouldn't be cropped to match. */
+
+.masonry {
+  columns: 3;
+  column-gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+.masonry figure {
+  break-inside: avoid;
+  margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 46rem) {
+  .gallery,
+  .masonry {
+    margin-right: calc(-1 * var(--content-gutter));
+  }
+}
+
+@media (max-width: 75rem) { .masonry { columns: 2 } }
+@media (max-width: 46rem) { .masonry { columns: 1 } }
+
+/* A figure in a gallery or masonry keeps its caption in flow, like an arrangement does. */
+.gallery figure,
+.masonry figure {
+  margin-bottom: 0;
+}
+
+.gallery figcaption,
+.masonry figcaption {
+  position: static;
+  width: auto;
+  background: transparent;
+  padding: 0;
+  margin-top: var(--space-sm);
+}
+
+.gallery figure img,
+.masonry figure img {
+  width: 100%;
+}
+
+/* CALLOUTS **************************************************************************************/
+
+/* These class names come from the {{info:}} and {{caution:}} macros in system/macros.ts */
+
+/* .info takes the --callout-bg / --callout-edge defaults from variables.css. */
+
+.caution {
+  --callout-bg: light-dark(#fff8e0, #33301f);
+  --callout-edge: light-dark(#e8d48a, #6b5f2e);
+}
+
+.info, .caution {
+  max-width: var(--measure);
+  background: var(--callout-bg);
+  border-left: 3px solid var(--callout-edge);
+  border-radius: 0 4px 4px 0;
+  padding: 1em;
+  margin-bottom: var(--space-md);
+}
+
+.info *:last-child,
+.caution *:last-child {
+  margin-bottom: 0;
+}
+
+/* CODE ******************************************************************************************/
+
+code {
+  display: inline-block;
+}
+
+pre, .code-title {
+  max-width: var(--measure);
+  overflow: auto;
+  border-radius: 4px;
+  background: var(--stark-bg);
+  border: 1px solid var(--stark-shadow);
+  border-bottom-width: 2px;
+  padding-block: var(--space-md);
+}
+
+.code-title {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 4px 4px 0 0;
+  border-bottom: 1px solid var(--stark-sep);
+  color: var(--inactive);
+  font: 400 13px / 16px var(--font-mono);
+}
+
+.code-title + pre {
+  margin-top: 0;
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+pre code[class*="language-"] {
+  font-size: .9em;
+  line-height: 1.5;
+}
+
+/* Prism wraps each line in its own element, and the padding goes there so that a
+   highlighted line's background runs the full width of the block. */
+pre code > * {
+  padding-inline: var(--space-md);
+}
+
+/* A hand-written <pre><code> has no per-line wrappers, so it needs the padding itself. */
+pre > code:not(:has(> *)) {
+  padding-inline: var(--space-md);
+}
+
+:not(pre) > code {
+  border: 1px solid var(--stark-shadow);
+  padding: .1em .2em 0;
+  border-radius: 1px;
+  background: var(--stark-bg);
+}
+
+.token.comment       { color: light-dark(#6a737d, #6a9955) }
+.token.keyword       { color: light-dark(#d73a49, #569cd6) }
+.token.string        { color: light-dark(#22863a, #ce9178) }
+.token.number        { color: light-dark(#005cc5, #b5cea8) }
+.token.function      { color: light-dark(#6f42c1, #dcdcaa) }
+.token.class-name    { color: light-dark(#6f42c1, #4ec9b0) }
+.token.operator      { color: light-dark(#24292e, #d4d4d4) }
+.token.variable      { color: light-dark(#e36209, #9cdcfe) }
+.token.tag,
+.token.selector      { color: light-dark(#005cc5, #d7ba7d) }
+.token.attr-name     { color: light-dark(#6f42c1, #9cdcfe) }
+.token.attr-value    { color: light-dark(#22863a, #ce9178) }
+.token.inserted      { color: light-dark(#22863a, #81b88b); background: light-dark(#e6ffed, transparent) }
+.token.deleted       { color: light-dark(#d73a49, #c24038); background: light-dark(#ffeef0, transparent) }
+
+.highlighted-line {
+  background: #00f1;
+}
+
+.highlighted-red-line {
+  background: light-dark(#ffeef0, #3d1c1c);
+}
+
+/* BLOG BITS *************************************************************************************/
+
+a.blog-link {
+  display: flex; /* Removes the tiny gap between rows that makes the underline flicker on hover */
+  flex-flow: column;
+  max-width: max-content; /* Makes :focus outlines look nicer */
+  margin-bottom: var(--space-md);
+  text-decoration: none;
+}
+
+a.blog-link:hover .title {
+  text-decoration: underline;
+}
+
+.micro {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--inactive);
+}
+
+/* FOOTNOTES *************************************************************************************/
+
+.footnotes {
+  max-width: var(--measure);
+  margin-top: var(--space-xl);
+  font-size: 14px;
+  color: var(--smoke);
+}
+
+html[theme="dark"] .footnotes { color: var(--silver); }
+
+.footnotes hr {
+  border-top-width: 1px;
+}

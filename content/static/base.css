@@ -1,108 +1,20 @@
 /*
-  Hello! This is the base CSS file used by every page on the site.
-  Here are a few notes to get you started.
+  The reset and the element defaults — what a plain HTML document should look like on this
+  site before anything else has an opinion about it.
 
-  1. Please don't use a formatter (like Prettier). The file has been laid out by hand, with
-     intentional use of whitespace and occasional one-lining to aid readability.
-  2. The focus is on maintainability over elegance or performance. We're hand-authoring this site,
-     so if we end up shipping a few dozen extra bytes on each page, that's okay.
-  3. This is a starting point, not a design system. It's deliberately quiet so that it doesn't
-     fight whatever you replace it with. Start with the custom properties below.
+  This is the normalize layer. Nothing here knows about layout (that's layout.css) or about
+  the prose and figure vocabulary (that's content.css). If a rule would stop making sense on
+  a page with no <main> at all, it belongs in one of those files instead.
+
+  Load order is variables -> base -> layout -> content. Later files win ties.
+
+  Please don't use a formatter (like Prettier). The file has been laid out by hand, with
+  intentional use of whitespace and occasional one-lining to aid readability.
 */
 
-/* COLORS & THEMES *******************************************************************************/
+/* RESET *****************************************************************************************/
 
-html {
-  --page-width: 72rem;
-
-  /*
-    The palette is achromatic on purpose — a starter shouldn't pick your brand colour for you.
-    Change --accent first; it's the only hue on the site.
-  */
-  --true-white: #fff;
-  --white: #fcfcfc;
-  --off-white: #f2f2f2;
-  --silver: #ddd;
-  --grey: #888;
-  --smoke: #555;
-  --slate: #222;
-  --deep: #111;
-  --black: #000;
-
-  /* This enables the new light-dark() function in modern browsers */
-  color-scheme: light dark;
-
-  /* Fallback colors for old browsers that don't support light-dark() */
-  --bg: var(--white);
-  --fg: var(--slate);
-  --accent: var(--slate);
-  --current: var(--off-white);
-  --inactive: var(--grey);
-  --separator: var(--silver);
-  --footer-fg: var(--smoke);
-  --stark-bg: var(--true-white);
-  --stark-shadow: var(--off-white);
-  --stark-sep: var(--off-white);
-
-  /* And, somewhat redundantly (sigh), here are the colors for light and dark themes. */
-  --bg: light-dark(var(--white), var(--slate));
-  --fg: light-dark(var(--slate), var(--white));
-  --accent: light-dark(var(--slate), var(--white));
-  --current: light-dark(#eee, #333);
-  --inactive: light-dark(var(--grey), var(--grey));
-  --separator: light-dark(var(--silver), #404040);
-  --footer-fg: light-dark(var(--smoke), var(--grey));
-  --stark-bg: light-dark(var(--true-white), var(--deep));
-  --stark-shadow: light-dark(var(--off-white), transparent);
-  --stark-sep: light-dark(var(--off-white), var(--slate));
-
-  /* Use these colors */
-  background: var(--bg);
-  color: var(--fg);
-}
-
-/* In supported browsers, when the dark theme is selected, use it! */
-html[theme="light"] { color-scheme: light; }
-html[theme="dark"] { color-scheme: dark; }
-
-/* TYPOGRAPHY ************************************************************************************/
-
-/*
-  The system font stack. No webfont is downloaded, nothing blocks first paint, and the site
-  looks native on every platform. Change these two variables to change every font on the site.
-*/
-html {
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-}
-
-/*
-  Using your own typeface instead? Drop a .ttf or .otf into /fonts, run the build, then
-  uncomment this and point --font-sans at it. See /docs/assets/ for the details.
-
-  @font-face {
-    font-family: "Your Font";
-    src: url("/static/fonts/yourfont.woff2") format("woff2-variations");
-    font-weight: 100 900;
-  }
-*/
-
-/* TYPOGRAPHIC HIERARCHY */
-
-h1   { font: 280 32px / 36px var(--font-sans); }
-h2   { font: 400 24px / 32px var(--font-sans); }
-h3   { font: 500 20px / 24px var(--font-sans); }
-h4   { font: 600 16px / 24px var(--font-sans); }
-body { font: 400 16px / 24px var(--font-sans); }
-code { font: 400 14px / 24px var(--font-mono); }
-strong { font-weight: 650; }
-
-/* ELEMENTS **************************************************************************************/
-
-/* Box sizing reset */
 *, *:before, *:after { box-sizing: border-box; }
-
-/* MAJOR LAYOUT ELEMENTS */
 
 html {
   /* Long words may be broken and wrapped. (NB: this doesn't affect min-content lengths) */
@@ -113,10 +25,10 @@ html {
   -moz-text-size-adjust: none;
   text-size-adjust: none;
 
-  /* Reserve space for a scroll bar */
+  /* Reserve space for a scroll bar, so the page doesn't jump sideways when one appears */
   scrollbar-gutter: stable;
 
-  /* Allow periods and commas to hang — useful when a <code> inline-block renders at the end of a line. */
+  /* Allow periods and commas to hang — useful when a <code> inline-block ends a line. */
   /* Only works in Safari, but that's fine. */
   hanging-punctuation: allow-end;
 }
@@ -126,151 +38,55 @@ body {
   margin: 0;
 }
 
-/* THE MASTHEAD */
+@media (pointer: fine) {
+  html * { scrollbar-width: thin; }
+}
+
+/* TYPOGRAPHIC HIERARCHY *************************************************************************/
 
 /*
-  Every template includes template/includes/site-header.html and it's styled here, rather
-  than per-template, so that it lands in exactly the same place on every page. It used to
-  be styled twice — once for landing pages, once for pages with a sidebar — and the two
-  drifted 6px apart horizontally and 8px vertically, so the header visibly jumped as you
-  moved between sections.
+  Sizes are in px and line-heights are multiples of 24px, so that everything lands on the
+  same vertical rhythm — see --baseline in variables.css. The aside and figure machinery in
+  content.css counts in those 24px lines, so changing `body` here means changing --baseline
+  to match.
 
-  Wordmark on the left, section links and theme toggle on the right, all sharing a
-  baseline. The gutter matches the one <main> uses, so the wordmark lines up with the
-  content beneath it.
+  Using a webfont? Declare it here with @font-face, then point --font-sans (or --font-serif)
+  at it in variables.css. See /docs/assets/.
 */
-html { --masthead-height: 5rem; }
 
-/*
-  Fixed, so the wordmark stays put as you scroll — which is the whole reason the original
-  put it inside the fixed sidebar. The outer element spans the window so its background
-  covers whatever passes underneath; the inner one holds the content to the page width.
+h1   { font: 280 32px / 36px var(--font-sans); }
+h2   { font: 400 24px / 32px var(--font-sans); }
+h3   { font: 500 20px / 24px var(--font-sans); }
+h4   { font: 600 16px / 24px var(--font-sans); }
+body { font: 400 16px / 24px var(--font-sans); }
+code { font: 400 14px / 24px var(--font-mono); }
 
-  Centred with margin-inline:auto against the inline containing block, which excludes the
-  scrollbar gutter. The sidebar is centred off the same basis, so the two can't drift.
-*/
-.site-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
-  background: var(--bg);
+/* Small caps-ish label, used for headings inside asides and footers */
+h5, h6 {
+  font: 500 13px / 24px var(--font-sans);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--inactive);
 }
 
-/*
-  The height is set rather than left to the content, because the body reserves exactly
-  --masthead-height above itself and the sidebar hangs from the same number. Letting the
-  content decide meant the bar came out 85px tall against 80px reserved, so the article
-  slipped underneath it — and it would have drifted again at the font-size breakpoint.
-  Padding only on top: the box-sizing reset means the height already accounts for it.
-*/
-.site-header-inner {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  height: var(--masthead-height);
-  max-width: var(--page-width);
-  margin-inline: auto;
-  padding: 1.5rem 1.375rem 0;
-  font-weight: 600;
+strong { font-weight: 650; }
+
+/* The UA styles for sub/sup mess up line-height. This tweak (borrowed from normalize.css)
+   fixes it by removing them from line-height calculations entirely. */
+sub, sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
 }
 
-/* Nothing starts underneath the fixed masthead */
-body {
-  padding-top: var(--masthead-height);
-}
+sup { top: -.5em; }
+sub { bottom: -.25em; }
 
-/* Pushes everything after it to the right */
-.site-header .logo {
-  margin-right: auto;
-  text-decoration: none;
-}
+/* BLOCK-LEVEL TEXT ELEMENTS *********************************************************************/
 
-.site-header .logo:hover span {
-  text-decoration: underline;
-}
-
-.site-header .nav {
-  display: flex;
-  align-items: baseline;
-  gap: 1.75rem;
-  flex: none;
-}
-
-.site-header .nav a {
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.site-header .nav a:hover {
-  text-decoration: underline;
-}
-
-.site-header #theme-toggle {
-  align-self: center;
-  flex: none; /* otherwise it's the first thing to get squashed when space runs out */
-}
-
-/*
-  Mark the section you're in. The is-current attribute the build system adds only matches
-  an exact URL — right for a table of contents, wrong here, where /docs/ should stay lit
-  while you're reading /docs/pages/. So <body> carries the section instead.
-*/
-body[data-section="docs"] .site-header .nav-docs,
-body[data-section="blog"] .site-header .nav-blog {
-  text-decoration: underline;
-  text-underline-offset: .35em;
-  text-decoration-thickness: 2px;
-}
-
-/* Bigger font on bigger screens */
-@media (width > 500px) { .site-header-inner { font-size: 18px } }
-
-/* When the masthead runs out of room, the wordmark goes before anything else does */
-@media (width <= 560px) {
-  .site-header .logo span { display: none }
-  .site-header .nav { gap: 1.25rem }
-}
-
-/*
-  The skip link lives in the masthead, so it's styled here alongside it. It sits offscreen
-  above the page until focused. This has to be in base.css, not in the stylesheet for pages
-  with a sidebar — otherwise a landing page renders it as an ordinary visible link, and it
-  takes up space in the header and shoves the wordmark sideways.
-*/
-a.skip {
-  position: absolute;
-  top: 0;
-  padding: 2rem 4rem;
-  border-radius: 0 0 8px 8px;
-  color: var(--bg);
-  background: var(--fg);
-  translate: 0 -100%;
-}
-
-a.skip:focus-visible {
-  translate: 0;
-  outline: 0;
-}
-
-/* Hide the sidebar's contents when the burger is closed.
-   General sibling, not adjacent — the masthead sits between the checkbox and the aside. */
-@media (width <= 800px) {
-  #burger-state:not(:checked) ~ aside nav { display: none }
-}
-
-footer {
-  text-align: center;
-  padding: 2rem 1rem 3rem;
-  color: var(--footer-fg);
-  font-size: 14px;
-}
-
-/* BLOCK-LEVEL TEXT ELEMENTS */
-
-h1, h2, h3, h4 {
-  margin: 0 0 1rem;
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 var(--space-md);
 }
 
 h1, h2 {
@@ -278,41 +94,48 @@ h1, h2 {
 }
 
 p {
-  margin: 0 0 1rem;
+  margin: 0 0 var(--space-md);
 }
 
 blockquote {
-  margin: 0 0 1rem;
+  margin: 0 0 var(--space-md);
   border-left: 3px solid var(--separator);
-  padding-left: 1rem;
+  padding-left: var(--space-md);
   color: var(--smoke);
   font-style: italic;
 }
 
 html[theme="dark"] blockquote { color: var(--silver); }
 
-figure {
-  position: relative;
-  margin: 0 0 1rem;
+hr {
+  margin: var(--space-md) 0;
+  border: 0;
+  border-top: 2px solid var(--separator);
 }
 
-figcaption {
-  margin-top: .5rem;
-  font-size: 14px;
-  color: var(--inactive);
+/* LISTS *****************************************************************************************/
+
+ul, ol {
+  margin-block: 0 var(--space-md);
+  margin-left: 1.3em;
+  padding: 0;
 }
 
-/* TABLES */
+li {
+  margin-top: var(--space-sm);
+}
+
+/* TABLES ****************************************************************************************/
 
 table {
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
   border-collapse: collapse;
   text-align: left;
 }
 
 th, td {
-  padding: .5rem .75rem .5rem 0;
+  padding: var(--space-sm) .75rem var(--space-sm) 0;
   border-bottom: 1px solid var(--separator);
   vertical-align: top;
 }
@@ -321,19 +144,7 @@ th {
   font-weight: 600;
 }
 
-/* LISTS */
-
-ul, ol {
-  margin-block: 0 1rem;
-  margin-left: 1.3em;
-  padding: 0;
-}
-
-li {
-  margin-top: .5em;
-}
-
-/* LINKS */
+/* LINKS *****************************************************************************************/
 
 a {
   color: inherit;
@@ -351,30 +162,7 @@ a.plain {
   text-decoration: none;
 }
 
-aside a {
-  text-decoration: none;
-}
-
-aside a:hover {
-  text-decoration: underline;
-}
-
-/* A call-to-action link. Used on the home page. */
-.button {
-  display: inline-block;
-  padding: .6em 1.4em;
-  border-radius: 6px;
-  background: var(--fg);
-  color: var(--bg);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.button:hover {
-  opacity: .85;
-}
-
-/* MEDIA & REPLACED ELEMENTS */
+/* MEDIA & REPLACED ELEMENTS *********************************************************************/
 
 img,
 svg,
@@ -399,236 +187,47 @@ iframe {
   width: 100%;
 }
 
-/* MISC ELEMENTS */
-
-hr {
-  margin: 1rem 0;
-  border: 0;
-  border-top: 2px solid var(--separator);
+iframe.youtube {
+  aspect-ratio: 16 / 9;
 }
 
-/* CALLOUTS */
-
-/* These class names come from the {{info:}} and {{caution:}} macros in system/macros.ts */
-
-.info {
-  --callout-bg: light-dark(var(--off-white), #2e2e2e);
-  --callout-edge: light-dark(var(--silver), #454545);
-}
-
-.caution {
-  --callout-bg: light-dark(#fff8e0, #33301f);
-  --callout-edge: light-dark(#e8d48a, #6b5f2e);
-}
-
-.info, .caution {
-  background: var(--callout-bg);
-  border-left: 3px solid var(--callout-edge);
-  border-radius: 0 4px 4px 0;
-  padding: 1em;
-  margin-bottom: 1rem;
-}
-
-.info *:last-child,
-.caution *:last-child {
-  margin-bottom: 0;
-}
-
-/* HEADER LOGO */
+/* FIGURES ***************************************************************************************/
 
 /*
-  Deliberately not a flex container. The surrounding header aligns its items on the text
-  baseline, and a flex container exposes its *first item's* baseline — here the <svg>,
-  which has no text in it, so the browser synthesises one from the box edge and the
-  wordmark ends up sitting higher than the nav links beside it.
-  Left as an inline box, the <a> reports the baseline of its own text, which is what we want.
+  Only the shared baseline lives here — the part both the reading layout and the gallery
+  arrangements agree on. Everything else (gutter captions, wide/tile/float modes, grids,
+  arrangements) is in content.css.
+
+  position: relative matters more than it looks: a figcaption in the right gutter is
+  positioned against its figure, not against <main>, which is why it can sit level with the
+  image rather than at the top of the page.
 */
-.logo svg {
-  width: 32px;
-  height: auto;
-  margin-right: .5em;
-  vertical-align: -.45em; /* optically centre the mark against the wordmark */
+
+figure {
+  position: relative;
+  margin: 0 0 var(--space-md);
 }
 
-.logo:focus-visible { outline: 0; }
-.logo:focus-visible span {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-  border-radius: 4px;
+figcaption {
+  margin-top: var(--space-sm);
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--inactive);
 }
 
-@media (max-width: 500px) {
-  .logo svg { width: 26px; }
-}
+/* BUTTONS ***************************************************************************************/
 
-/* BURGER MENU */
-
-/* Checkbox that stores whether the burger menu is open */
-#burger-state {
-  display: none;
-}
-
-/* <label> that toggles the burger state checkbox.
-   Hidden by default: it only earns its place on a narrow screen that has a sidebar to
-   open, so docs.css is what reveals it. The masthead is shared by every template, and a
-   landing page has nothing for it to toggle. */
-#burger {
-  display: none;
-  border-radius: 24px;
-  stroke: var(--fg);
-  cursor: pointer;
-}
-
-#burger:hover {
-  stroke: var(--bg);
-  background: var(--fg);
-}
-
-#burger svg {
-  width: 30px;
-  padding: 5px;
-}
-
-/* Toggle between the show (burger) and hide (X) icons.
-   General sibling, not adjacent — the burger sits inside the masthead. */
-#burger-state:checked       ~ * .show { display: none }
-#burger-state:not(:checked) ~ * .hide { display: none }
-
-/* THEME TOGGLE */
-
-#theme-toggle {
-  padding: 4px;
-  border: 0;
-  border-radius: 24px;
-  color: inherit;
-  outline: 0;
-  background: none;
-  cursor: pointer;
-}
-
-@supports not (color: light-dark(#fff, #000)) {
-  #theme-toggle { display: none }
-}
-
-#theme-toggle:hover,
-#theme-toggle:focus-visible {
+/* A call-to-action link. Used on the home page. */
+.button {
+  display: inline-block;
+  padding: .6em 1.4em;
+  border-radius: 6px;
   background: var(--fg);
   color: var(--bg);
-}
-
-#theme-toggle .dark { display: none; }
-html[theme="dark"] #theme-toggle .dark { display: inherit; }
-html[theme="dark"] #theme-toggle .light { display: none; }
-
-/* CODE *****************************************************************************************/
-
-code {
-  display: inline-block;
-}
-
-pre, .code-title {
-  overflow: auto;
-  border-radius: 4px;
-  background: var(--stark-bg);
-  border: 1px solid var(--stark-shadow);
-  border-bottom-width: 2px;
-  padding-block: 1rem;
-}
-
-.code-title {
-  padding: .5rem 1rem;
-  border-radius: 4px 4px 0 0;
-  border-bottom: 1px solid var(--stark-sep);
-  color: var(--inactive);
-  font: 400 13px / 16px var(--font-mono);
-}
-
-.code-title + pre {
-  margin-top: 0;
-  border-top: 0;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
-pre code[class*="language-"] {
-  font-size: 0.9em;
-  line-height: 1.5;
-}
-
-/* Prism wraps each line in its own element, and the padding goes there so that a
-   highlighted line's background runs the full width of the block. */
-pre code > * {
-  padding-inline: 1rem;
-}
-
-/* A hand-written <pre><code> has no per-line wrappers, so it needs the padding itself. */
-pre > code:not(:has(> *)) {
-  padding-inline: 1rem;
-}
-
-.token.comment       { color: light-dark(#6a737d, #6a9955) }
-.token.keyword       { color: light-dark(#d73a49, #569cd6) }
-.token.string        { color: light-dark(#22863a, #ce9178) }
-.token.number        { color: light-dark(#005cc5, #b5cea8) }
-.token.function      { color: light-dark(#6f42c1, #dcdcaa) }
-.token.class-name    { color: light-dark(#6f42c1, #4ec9b0) }
-.token.operator      { color: light-dark(#24292e, #d4d4d4) }
-.token.variable      { color: light-dark(#e36209, #9cdcfe) }
-.token.tag,
-.token.selector      { color: light-dark(#005cc5, #d7ba7d) }
-.token.attr-name     { color: light-dark(#6f42c1, #9cdcfe) }
-.token.attr-value    { color: light-dark(#22863a, #ce9178) }
-.token.inserted      { color: light-dark(#22863a, #81b88b); background: light-dark(#e6ffed, transparent) }
-.token.deleted       { color: light-dark(#d73a49, #c24038); background: light-dark(#ffeef0, transparent) }
-
-.highlighted-line {
-  background: #00f1;
-}
-
-.highlighted-red-line {
-  background: light-dark(#ffeef0, #3d1c1c);
-}
-
-:not(pre) > code {
-  border: 1px solid var(--stark-shadow);
-  padding: .1em .2em 0em;
-  border-radius: 1px;
-  background: var(--stark-bg);
-}
-
-/* BLOG BITS ************************************************************************************/
-
-a.blog-link {
-  display: flex; /* Remove tiny gap between text rows which causes the underline to flicker when mousing */
-  flex-flow: column;
-  max-width: max-content; /* Make :focus outlines look nicer */
-  margin-bottom: 1rem;
-}
-
-a.blog-link:hover {
   text-decoration: none;
+  font-weight: 600;
 }
 
-a.blog-link:hover .title {
-  text-decoration: underline;
-}
-
-.micro {
-  font-size: 12px;
-  line-height: 1.2;
-  color: var(--inactive);
-}
-
-/* FOOTNOTES ************************************************************************************/
-
-.footnotes {
-  margin-top: 3rem;
-  font-size: 14px;
-  color: var(--smoke);
-}
-
-html[theme="dark"] .footnotes { color: var(--silver); }
-
-.footnotes hr {
-  border-top-width: 1px;
+.button:hover {
+  opacity: .85;
 }

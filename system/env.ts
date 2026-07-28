@@ -51,4 +51,8 @@ export const Env = {
 
   // Increase the amount of logging
   verbose: false, // enable with --verbose
+
+  // Paint the grid guides over every page. Set to "fluid outline" or "fixed outline" by
+  // the --fluid / --fixed flags, and written onto <html> where variables.css picks it up.
+  gridDebug: "", // enable with --fluid or --fixed
 }

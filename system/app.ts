@@ -82,6 +82,8 @@ const args = parseArgs({
     "no-draft": { type: "boolean", default: false },
     "fonts": { type: "boolean", default: true },
     "verbose": { type: "boolean", default: false },
+    "fluid": { type: "boolean", default: false },
+    "fixed": { type: "boolean", default: false },
   },
   allowPositionals: true,
 })
@@ -90,6 +92,11 @@ const args = parseArgs({
 Env.draft = !args.values["no-draft"]
 Env.subsetFonts = args.values.fonts
 Env.verbose = args.values.verbose
+
+// Paint the column guides over every page, so you can check what lines up with what.
+// One at a time — they'd cover each other. See the debug overlays in variables.css.
+if (args.values.fluid) Env.gridDebug = "fluid outline"
+else if (args.values.fixed) Env.gridDebug = "fixed outline"
 
 // Alright! Let's run the requested command.
 

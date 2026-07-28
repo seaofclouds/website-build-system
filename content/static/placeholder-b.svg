@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600" role="img" aria-label="Placeholder image, B">
+  <rect width="900" height="600" fill="#e2e2e2"/>
+  <path d="M450 100 L700 500 L200 500 Z" fill="#cfcfcf"/>
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-family="ui-sans-serif, system-ui, sans-serif" font-size="50" fill="#6f6f6f">B</text>
+</svg>

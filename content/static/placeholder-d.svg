@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600" role="img" aria-label="Placeholder image, D">
+  <rect width="900" height="600" fill="#e4e4e4"/>
+  <path d="M150 500 L450 100 L750 500 L450 380 Z" fill="#d0d0d0"/>
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-family="ui-sans-serif, system-ui, sans-serif" font-size="50" fill="#6f6f6f">D</text>
+</svg>

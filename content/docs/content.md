@@ -1,5 +1,5 @@
 ---
-title: Pages
+title: Content
 description: How files in the content folder become URLs, and what frontmatter controls.
 template: docs
 ---

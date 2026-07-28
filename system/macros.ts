@@ -70,6 +70,23 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             return children.map((child) => expandMacros(`{{include:${template}}}`, child, pages)).join("\n")
           }
 
+          // {{aside SOME TEXT}} — a note in the right-hand gutter, level with the paragraph that follows it
+          // {{aside 2 SOME TEXT}} — the same, pulled up 2 body lines so it lands beside the line you mean
+          // Colons are optional and tolerated, so {{aside: …}} and {{aside 2: …}} both work.
+          // The gutter only exists on the essay template — see .layout-margin in content.css.
+          // Anywhere else the aside stays in normal flow, which is a reasonable fallback rather than a bug.
+          case macro.startsWith("aside") && macro: {
+            let content = stripName(macro, "aside")
+
+            // A leading integer is the move-up count; everything else is content. If the
+            // aside genuinely starts with a number, write it as {{aside 0 42 is the answer}}.
+            let moveUp = "0"
+            const leadingInteger = content.match(/^(\d+)\s*:?\s+([\s\S]*)$/)
+            if (leadingInteger) [, moveUp, content] = leadingInteger
+
+            return `<aside class="move-up" style="--move-up: ${moveUp}">${stripColon(content)}</aside>`
+          }
+
           // {{figure ![](src.ext)}} — A <figure> with some media (image or video)
           // {{figure wide frame ![](src.ext) }} — with class="wide frame"
           // {{figure autoplay ![](src.mp4) }} — the "autoplay" class is special, and adds "autoplay loop muted" to the <video>
@@ -108,8 +125,21 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             // TODO: I suspect we should almost always add alt text, and it definitely shouldn't be the same as the caption.
             img = img.replace(` alt=""`, "")
 
-            // If there's a caption, add a <figcaption> element
-            let figcaption = caption ? `<figcaption>\n${Markdown.render(caption).trim()}\n</figcaption>` : null
+            // If there's a caption, add a <figcaption> element.
+            //
+            // A caption can hold a nested {{aside}}. Markdown would fold that into the
+            // caption's own paragraph — and a <p> can't contain an <aside>, so the browser
+            // closes the paragraph early and the caption comes apart. So lift any macro
+            // sitting on its own line out of the caption before rendering, then append it
+            // after, as a sibling of the caption text. That's the shape the gutter CSS
+            // expects: figcaption > p, then figcaption > aside.
+            let figcaption = null
+            if (caption) {
+              let lifted: string[] = []
+              caption = caption.replace(/^[ \t]*({{[^{}]*}})[ \t]*$/gm, (_, inner) => (lifted.push(inner), ""))
+              const parts = [Markdown.render(caption).trim(), ...lifted].filter(Boolean)
+              figcaption = `<figcaption>\n${parts.join("\n")}\n</figcaption>`
+            }
 
             return compact([`<figure${cls}>`, img, figcaption, "</figure>"]).join("\n")
           }
@@ -282,22 +312,68 @@ type ReplaceHbarFn = (contents: string, spaces: string) => string
 // showing a template language, a shell variable, or Handlebars.
 const CODE_REGIONS = /<pre[\s\S]*?<\/pre>|<code[\s\S]*?<\/code>/g
 
-const MACRO = /( *){{(.+?)}}/gs
+const MACRO_OPEN = /( *){{/g
 
+// Find the }} that closes the {{ at `open`, counting nested pairs along the way.
+// Returns the index just past the closing braces, or -1 if it never closes.
+const findMacroEnd = (html: string, open: number) => {
+  let depth = 0
+  for (let i = open; i < html.length - 1; i++) {
+    if (html[i] === "{" && html[i + 1] === "{") {
+      depth++
+      i++
+    } else if (html[i] === "}" && html[i + 1] === "}") {
+      i++
+      if (--depth === 0) return i + 1
+    }
+  }
+  return -1
+}
+
+/*
+  Macros nest — a figure's caption can hold an aside, and a comment can quote a macro while
+  explaining it — so we match braces by counting rather than with a regex. A lazy /{{(.+?)}}/
+  ends the outer macro's match at the *inner* macro's closing braces, which silently
+  swallows half of one and leaks the other half into the page.
+
+  Counting means the outermost macro matches first. That's the right way round: a comment
+  containing an example gets removed whole, and a figure receives its caption with the
+  aside still written as a macro — which is fine, because expandMacros runs the whole thing
+  again until nothing changes, and the aside expands on the next pass.
+*/
 const expandAllMacros = (html: string, cb: ReplaceHbarFn) => {
   // Work out where the code samples are, so we can tell whether a given {{ sits inside one.
   const codeSpans: [number, number][] = []
   for (const region of html.matchAll(CODE_REGIONS)) codeSpans.push([region.index, region.index + region[0].length])
   const startsInsideCode = (i: number) => codeSpans.some(([from, to]) => i >= from && i < to)
 
-  return html.replaceAll(MACRO, (match, spaces, macro, offset) => {
+  let out = ""
+  let cursor = 0
+  MACRO_OPEN.lastIndex = 0
+
+  for (let match = MACRO_OPEN.exec(html); match; match = MACRO_OPEN.exec(html)) {
+    const spaces = match[1]
+    const open = match.index + spaces.length
+
     // We test where the macro *opens*, not whether it overlaps a code sample at all. A macro
     // shown as an example opens inside the sample, and should stay exactly as written. But a
     // real macro can perfectly well have code in its arguments — {{caution: run `./site build`}}
     // opens in the prose and merely happens to contain a <code> — and that must still expand.
-    if (startsInsideCode(offset + spaces.length)) return match
-    return cb(macro.trim(), spaces)
-  })
+    if (startsInsideCode(open)) continue
+
+    // Unbalanced braces are left exactly as written rather than guessed at.
+    const end = findMacroEnd(html, open)
+    if (end < 0) continue
+
+    out += html.slice(cursor, match.index)
+    out += cb(html.slice(open + 2, end - 2).trim(), spaces)
+    cursor = end
+
+    // Skip past the macro we just consumed, so its nested macros aren't matched again here.
+    MACRO_OPEN.lastIndex = end
+  }
+
+  return out + html.slice(cursor)
 }
 
 const stripName = (macro: string, name: string) => stripColon(macro.replace(name, "").trim())

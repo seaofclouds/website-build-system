@@ -1,5 +1,5 @@
 ---
-title: Deploying
+title: Deployment
 description: What you need to build the site, and how to host it on GitHub Pages, Cloudflare, or Netlify.
 template: docs
 ---

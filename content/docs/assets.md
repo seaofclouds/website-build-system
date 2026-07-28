@@ -49,8 +49,10 @@ build will:
 2. Subset the font down to just those glyphs.
 3. Compress the result to `woff2` in `content/static/fonts/`.
 
-Then uncomment the `@font-face` block near the top of `content/static/base.css` and
-point `--font-sans` or `--font-mono` at the new family.
+Then declare it with `@font-face` in `content/static/base.css`, and point `--font-sans`
+or `--font-mono` at the new family in `content/static/variables.css` — there's a
+commented `--font-serif` there for exactly this. See [Stylesheets](/docs/styles/) for
+what else lives where.
 
 This matters more than it sounds. A typical webfont carries thousands of glyphs for
 alphabets and symbols your site never uses. Subsetting an English-language site

@@ -1,20 +1,18 @@
 ---
 All our reference pages use this template, and we want them to have clickable links for each header.
 header_anchors: true
-styles: /static/docs.css
+scripts: /static/nav.js
 ---
 
 <!doctype html>
 <html lang="en">
 <head>{{include: head-stuff}}</head>
-<body data-section="{{section}}">
+<body class="layout-nav" data-section="{{section}}">
   <input type="checkbox" id="burger-state" />
   {{include: site-header}}
-  <aside>
-    <nav>
-      {{include: docs}}
-    </nav>
-  </aside>
+  <nav class="site-nav">
+    {{include: docs}}
+  </nav>
   <main id="content">
     <h1>{{title}}</h1>
     {{content}}

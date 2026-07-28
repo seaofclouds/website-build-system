@@ -1,26 +1,23 @@
 /*
-  Styles for wide, sidebar-less pages — the home page, the blog index, the 404.
-  Loaded by template/landing.html.
+  The home page and the 404 — the two pages that are display surfaces rather than reading
+  surfaces. Loaded only by template/landing.html.
+
+  The page *shape* (full page width, no sidebar) is .layout-wide in layout.css. What's left
+  here is the display typography and the handful of sections the home page is made of. If
+  you're adapting this starter, this is the file to empty out first: nothing in it is
+  load-bearing for any other page.
+
+  Please don't use a formatter (like Prettier).
 */
+
+/* DISPLAY TYPE **********************************************************************************/
 
 /*
-  The width constraint lives on <main> rather than on <section>, because a Markdown page
-  emits its headings and paragraphs straight into <main> with no section to hang it on.
-  HTML pages can still use <section> to group things; it just inherits the width instead
-  of applying its own and insetting twice.
+  Bigger and lighter than the reading hierarchy in base.css. Centred, because on both of
+  these pages the text is the whole composition rather than something you read through.
 */
-main {
-  max-width: var(--page-width);
-  margin-inline: auto;
-  padding-inline: 1.375em;
-}
-
-section {
-  margin-inline: auto;
-}
 
 h1 {
-  line-height: 1;
   font: 200 48px / 1 var(--font-sans);
   text-align: center;
 }
@@ -32,7 +29,7 @@ h2 {
 }
 
 h3 {
-  margin-block: 3rem 0;
+  margin-block: var(--space-xl) 0;
 }
 
 h4 {
@@ -43,27 +40,24 @@ p {
   margin: 0;
 }
 
+section {
+  margin-inline: auto;
+}
+
 @media (width <= 1024px) {
-  h1   { font: 220 42px / 1 var(--font-sans); }
-  h2   { font: 300 30px / 1.4 var(--font-sans); }
+  h1 { font: 220 42px / 1 var(--font-sans); }
+  h2 { font: 300 30px / 1.4 var(--font-sans); }
 }
 
 @media (width <= 500px) {
-  h1   { font: 220 40px / 1 var(--font-sans); }
-  h2   { font: 300 28px / 1.4 var(--font-sans); }
+  h1 { font: 220 40px / 1 var(--font-sans); }
+  h2 { font: 300 28px / 1.4 var(--font-sans); }
 }
 
-/* The masthead is shared with the other templates and styled in base.css — fixed to the
-   top, so it stays put and lands in the same place on every page. Landing pages just want
-   a little more air beneath it than the body padding alone provides. */
-main {
-  padding-top: 2rem;
-}
-
-/* HOME PAGE ************************************************************************************/
+/* HOME PAGE *************************************************************************************/
 
 #tag {
-  margin-bottom: 4rem;
+  margin-bottom: var(--space-2xl);
 }
 
 #tag h2 {
@@ -84,7 +78,7 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
 }
 
 .cta-note {
-  margin-top: 1rem;
+  margin-top: var(--space-md);
   text-align: center;
   font-size: 14px;
   color: var(--inactive);
@@ -96,8 +90,11 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
   text-align: center;
 }
 
+/* content.css holds <pre> to the measure; here the block is the composition, so it takes
+   whatever room the section gives it. */
 #quickstart pre {
-  margin-block: 1rem;
+  max-width: none;
+  margin-block: var(--space-md);
   text-align: left;
 }
 
@@ -110,6 +107,7 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
 }
 
 #quote blockquote {
+  max-width: none;
   margin: 0 0 1.5rem;
   padding: 0;
   border: 0;
@@ -123,7 +121,7 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
 
 #quote cite {
   display: block;
-  margin-top: 1rem;
+  margin-top: var(--space-md);
   font-size: 14px;
   font-style: normal;
   color: var(--inactive);
@@ -136,18 +134,18 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
 html[theme="dark"] #quote > p { color: var(--silver); }
 
 .section-heading {
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-xl);
 }
 
 #principles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-  gap: 2.5rem 3rem;
-  margin-bottom: 6rem;
+  gap: 2.5rem var(--space-xl);
+  margin-bottom: var(--space-3xl);
 }
 
 #principles .unit h4 {
-  margin-bottom: .5rem;
+  margin-bottom: var(--space-sm);
 }
 
 #principles .unit p {
@@ -158,11 +156,11 @@ html[theme="dark"] #principles .unit p { color: var(--silver); }
 
 #closing {
   max-width: 40rem;
-  margin-bottom: 4rem;
+  margin-bottom: var(--space-2xl);
   text-align: center;
 }
 
-/* 404 ******************************************************************************************/
+/* 404 *******************************************************************************************/
 
 #not-found {
   max-width: max-content;

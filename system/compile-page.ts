@@ -3,6 +3,7 @@
 // everything from markdown conversion to macro expansion,
 // is applied and/or orchestrated here.
 
+import { Env } from "./env.ts"
 import { log } from "./logging.ts"
 import { expandMacros } from "./macros.ts"
 import { Markdown } from "./markdown.ts"
@@ -79,6 +80,10 @@ function compileHtml(page: Page, pages: Page[]) {
   for (const script of scripts) html = html.replace("</head>", `  <script defer src="${script}"></script>\n</head>`)
 
   html = expandMacros(html, page, pages)
+
+  // Grid guides, when the build was run with --fluid or --fixed. Written onto <html> here
+  // rather than into every template, so that a template you write yourself gets them too.
+  if (Env.gridDebug) html = html.replace("<html", `<html ${Env.gridDebug}`)
 
   html = replaceHtmlTag(html, "a", (content, attrs, spaces) => {
     if (

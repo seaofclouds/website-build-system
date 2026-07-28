@@ -1,0 +1,541 @@
+/*
+  The page shell: where the masthead, the navigation, the content area and the footer sit.
+  Nothing in here styles the content itself — that's content.css.
+
+  A page picks its shape with a class on <body>:
+
+    .layout-plain    content only, held to the measure          template/default.html
+    .layout-wide     content only, held to the full page width  template/landing.html
+    .layout-nav      left navigation + content                  template/docs.html, blog.html
+    .layout-margin   content + a right gutter for marginalia    template/essay.html
+
+  This is the layer that makes one stylesheet set dress more than one site. A documentation
+  site is .layout-nav; a long-form essay site is .layout-margin; a gallery is .layout-wide.
+  Add a shape by adding a class here, not by writing a new stylesheet.
+
+  One combination is deliberately missing. .layout-nav spends columns 1-3 on navigation and
+  .layout-margin spends 10-12 on marginalia, and a page wanting both leaves nowhere for the
+  body that doesn't collide with one of them. That's also how Ink & Switch works: essays
+  have a gutter and no nav. If you want both, widen the grid first.
+
+  Please don't use a formatter (like Prettier).
+*/
+
+/* THE MASTHEAD **********************************************************************************/
+
+/*
+  Every template includes template/includes/site-header.html and it's styled here, once,
+  rather than per-template, so that it lands in exactly the same place on every page. It
+  used to be styled twice — once for landing pages, once for pages with a sidebar — and the
+  two drifted 6px apart horizontally and 8px vertically, so the header visibly jumped as
+  you moved between sections.
+
+  Wordmark on the left, section links and theme toggle on the right, all sharing a
+  baseline. The gutter matches the one <main> uses, so the wordmark lines up with the
+  content beneath it.
+
+  Fixed, so the wordmark stays put as you scroll. The outer element spans the window so its
+  background covers whatever passes underneath; the inner one holds the content to the page
+  width.
+
+  Centred with margin-inline: auto against the inline containing block, which excludes the
+  scrollbar gutter. The sidebar is centred off the same basis, so the two can't drift.
+*/
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: var(--bg);
+}
+
+/*
+  The height is set rather than left to the content, because <body> reserves exactly
+  --masthead-height above itself and the sidebar hangs from the same number. Letting the
+  content decide meant the bar came out 85px tall against 80px reserved, so the article
+  slipped underneath it — and it would have drifted again at the font-size breakpoint.
+  Padding only on top: the box-sizing reset means the height already accounts for it.
+*/
+.site-header-inner {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  height: var(--masthead-height);
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding: 1.5rem var(--page-padding) 0;
+  font-weight: 600;
+}
+
+/* Nothing starts underneath the fixed masthead */
+body {
+  padding-top: var(--masthead-height);
+}
+
+/* Pushes everything after it to the right */
+.site-header .logo {
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.site-header .logo:hover span {
+  text-decoration: underline;
+}
+
+.site-header .nav {
+  display: flex;
+  align-items: baseline;
+  gap: 1.75rem;
+  flex: none;
+}
+
+.site-header .nav a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header .nav a:hover {
+  text-decoration: underline;
+}
+
+.site-header #theme-toggle {
+  align-self: center;
+  flex: none; /* otherwise it's the first thing to get squashed when space runs out */
+}
+
+/*
+  Mark the section you're in. The is-current attribute the build system adds only matches
+  an exact URL — right for a table of contents, wrong here, where /docs/ should stay lit
+  while you're reading /docs/content/. So <body> carries the section instead.
+*/
+body[data-section="docs"] .site-header .nav-docs,
+body[data-section="blog"] .site-header .nav-blog {
+  text-decoration: underline;
+  text-underline-offset: .35em;
+  text-decoration-thickness: 2px;
+}
+
+/* Bigger font on bigger screens */
+@media (width > 500px) { .site-header-inner { font-size: 18px } }
+
+/* When the masthead runs out of room, the wordmark goes before anything else does */
+@media (width <= 560px) {
+  .site-header .logo span { display: none }
+  .site-header .nav { gap: 1.25rem }
+}
+
+/* HEADER LOGO */
+
+/*
+  Deliberately not a flex container. The surrounding header aligns its items on the text
+  baseline, and a flex container exposes its *first item's* baseline — here the <svg>,
+  which has no text in it, so the browser synthesises one from the box edge and the
+  wordmark ends up sitting higher than the nav links beside it.
+  Left as an inline box, the <a> reports the baseline of its own text, which is what we want.
+*/
+.logo svg {
+  width: 32px;
+  height: auto;
+  margin-right: .5em;
+  vertical-align: -.45em; /* optically centre the mark against the wordmark */
+}
+
+.logo:focus-visible { outline: 0; }
+.logo:focus-visible span {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (width <= 500px) {
+  .logo svg { width: 26px; }
+}
+
+/* THE SKIP LINK */
+
+/*
+  Sits offscreen above the page until focused. It lives in the masthead, so it's styled
+  here alongside it — and it has to be in a stylesheet every page loads, not just the ones
+  with a sidebar, or a landing page renders it as an ordinary visible link that takes up
+  space in the header and shoves the wordmark sideways.
+*/
+a.skip {
+  position: absolute;
+  top: 0;
+  padding: var(--space-lg) 4rem;
+  border-radius: 0 0 8px 8px;
+  color: var(--bg);
+  background: var(--fg);
+  translate: 0 -100%;
+}
+
+a.skip:focus-visible {
+  translate: 0;
+  outline: 0;
+}
+
+/* THEME TOGGLE */
+
+#theme-toggle {
+  padding: 4px;
+  border: 0;
+  border-radius: 24px;
+  color: inherit;
+  outline: 0;
+  background: none;
+  cursor: pointer;
+}
+
+@supports not (color: light-dark(#fff, #000)) {
+  #theme-toggle { display: none }
+}
+
+#theme-toggle:hover,
+#theme-toggle:focus-visible {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+#theme-toggle .dark { display: none; }
+html[theme="dark"] #theme-toggle .dark { display: inherit; }
+html[theme="dark"] #theme-toggle .light { display: none; }
+
+/* BURGER MENU */
+
+/* Checkbox that stores whether the burger menu is open */
+#burger-state {
+  display: none;
+}
+
+/* <label> that toggles the burger state checkbox.
+   Hidden by default: it only earns its place on a narrow screen that has a sidebar to
+   open. The masthead is shared by every template, and a landing page has nothing for it
+   to toggle — so only .layout-nav reveals it, below. */
+#burger {
+  display: none;
+  border-radius: 24px;
+  stroke: var(--fg);
+  cursor: pointer;
+}
+
+#burger:hover {
+  stroke: var(--bg);
+  background: var(--fg);
+}
+
+#burger svg {
+  width: 30px;
+  padding: 5px;
+}
+
+/* Toggle between the show (burger) and hide (X) icons.
+   General sibling, not adjacent — the burger sits inside the masthead. */
+#burger-state:checked       ~ * .show { display: none }
+#burger-state:not(:checked) ~ * .hide { display: none }
+
+/* THE CONTENT AREA ******************************************************************************/
+
+/*
+  The default: centred, held to the page width, with the same horizontal padding the
+  masthead uses so the first line of text starts under the wordmark. Each layout below
+  narrows or reshapes this.
+*/
+main {
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding-inline: var(--page-padding);
+}
+
+/* PLAIN — content only, held to the measure. The most unopinionated shape. */
+
+.layout-plain main {
+  max-width: calc(var(--measure) + var(--page-padding) * 2);
+  padding-top: var(--space-lg);
+}
+
+/* WIDE — the full page width. Landing pages, galleries, anything image-led. */
+
+.layout-wide main {
+  padding-top: var(--space-lg);
+}
+
+/* NAV — a fixed sidebar on the left, content to its right. */
+
+/*
+  The offset uses 100%, not 100vw, so it resolves against the same box the masthead is
+  centred in. 100vw includes the scrollbar gutter and would put the sidebar half a
+  scrollbar out of line with the wordmark above it — only on machines that show scrollbars,
+  which is a miserable way to find a bug.
+*/
+/* The navigation occupies columns 1-3 — the left band, which is the same three columns
+   the essay's marginalia occupies on the right. */
+.layout-nav .site-nav {
+  position: fixed;
+  top: var(--masthead-height);
+  left: calc((100% - var(--page-width)) / 2);
+  width: calc(var(--band) + var(--page-padding));
+
+  /*
+    Above <main>, below the masthead. <main> is position: relative (content.css needs it
+    as the containing block for marginalia) and comes later in the DOM, so with both at
+    z-index auto it paints over this — and since main's left padding spans exactly these
+    columns, the whole sidebar became unclickable while still being perfectly visible.
+  */
+  z-index: 5;
+
+  /* Left padding matches the masthead's gutter, so the links line up with the wordmark */
+  padding-left: var(--page-padding);
+  padding-right: 1.5rem;
+
+  /* Room below the last link, so it doesn't sit flush against the bottom of the window */
+  padding-bottom: var(--space-lg);
+
+  /*
+    max-height rather than height: the sidebar is as tall as its links and no taller, so on
+    a normal window it isn't a scroll container at all. It only becomes one when the list
+    genuinely doesn't fit.
+
+    And no overscroll-behavior: contain here. Containing the scroll sounds tidy, but it
+    stops the wheel from reaching the page — so on a short window, where the sidebar does
+    overflow, pointing at it and scrolling moved the sidebar a few pixels and then nothing
+    at all, with the article refusing to move. Chaining to the page is what people expect.
+  */
+  max-height: calc(100% - var(--masthead-height));
+  overflow: hidden auto;
+  scrollbar-gutter: stable;
+}
+
+/*
+  3 · 0 · 6 · 3 — navigation, body, marginalia, with no space column between the nav and
+  the body. Four regions don't fit twelve columns with a gap between each, so this spends
+  the spare column on the body rather than on separation: 34rem of measure instead of
+  28rem, which is the difference between a comfortable line and a cramped one. The nav is
+  a fixed sidebar with its own visual separation, so a 2rem gap there costs little.
+
+  The cost, and it's real: the body sits 2rem from its marginalia, against 8rem on the
+  essay layout. Marginalia here reads closer to the text than it does on /docs/styleguide/.
+*/
+.layout-nav main {
+  --measure: calc(6 * var(--grid-col) + 5 * var(--grid-gap));   /* 6 cols — 34rem */
+  --content-gutter: calc(3 * var(--grid-step));                 /* cols 10-12, plus the gap */
+  padding-left: calc(var(--page-padding) + 3 * var(--grid-step));
+  padding-right: calc(var(--page-padding) + var(--content-gutter));
+}
+
+/* Once the page is narrower than it is wide, the sidebar can't hang off the centred box */
+@media (width <= 72em) {
+  .layout-nav .site-nav { left: 0 }
+}
+
+/* The burger exists to open this sidebar, so it only appears where there is one */
+@media (width <= 800px) {
+  .layout-nav #burger { display: block }
+
+  .layout-nav .site-nav {
+    position: relative;
+    top: 0;
+    width: auto;
+    max-height: none;
+    max-width: 24rem;
+    margin-inline: auto;
+    padding-left: 0;
+    overflow: visible;
+  }
+
+  /* General sibling, not adjacent — the masthead sits between the checkbox and the nav */
+  #burger-state:not(:checked) ~ .site-nav { display: none }
+
+  #burger-state:checked ~ .site-nav {
+    border-bottom: 2px solid var(--separator);
+    padding-bottom: var(--space-md);
+    margin-bottom: 2.5rem;
+  }
+
+  .layout-nav main { padding-inline: var(--space-lg) }
+}
+
+@media (width <= 500px) {
+  .layout-nav main { padding-inline: var(--space-md) }
+}
+
+/* MARGIN — content with a gutter on the right for asides and captions. */
+
+/*
+  The body takes columns 1-8 and reserves 9-12: the space column, then the marginalia
+  band. Setting --content-gutter is what opens it; content.css reads it to position the
+  marginalia, and to let a `wide` figure reclaim the space.
+
+  Note that the custom property is *set* inside a media query below. You can't read a
+  custom property in a media query condition, but you can assign one in a block — which is
+  what keeps the geometry in one place instead of duplicated at each breakpoint.
+*/
+/*
+  Body text starts at column 2, leaving column 1 as a rail. The gutter it reserves on the
+  right is columns 9-12 — the space column plus the marginalia band — which is the same
+  four columns the nav layout spends on its left. So the two layouts are mirror images on
+  one grid, and both share the masthead's page box rather than centring in a narrower one
+  of their own.
+*/
+.layout-margin main {
+  --content-gutter: calc(4 * var(--grid-step));
+  /* Body from column 1. Add `+ var(--rail) + var(--grid-gap)` here, and drop --measure to
+     7 columns, to open the rail — see variables.css. */
+  padding-left: var(--page-padding);
+  padding-right: calc(var(--page-padding) + var(--content-gutter));
+  padding-top: var(--space-lg);
+}
+
+/* Below the breakpoint there's no room for a gutter, so everything falls back to block
+   flow. 46rem is a literal here and in content.css, and has to stay one — see above. */
+@media (width <= 46rem) {
+  .layout-margin main {
+    --content-gutter: 0rem;
+    padding-left: var(--page-padding);
+  }
+}
+
+/* SIDEBAR NAVIGATION ****************************************************************************/
+
+/*
+  <nav class="site-nav">, not <aside>. The bare element is reserved for marginalia in the
+  right gutter — see content.css — and when this was an <aside> the two collided: every
+  marginalia rule applied to the navigation and vice versa.
+*/
+
+/*
+  Group labels — GUIDE, STYLE, STYLEGUIDE. Uppercased in CSS rather than in the markdown,
+  so the source stays readable and a screen reader doesn't spell them out.
+
+  STYLEGUIDE is a label that happens to be a link, because unlike the other two it has a
+  page of its own; the headings beneath it are anchors into that page and read as its
+  contents, the way the page links read as the contents of GUIDE.
+*/
+.site-nav p {
+  margin-bottom: var(--space-sm);
+  color: var(--inactive);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.site-nav p a {
+  display: inline;
+  color: inherit;
+}
+
+/* The {{# comment }} at the top of the include leaves an empty paragraph behind, which
+   would otherwise open the list with a label-sized gap. */
+.site-nav p:empty {
+  display: none;
+}
+
+.site-nav p + p {
+  margin-top: var(--space-md);
+}
+
+.site-nav a {
+  position: relative;
+  display: block;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  text-decoration: underline;
+}
+
+/*
+  The sidebar is a flat list of links, not an outline. The markdown that generates it uses
+  a heading and a list because that's the natural way to write it — but a list's indent
+  would set the links a third of a column off the grid line the wordmark sits on, and a
+  navigation of eight items doesn't need hierarchy to be legible.
+*/
+.site-nav ul {
+  margin-left: 0;
+}
+
+.site-nav li {
+  list-style-type: none;
+}
+
+/*
+  Highlight the page you're on, and the section within it. is-current is written by the
+  build (it knows every URL); is-here is written by nav.js as you scroll, because the
+  build can't know which heading you're looking at.
+
+  Scoped to the sidebar — the same is-current attribute appears in the masthead, where the
+  underline treatment above is what marks the current section instead.
+*/
+.site-nav a:is([is-current], [is-here])::before {
+  content: "";
+  position: absolute;
+  top: -.3em;
+  left: -.5em;
+  width: calc(100% + 1em);
+  height: calc(100% + .4em);
+  border-radius: 2px;
+  background: var(--current);
+  z-index: -1;
+}
+
+.subscribe {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: start;
+  align-items: baseline;
+  gap: .7em;
+  margin-left: -.5em;
+  padding-inline: .5em;
+  width: calc(100% + 1em);
+  margin-bottom: .8rem;
+  padding-bottom: .7rem;
+  border-bottom: 2px solid var(--separator);
+}
+
+.subscribe strong {
+  font: 500 14px / 14px var(--font-mono);
+  color: var(--inactive);
+}
+
+/* PREVIOUS / NEXT *******************************************************************************/
+
+/* The pair of cards at the foot of a docs page or blog post. */
+
+.page-nav {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.page-nav a {
+  flex: 0 1 50%;
+  padding: var(--space-md);
+  border: 2px solid var(--separator);
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.page-nav a:hover {
+  outline: 2px solid currentColor;
+  outline-offset: -1px;
+}
+
+.page-nav span {
+  display: block;
+  color: var(--inactive);
+}
+
+.page-nav .right {
+  margin-left: auto;
+}
+
+/* FOOTER ****************************************************************************************/
+
+footer {
+  text-align: center;
+  padding: var(--space-lg) var(--space-md) var(--space-xl);
+  color: var(--footer-fg);
+  font-size: 14px;
+}

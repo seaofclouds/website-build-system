@@ -24,9 +24,20 @@ Here's the whole of `template/default.html`:
 
 `{{content}}` is where the page goes. Everything else is ordinary HTML.
 
-The starter ships four templates plus one for redirects: `default` (bare), `landing`
-(wide, no sidebar), `docs` (sidebar with a table of contents), and `blog` (sidebar
-listing posts by date). They're a starting point, not a set — add and remove freely.
+The starter ships five templates plus one for redirects:
+
+| Template | Shape |
+| --- | --- |
+| `default` | bare — content held to the measure, nothing else |
+| `landing` | wide, no sidebar. The home page and the 404 |
+| `docs` | a sidebar with a table of contents |
+| `blog` | a sidebar listing posts by date |
+| `essay` | a gutter down the right, for asides and figure captions |
+
+They're a starting point, not a set — add and remove freely.
+
+Each one sets a `layout-*` class on `<body>`, which is what actually decides the page's
+shape. See [Stylesheets](/docs/styles/) for what the classes do and how to add one.
 
 ## Templates have frontmatter too
 
@@ -35,7 +46,7 @@ A template can carry its own frontmatter, which applies to every page using it:
 ```html
 ---
 header_anchors: true
-styles: /static/docs.css
+styles: /static/landing.css
 ---
 ```
 

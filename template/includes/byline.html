@@ -1,0 +1,12 @@
+{{# The byline, which lands in the right-hand gutter like any other aside.
+
+    move-up: 2 pulls it up two body lines so its first line sits beside the first line of
+    the opening paragraph rather than two lines below it. If your <h1> wraps to two lines,
+    raise it to 3.
+
+    Delete this file and the {{include: byline}} in template/essay.html if your essays
+    don't want one. }}
+<aside class="meta move-up" style="--move-up: 2">
+  <h6>{{month-year}}</h6>
+  {{authors?}}
+</aside>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="Diagram: the body column spanning grid columns 1 to 8, an empty space column, and a three-column marginalia band holding an aside.">
+  <style>
+    .rule  { stroke: #b4b4b4; stroke-width: 1.5; }
+    .dash  { stroke: #cdcdcd; stroke-width: 1.5; stroke-dasharray: 5 5; }
+    .fill  { fill: #ebebeb; }
+    .line  { fill: #c4c4c4; }
+    .label { fill: #6f6f6f; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 17px; }
+    .small { fill: #8f8f8f; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; }
+  </style>
+
+  <!-- body: columns 2-8, 40rem of the 64rem span this diagram covers -->
+  <rect class="fill" x="0" y="52" width="562" height="230" rx="3"/>
+  <g class="line">
+    <rect x="24" y="80"  width="514" height="9" rx="4"/>
+    <rect x="24" y="105" width="514" height="9" rx="4"/>
+    <rect x="24" y="130" width="466" height="9" rx="4"/>
+    <rect x="24" y="167" width="514" height="9" rx="4"/>
+    <rect x="24" y="192" width="514" height="9" rx="4"/>
+    <rect x="24" y="217" width="514" height="9" rx="4"/>
+    <rect x="24" y="242" width="340" height="9" rx="4"/>
+  </g>
+
+  <!-- column 9: nothing flows here -->
+  <line class="dash" x1="562" y1="52" x2="562" y2="282"/>
+  <line class="dash" x1="675" y1="52" x2="675" y2="282"/>
+
+  <!-- an aside, absolutely positioned into the band, level with the second paragraph -->
+  <g fill="#a8a8a8">
+    <rect x="675" y="167" width="225" height="7" rx="3"/>
+    <rect x="675" y="186" width="225" height="7" rx="3"/>
+    <rect x="675" y="205" width="150" height="7" rx="3"/>
+  </g>
+
+  <g class="rule">
+    <line x1="0" y1="34" x2="562" y2="34"/>
+    <line x1="0" y1="28" x2="0" y2="40"/>
+    <line x1="562" y1="28" x2="562" y2="40"/>
+    <line x1="675" y1="34" x2="900" y2="34"/>
+    <line x1="675" y1="28" x2="675" y2="40"/>
+    <line x1="900" y1="28" x2="900" y2="40"/>
+  </g>
+
+  <text class="label" x="281" y="22" text-anchor="middle">body — cols 1–8, 46rem</text>
+  <text class="small" x="618" y="22" text-anchor="middle">col 9</text>
+  <text class="label" x="787" y="22" text-anchor="middle">marginalia — cols 10–12, 16rem</text>
+</svg>

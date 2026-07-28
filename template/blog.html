@@ -2,21 +2,18 @@
 Blog posts, with a sidebar listing every post by date.
 Headings become linkable anchors, so people can link to a section of a long post.
 header_anchors: true
-styles: /static/docs.css
 ---
 
 <!doctype html>
 <html lang="en">
 <head>{{include: head-stuff}}</head>
-<body data-section="{{section}}">
+<body class="layout-nav" data-section="{{section}}">
   <input type="checkbox" id="burger-state" />
   {{include: site-header}}
-  <aside>
-    <nav>
-      <div class="subscribe"><strong>Subscribe via</strong> <a href="/index.xml">RSS</a></div>
-      {{ blog-sidebar }}
-    </nav>
-  </aside>
+  <nav class="site-nav">
+    <div class="subscribe"><strong>Subscribe via</strong> <a href="/index.xml">RSS</a></div>
+    {{ blog-sidebar }}
+  </nav>
   <main id="content">
     <h1>{{title?}}</h1>
     {{content}}

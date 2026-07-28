@@ -1,0 +1,245 @@
+/*
+  Every custom property used anywhere on the site is declared here, and only here.
+
+  That rule earns its keep because of how CSS handles a typo: an undefined custom property
+  fails *silently*. Misspell one — `--colour-text` where you meant `--color-text` — and the
+  declaration reading it doesn't warn and doesn't fall back. It's dropped at computed-value
+  time and the rule just quietly does nothing. The only defence is a single list you can
+  diff "what exists" against "what's used":
+
+      grep -ohr 'var[(]--[a-z0-9-]*' content/static | sed 's/var[(]//' | sort -u
+
+  Anything that prints and isn't declared below is a typo. (The pattern is written with
+  [(] rather than a bare ( so that this comment doesn't match its own search.)
+
+  1. Please don't use a formatter (like Prettier). Laid out by hand, with intentional
+     whitespace and occasional one-lining to aid readability.
+  2. This is a starting point, not a design system. It's deliberately quiet so that it
+     doesn't fight whatever you replace it with. Start here — most of what you want to
+     change about how the site looks is a value in this file.
+*/
+
+html {
+
+/* PAGE GEOMETRY *********************************************************************************/
+
+  /*
+    ONE GRID, TWELVE COLUMNS
+
+    Every region on every page is a whole number of columns on the same grid, so the
+    masthead, the navigation, the body text and the marginalia all hang off one set of
+    vertical lines. The split follows the Aria notebook — 1 rail · 7 body · 1 space · 3
+    marginalia — with the rail folded into the body, because this site has no section
+    marks to put in one and an empty rail is just an indent.
+
+      essay   1 . . . . . . . . 8        9         10 . 11 . 12
+              body                    │  space  │  marginalia
+
+      docs    1 . 2 . 3        4        5 . . . . . . . . 12
+              navigation    │  space  │  body
+
+    Both layouts use all twelve columns. The body is 8 columns either way, and the
+    navigation is the marginalia band mirrored — which is what makes a documentation page
+    and an essay read as one grid rather than two designs sharing a header.
+
+    The numbers come out round, which is the reason for the 1rem page padding:
+
+      --page-width  72rem  =  2 x 1rem padding  +  70rem of grid
+      70rem                =  12 columns x 4rem  +  11 gaps x 2rem
+
+    Everything below is derived from those two lines. Change --grid-col or --grid-gap and
+    the whole page follows; the only thing you must keep in step is --page-width, which is
+    12 columns + 11 gaps + 2 paddings.
+  */
+  --page-width: 72rem;
+  --page-padding: 1rem;
+
+  --grid-columns: 12;
+  --grid-col: 4rem;
+  --grid-gap: 2rem;
+
+  /* One column plus its gap — the distance from one column's left edge to the next. */
+  --grid-step: calc(var(--grid-col) + var(--grid-gap)); /* 6rem */
+
+  /* The regions, as spans of N columns including the gaps inside them. */
+  --measure: calc(8 * var(--grid-col) + 7 * var(--grid-gap));       /* 8 cols — 46rem */
+  --band:    calc(3 * var(--grid-col) + 2 * var(--grid-gap));       /* 3 cols — 16rem */
+
+  /*
+    The rail is column 1 — the narrow column the Aria notebook puts section marks in
+    (§II.1) and running heads. Nothing here uses it yet, so the body absorbs it and runs
+    from column 1. It stays declared because the affordance is the point: to turn it on,
+    drop --measure to 7 columns and add one --grid-step to .layout-margin's padding-left,
+    and every region downstream still lands on the same lines.
+  */
+  --rail: var(--grid-col);                                          /* 1 col  —  4rem */
+
+  /* --band is deliberately one token, not two: the marginalia and the navigation are the
+     same three columns, mirrored. Naming them separately would let them drift. */
+
+  /* The fixed masthead. Set rather than left to the content, because <body> reserves
+     exactly this much space above itself and the sidebar hangs from the same number. */
+  --masthead-height: 5rem;
+
+  /*
+    How much room <main> reserves on its right for marginalia: the space column plus the
+    marginalia band, i.e. columns 9-12. Zero by default — most layouts don't have
+    marginalia — and set by .layout-margin in layout.css. Declared here so that every
+    layout has a defined value rather than inheriting one from somewhere unclear.
+  */
+  --content-gutter: 0rem;
+
+  /*
+    The grid is a convention, not a display: grid. Nothing below sets one. Regions are
+    sized and offset in whole columns using the tokens above, which means the marginalia
+    can stay absolutely positioned — and that matters, because an aside has to sit level
+    with an arbitrary *line* of a paragraph rather than starting its own grid row.
+
+    Run `./site --fluid` or `./site --fixed` to paint the column guides over every page
+    and check what actually lines up.
+  */
+
+/* SPACING ***************************************************************************************/
+
+  /*
+    One ramp, reconciling two systems that arrived here separately.
+
+    The reading layout counts in body lines — 24px, the line-height of body text — so that
+    an aside pulled up by N lines lands exactly on a line of the paragraph beside it. The
+    gallery layouts count in 8pt steps: 4, 8, 16, 32, 48, 64, 96.
+
+    24 is divisible by 8, so one ramp holds both: 4, 8, 16, *24*, 32, 48, 64, 96. Use
+    --baseline for anything that has to land on the text rhythm, and the --space-* steps
+    for everything else.
+  */
+  --baseline: 1.5rem;  /* 24px — the vertical rhythm unit */
+
+  /*
+    How many body lines an aside is pulled up by. The {{aside N}} macro writes this onto
+    each aside as an inline style; the 0 here is the fallback for a .move-up element that
+    doesn't carry one, which would otherwise make the whole calc() invalid.
+  */
+  --move-up: 0;
+
+  --space-xs:  .25rem; /*  4px */
+  --space-sm:  .5rem;  /*  8px */
+  --space-md:  1rem;   /* 16px */
+  --space-lg:  2rem;   /* 32px */
+  --space-xl:  3rem;   /* 48px */
+  --space-2xl: 4rem;   /* 64px */
+  --space-3xl: 6rem;   /* 96px */
+
+/* TYPOGRAPHY ************************************************************************************/
+
+  /*
+    The system font stack. No webfont is downloaded, nothing blocks first paint, and the
+    site looks native on every platform. Change these to change every font on the site.
+  */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /*
+    Want a serif body, the way Ink & Switch and automerge.org read? Drop the font files
+    into /fonts, run the build, add the @font-face in base.css, then uncomment this and
+    swap `body` over to it. See /docs/assets/ for the whole procedure.
+
+    --font-serif: "Merriweather", Charter, Cambria, Georgia, serif;
+  */
+
+/* COLOUR ****************************************************************************************/
+
+  /*
+    The palette is achromatic on purpose — a starter shouldn't pick your brand colour for
+    you. Change --accent first: it's the only place a hue is meant to go, and content.css
+    already hangs prose link hovers off it, so one value colours every link on the site.
+  */
+  --true-white: #fff;
+  --white: #fcfcfc;
+  --off-white: #f2f2f2;
+  --silver: #ddd;
+  --grey: #888;
+  --smoke: #555;
+  --slate: #222;
+  --deep: #111;
+  --black: #000;
+
+  /* This enables the light-dark() function in modern browsers */
+  color-scheme: light dark;
+
+  /* Fallback colours for old browsers that don't support light-dark() */
+  --bg: var(--white);
+  --fg: var(--slate);
+  --accent: var(--slate);
+  --current: var(--off-white);
+  --inactive: var(--grey);
+  --separator: var(--silver);
+  --footer-fg: var(--smoke);
+  --stark-bg: var(--true-white);
+  --stark-shadow: var(--off-white);
+  --stark-sep: var(--off-white);
+  --sunken: var(--off-white);
+  --sunken-edge: var(--silver);
+
+  /* And, somewhat redundantly (sigh), here are the colours for light and dark themes. */
+  --bg: light-dark(var(--white), var(--slate));
+  --fg: light-dark(var(--slate), var(--white));
+  --accent: light-dark(var(--slate), var(--white));
+  --current: light-dark(#eee, #333);
+  --inactive: light-dark(var(--grey), var(--grey));
+  --separator: light-dark(var(--silver), #404040);
+  --footer-fg: light-dark(var(--smoke), var(--grey));
+  --stark-bg: light-dark(var(--true-white), var(--deep));
+  --stark-shadow: light-dark(var(--off-white), transparent);
+  --stark-sep: light-dark(var(--off-white), var(--slate));
+
+  /*
+    Recessed surfaces — gutter captions, callouts, anything that should read as sitting
+    slightly behind the page. Ink & Switch hardcodes this as #f2f2f2; here it has to theme,
+    or every figcaption on the site is a bright grey slab in dark mode.
+  */
+  --sunken: light-dark(var(--off-white), #2e2e2e);
+  --sunken-edge: light-dark(var(--silver), #454545);
+
+  /*
+    Callouts. These are the defaults, used by .info; .caution overrides them in
+    content.css, and a callout variant you add would do the same.
+  */
+  --callout-bg: var(--sunken);
+  --callout-edge: var(--sunken-edge);
+
+  /* Use these colours */
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* In supported browsers, when a theme is chosen explicitly, use it. */
+html[theme="light"] { color-scheme: light; }
+html[theme="dark"] { color-scheme: dark; }
+
+/* GRID DEBUG OVERLAYS ***************************************************************************/
+
+/*
+  Paint the column guides over the page so you can check whether things line up. Enable
+  with `./site --fluid` or `./site --fixed` (one at a time), or by adding the attribute to
+  <html> by hand in the web inspector.
+*/
+
+/* The twelve columns, painted where they actually fall: a --grid-col stripe every
+   --grid-step, inside the page box. */
+html[fluid] body,
+html[fixed] body {
+  background-image: repeating-linear-gradient(
+    to right,
+    light-dark(#fee, #322) 0 var(--grid-col),
+    transparent var(--grid-col) var(--grid-step)
+  );
+  background-size: calc(var(--page-width) - var(--page-padding) * 2) 100%;
+  background-position: top center;
+  background-repeat: repeat-y;
+}
+
+/* Outline every element, to see what's actually taking up space. Added alongside the above. */
+html[outline] * {
+  outline: 1px solid #f004;
+  outline-offset: -1px;
+}

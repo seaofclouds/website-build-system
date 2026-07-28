@@ -1,0 +1,26 @@
+---
+Long-form pages with a gutter down the right-hand side. Asides and figure captions sit in
+that gutter, level with the paragraph they annotate, rather than interrupting the text.
+This is the shape Ink & Switch essays use, and the one the figure vocabulary in
+content.css was designed against — see /styleguide/ for everything it can do.
+
+Requires a `date` in the page's frontmatter, for the byline. `authors` is optional.
+header_anchors: true
+---
+
+<!doctype html>
+<html lang="en">
+<head>{{include: head-stuff}}</head>
+<body class="layout-margin" data-section="{{section}}">
+  {{# No sidebar to open, so the burger stays hidden — but the checkbox is kept so that
+      every template has the same shape and the masthead include works unchanged. }}
+  <input type="checkbox" id="burger-state" />
+  {{include: site-header}}
+  <main id="content">
+    <h1>{{title?}}</h1>
+    {{include: byline}}
+    {{content}}
+    <footer>{{include: footer}}</footer>
+  </main>
+</body>
+</html>
