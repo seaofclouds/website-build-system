@@ -185,15 +185,8 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   margin-top: var(--space-xl);
 }
 
-/* The date belongs to the title above it rather than to the paragraph below, so it sits
-   nearer the one than the other. Left at base.css's 16px it lands equidistant and reads as
-   belonging to neither — the same failure the byline's move-up exists to avoid. */
-.post-index h1 {
-  margin-bottom: var(--space-sm);
-}
-
 /*
-  Nothing else here styles the title, the date or the excerpt, and that's the point. The row
+  Nothing here styles the title, the date or the excerpt, and that's the point. The row
   is a real <h1> at the size base.css says an h1 is, the date is base.css's h6 label — the
   same element and the same rule the byline on a post uses — the excerpt is a paragraph, and
   the link carries base.css's `plain` class so it isn't underlined.
@@ -334,18 +327,9 @@ figcaption li + li {
   margin-top: 0;
 }
 
-/*
-  The byline aside gets a figcaption's full padding, so its text starts at the same
-  horizontal indent. The h6 is then pulled up by negative margin so its small-cap baseline
-  lands on body line 1, and each <li> (inheriting the 24px line-height) lands on the next.
-*/
 /* No indent: the byline is marginalia like any other, and its text starts on column 10. */
 main aside.meta {
   padding: 0;
-}
-
-main aside.meta h6 {
-  margin: -14px 0 0;
 }
 
 /*
@@ -430,6 +414,20 @@ main aside.meta h6 {
   /* See the {{ aside N }} note above — only meaningful out of flow. */
   :is(.layout-margin, .layout-nav) .move-up {
     margin-top: calc(-1 * var(--baseline) * var(--move-up));
+  }
+
+  /*
+    The byline's date, pulled up so its small-cap baseline lands on body line 1 and each
+    line under it lands on the next. Like .move-up above, this is only meaningful out in the
+    gutter: there's a body line to land on there, and in normal flow there isn't.
+
+    It used to sit outside this block and apply at every width, which squashed the date to
+    2px under the title once the byline dropped into flow — against 16px on the blog index,
+    where the same date under the same title is set by the same rule. Two dates that were
+    supposed to be identical, differing by a number nothing had chosen.
+  */
+  main aside.meta h6 {
+    margin: -14px 0 0;
   }
 }
 
