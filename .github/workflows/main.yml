@@ -1,21 +1,14 @@
 name: Build and Deploy
 
-# Builds the site and publishes it to Cloudflare Pages on every push to main.
+# Builds the site and publishes it to Cloudflare Workers on every push to main.
 #
-# To use this you need two repository secrets, under Settings → Secrets and variables
-# → Actions:
+# What gets deployed, and where, is in wrangler.jsonc — this file only builds public/
+# and hands it to wrangler. To deploy under a different name, edit that file, not this one.
 #
-#   CLOUDFLARE_API_TOKEN    an API token with the "Cloudflare Pages — Edit" permission
+# You need two repository secrets, under Settings → Secrets and variables → Actions:
+#
+#   CLOUDFLARE_API_TOKEN    an API token from the "Edit Cloudflare Workers" template
 #   CLOUDFLARE_ACCOUNT_ID   the account ID, shown by `wrangler whoami`
-#
-# and a Pages project to deploy into, which you make once with:
-#
-#   wrangler pages project create <name> --production-branch main
-#
-# Then set PROJECT below to that name. Pages serves it at <name>.pages.dev, at the root
-# of the domain — which this build needs, because it emits root-relative paths like
-# /static/base.css and has no notion of a base path. A host that serves the site from a
-# subdirectory will 404 on every stylesheet and every internal link.
 #
 # Deploying somewhere else instead? Delete this file. The build output is a plain folder
 # of static files in public/, which any host will serve.
@@ -27,9 +20,6 @@ on:
 
 permissions:
   contents: read
-
-env:
-  PROJECT: theseus-build-system
 
 jobs:
   deploy:
@@ -65,9 +55,8 @@ jobs:
       # The build reports broken links, missing frontmatter and failed macros by printing
       # to the terminal — it does not fail. Read the log above this step; a clean build
       # prints nothing between "Build" and here.
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy public --project-name=${{ env.PROJECT }} --branch=${{ github.ref_name }}

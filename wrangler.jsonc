@@ -1,0 +1,29 @@
+{
+  // Deployment config for Cloudflare Workers. `wrangler deploy` reads this and uploads
+  // the built site in public/ as static assets — there's no Worker script, so there's no
+  // `main` field and nothing runs per-request.
+  //
+  // Deploying somewhere else instead? Delete this file. The build output is a plain
+  // folder of static files, which any host will serve.
+
+  "name": "theseus",
+  "compatibility_date": "2026-07-27",
+
+  // Serves the Worker at <name>.<your-subdomain>.workers.dev, at the root of the domain.
+  // That root matters: the build emits paths like /static/base.css and has no notion of a
+  // base path, so anything serving the site from a subdirectory breaks every stylesheet
+  // and every internal link.
+  "workers_dev": true,
+
+  "assets": {
+    "directory": "./public",
+
+    // Pages used to guess this by looking for a 404.html. Workers makes it explicit, on
+    // purpose — without this line a missing page returns a bare 404 with no body, and
+    // content/404.html is uploaded but never served.
+    "not_found_handling": "404-page"
+
+    // html_handling defaults to "auto-trailing-slash", which is what makes the clean URLs
+    // work: /docs/ resolves to public/docs/index.html. Left unset deliberately.
+  }
+}

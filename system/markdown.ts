@@ -11,6 +11,7 @@ import { splitOnce, trimAll } from "./util.ts"
 import "prismjs/components/prism-bash.js"
 import "prismjs/components/prism-css.js"
 import "prismjs/components/prism-json.js"
+import "prismjs/components/prism-json5.js" // for jsonc — plain json has no comment token
 import "prismjs/components/prism-jsx.js" // We don't use jsx, but need to import it for tsx to work
 import "prismjs/components/prism-markup.js" // html, xml, svg
 import "prismjs/components/prism-toml.js"

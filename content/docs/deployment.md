@@ -1,6 +1,6 @@
 ---
 title: Deployment
-description: What you need to build the site, and how to host it on GitHub Pages, Cloudflare, or Netlify.
+description: What you need to build the site, and how to host it on Cloudflare, Netlify, or anywhere that serves files.
 template: docs
 ---
 
@@ -34,42 +34,62 @@ and the output directory is always `public`.
 for you, which is handy locally and unnecessary on a build server where you've already
 pinned one.}}
 
-## Cloudflare Pages
+## Cloudflare Workers
 
-This is what the starter ships configured for, and there are two ways in.
+This is what the starter ships configured for. `wrangler.jsonc` at the repo root says what
+to deploy and under what name:
 
-**Push it yourself.** Make the project once, then deploy the built folder whenever you
-like — no dashboard, no repo connection:
-
-```bash
-wrangler pages project create my-site --production-branch main
-./site build
-wrangler pages deploy public --project-name=my-site
+```json5
+{
+  "name": "theseus",
+  "compatibility_date": "2026-07-27",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  }
+}
 ```
 
-Pages serves it at `my-site.pages.dev`, and the name has to be free across all of
-Cloudflare — if it's taken you'll be handed a suffixed one like `my-site-7fy`, so check
-the name you get before you rely on it.
+There's no `main` field, so no Worker script runs — this is an assets-only Worker, and
+requests are served straight from the uploaded files.
 
-**Or let CI do it.** `.github/workflows/main.yml` runs that same build and deploy on every
-push to `main`. Set `PROJECT` at the top of the file to your project name, and add two
-repository secrets under **Settings → Secrets and variables → Actions**:
+**Push it yourself.** Two commands, no dashboard:
+
+```bash
+./site build
+wrangler deploy
+```
+
+That serves the site at `<name>.<your-subdomain>.workers.dev`, at the root of the domain.
+
+**Or let CI do it.** `.github/workflows/main.yml` runs the same build and deploy on every
+push to `main`. It needs two repository secrets, under
+**Settings → Secrets and variables → Actions**:
 
 | Secret | Value |
 | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | An API token with the **Cloudflare Pages — Edit** permission |
+| `CLOUDFLARE_API_TOKEN` | A token from the **Edit Cloudflare Workers** template |
 | `CLOUDFLARE_ACCOUNT_ID` | Your account ID, which `wrangler whoami` prints |
 
-**Connecting the repo in the Cloudflare dashboard** works too, and builds on Cloudflare's
-machines instead of GitHub's. Set the build command to
-`npm ci && node --disable-warning=ExperimentalWarning system/app.ts build`, the output
-directory to `public`, and add an environment variable `NODE_VERSION` of `24` — without it
-the build runs on whatever Cloudflare defaults to and the TypeScript won't execute.
+{{caution: `not_found_handling` is the line to keep. Cloudflare Pages used to detect a
+`404.html` and wire it up for you; Workers makes it explicit so a misconfiguration can't
+pass silently. Leave it out and `content/404.html` still uploads — it just never gets
+served, and a missing page returns an empty 404 instead.}}
 
-{{info: Whichever route you take, set `domain` in `system/env.ts` to the domain you end up
-on. It's only used where a URL has to be absolute — the sitemap, the RSS feed, the Open
-Graph tags — so getting it wrong doesn't break the site, it just publishes a feed that
-points somewhere else.}}
+{{info: Set `domain` in `system/env.ts` to the domain you end up on. It's only used where
+a URL has to be absolute — the sitemap, the RSS feed, the Open Graph tags — so getting it
+wrong doesn't break the site, it just publishes a feed pointing somewhere else.}}
+
+### Coming from Pages
+
+Cloudflare's own guidance now points new static projects at Workers rather than Pages, and
+there's an official [migration guide](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/).
+For a site like this one it's a small move: `wrangler deploy` instead of
+`wrangler pages deploy`, and `assets.directory` in `wrangler.jsonc` instead of
+`pages_build_output_dir`. The two behaviour differences worth knowing are the
+`not_found_handling` above, and that you get a `workers.dev` subdomain rather than a
+`pages.dev` one.
 
 ## GitHub Pages
 
@@ -120,7 +140,7 @@ either configure it to or set `clean: false` on your pages and link to the `.htm
 [Redirects](/docs/links/) are client-side by default — a small HTML page with a meta
 refresh — because that works on every host without configuration.
 
-Netlify and Cloudflare Pages both read a `_redirects` file from the root of the published
+Cloudflare Workers and Netlify both read a `_redirects` file from the root of the published
 folder, which gets you real 301s instead. Put it at `content/_redirects` and it'll be
 copied through:
 
