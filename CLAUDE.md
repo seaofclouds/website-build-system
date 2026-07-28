@@ -49,7 +49,9 @@ There is no test suite, no linter, and no typecheck in CI. Prettier config exist
 
 **`./site build` exits 0 even when the build is broken.** Nearly every problem — broken links, missing frontmatter, unknown templates, missing includes, macro failures — is reported through `log()` in the terminal and does not affect the exit code. Some failures also inject a red `{{macro}}` into the rendered HTML rather than failing the build.
 
-So: **run `./site build` and read the terminal output.** A clean build means zero warnings printed, not exit 0. Because `validation.ts` checks every internal link and anchor against the generated `public/` tree, a genuinely silent build is strong evidence the content graph is correct.
+So: **run `./site build` and read the terminal output.** A clean build means zero warnings printed, not exit 0. Because `validation.ts` checks every internal link, anchor and asset path against the generated `public/` tree, a genuinely silent build is strong evidence the content graph is correct.
+
+Don't run `./site build` while `./site` (dev) is watching — both wipe and rewrite `public/`, and the race surfaces as `EEXIST: file already exists, open 'public/index.xml'`. Stop the dev server, or read its output instead of starting a second build.
 
 ## Architecture
 

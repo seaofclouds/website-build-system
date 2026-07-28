@@ -17,13 +17,26 @@ caught immediately, which is the kind of breakage that otherwise survives for ye
 
 It also warns when a published page links to a draft.
 
+Assets are checked the same way, so a mistyped image path is caught rather than showing
+up as a broken picture later:
+
+```
+Broken asset in content/blog/hello.md: /photos/portriat.jpg
+```
+
+That covers anything with a `src` — images, video, `<source>`, `<script>` — and any link
+naming a file rather than a clean URL, which is how stylesheets and plain `.html` pages
+get checked.
+
 {{info: This is the reason a silent build is meaningful. The checks run against the
 finished `public/` folder, so if nothing is printed, the whole content graph genuinely
-resolves.}}
+resolves — every page, every anchor, every file it points at.}}
 
-Two things aren't checked, both noted in `system/validation.ts`: external links, and any
-link containing a dot. The second is a blunt way of skipping `.css` and `.png` and
-`https://` — it means a link to a plain `.html` file is skipped too.
+What isn't checked is anything off-site. A link to another domain, a `mailto:`, an inline
+`data:` URI — none of those are ours to verify, so they're skipped rather than guessed at.
+
+{{caution: A path is checked as text, so it's the *spelling* that's verified, not the
+file's usefulness. A 0-byte image passes. So does one committed at 4000px wide.}}
 
 ## Redirects
 

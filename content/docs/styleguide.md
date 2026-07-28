@@ -1,7 +1,6 @@
 ---
 title: Styleguide
 template: docs
-date: 2026-07-27
 description: Every layout class the stylesheets support — asides, figures, tiles, grids, arrangements, spacing.
 ---
 

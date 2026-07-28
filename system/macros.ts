@@ -88,7 +88,7 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           }
 
           // {{figure ![](src.ext)}} — A <figure> with some media (image or video)
-          // {{figure wide frame ![](src.ext) }} — with class="wide frame"
+          // {{figure wide border ![](src.ext) }} — with class="wide border"
           // {{figure autoplay ![](src.mp4) }} — the "autoplay" class is special, and adds "autoplay loop muted" to the <video>
           // {{figure ![Photograph of a brown dog on a grassy field](src.ext)}} — with alt text
           // {{figure ![](src.ext) *This* image is, as they say, "cute"}} — with caption, which can be multiline and contain md/html

@@ -8,6 +8,7 @@ import { getValuesOfAttributes, withTrailingSlash } from "./util.ts"
 
 export function runValidityChecks(pages: Page[]) {
   checkForBrokenLinks(pages)
+  checkForBrokenAssets(pages)
   checkForInvalidHtml(pages)
 }
 
@@ -26,6 +27,22 @@ const checkForBrokenLinks = (pages: Page[]) => {
   }
 }
 
+// Images, videos and scripts. Separate from the href walk above because an asset is found
+// at exactly the path it names, while a page link gets index.html appended — see checkAsset.
+//
+// Note this reads src="…" out of the raw HTML with a regex, so in principle it could match
+// something inside a code sample. In practice it can't: Markdown escapes quotes to &quot;
+// inside a fenced block, so a documented <img src="…"> never looks like an attribute here.
+// The styleguide contains exactly that, pointing at a file that doesn't exist, and stays
+// quiet — worth knowing before anyone "fixes" the escaping.
+const checkForBrokenAssets = (pages: Page[]) => {
+  for (const page of pages) {
+    for (const src of getValuesOfAttributes(page.html, "src")) {
+      checkAsset(page, src)
+    }
+  }
+}
+
 const checkLink = (pages: Page[], page: Page, link: string) => {
   // Check links that target an anchor on the same page
   if (link.startsWith("#")) {
@@ -35,11 +52,10 @@ const checkLink = (pages: Page[], page: Page, link: string) => {
     return
   }
 
-  // TODO: We don't yet support checking links that contain a dot. Eg:
-  //   <meta rel="stylesheet" href="….css">
-  //   <a href="/something.html"> — a plain html file, no frontmatter, not named index.html
-  //   <a href="https://some.other.site">
-  if (link.includes(".")) return
+  // A link containing a dot names a file rather than a clean URL — a stylesheet, a plain
+  // .html page with no frontmatter, or an off-site address. All three are checked the same
+  // way an image is, so hand them to checkAsset rather than appending index.html below.
+  if (link.includes(".")) return checkAsset(page, link)
 
   // Initialize a URL object for this link, using the current page's absolute URL as a base for relative links.
   let linkUrl = new URL(link, page.url)
@@ -66,6 +82,35 @@ const checkLink = (pages: Page[], page: Page, link: string) => {
     if (!exists) log(`Broken cross-page anchor in ${green(page.path)}: ${yellow(link)}`)
     return
   }
+}
+
+// An asset sits in the output at exactly the path it names — no clean-URL rewrite, no
+// index.html appended. That one difference is why it can't go through checkLink.
+//
+// This is the check that used to be missing entirely, and its absence was invisible: a
+// mistyped image path produced a build with zero warnings and a broken picture on the page.
+const checkAsset = (page: Page, link: string) => {
+  // An inline data: URI carries its own payload. Nothing to look for.
+  if (link.startsWith("data:")) return
+
+  // Anything unparseable is not something we can reason about, so leave it alone rather
+  // than guessing. (checkLink lets a throw here bubble up, because by that point the link
+  // is known to be site-relative. Here it might be anything at all.)
+  let url: URL
+  try {
+    url = new URL(link, page.url)
+  } catch {
+    return
+  }
+
+  // Off-site, or a scheme like mailto: and tel: whose origin can never match ours. Either
+  // way there's no file of ours to go looking for.
+  if (url.origin !== page.url.origin) return
+
+  // pathname stays percent-encoded, so a file whose name contains a space or a non-ASCII
+  // character would be reported as missing. Decode it back before touching the disk.
+  const targetFile = "public" + decodeURIComponent(url.pathname)
+  if (!exists(targetFile)) log(`Broken asset in ${green(page.path)}: ${yellow(link)}`)
 }
 
 const hasTargetAnchor = (html: string, id: string) => new RegExp(`\\b(id|name)=["']${id}["']`).test(html)
