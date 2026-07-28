@@ -124,12 +124,12 @@ then built once locally and used everywhere.
 is a warning, not an error, so a font that never got subsetted looks exactly like a
 successful deploy.}}
 
-## A note on what you're deploying
+## Reproducible by construction
 
-The build system is in the repo you just deployed. There's no version of it pinned
-elsewhere that could drift, and no upstream that could change under you. What builds the
-site today builds it identically in five years, because it's sitting right there.
+The build system is in the repo you just deployed, so a build is pinned by the commit it
+runs from. Check out last year's tag and you get last year's site, byte for byte, without
+a lockfile for the build system itself — it's sitting right there in `system/`.
 
-The flip side: you won't get upstream fixes automatically. If you want an improvement
-someone else made, you read their diff and apply what you want. For a few thousand lines
-of code you own, that's a fair trade.
+Worth knowing when you're setting up CI: `npm ci` against the committed lockfile is the
+only fetch the build makes. Cache `node_modules` on that key and there's nothing else to
+warm.

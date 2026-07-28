@@ -7,15 +7,9 @@ template: docs
 Theseus is a static site build system of about 2,000 lines of TypeScript. It turns
 Markdown and HTML in `content/` into a finished website in `public/`.
 
-It is not a framework and it is not a dependency. You copy it into your project, and from
-that moment it's yours — you're expected to read it, change it, and delete the parts you
-don't want. The original author put it this way:
-
-> I really don't want the build system to be a dependency. It was designed and built
-> around the idea of being part of the website that it's building. It should be a ship
-> of Theseus.
-
-That's the whole idea. Everything below follows from it.
+You copy it into your project, and from that moment it's yours to read, change and cut
+down. These pages describe what it does. The code is the reference, and it's meant to be
+opened — every page here names the file it's talking about.
 
 ## Install
 
@@ -81,8 +75,8 @@ whole content graph actually resolves.
 
 ## Making it yours
 
-1. Open `system/env.ts` and set your domain, title, and description. That's the entire
-   configuration surface — there's no config file, deliberately.
+1. Open `system/env.ts` and set your domain, title, and description. That block is the
+   entire configuration surface, and editing it in place is how you configure the site.
 2. Replace the contents of `content/` with your own pages.
 3. Edit the templates and CSS until the site looks like yours.
 4. Delete the parts of `system/` you don't need. The blog macros, the docs navigation,

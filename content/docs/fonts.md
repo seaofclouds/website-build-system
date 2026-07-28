@@ -4,8 +4,8 @@ description: How automatic font subsetting works, and what to know before shippi
 template: docs
 ---
 
-The starter ships no webfonts. It uses the system font stack, which costs your visitors
-nothing and looks native on every platform.
+Out of the box the site uses the system font stack: your visitors download nothing, and
+the text looks native on whatever they're reading it on.
 
 When you want your own typeface, drop a `.ttf` or `.otf` into `/fonts` and the next
 build will:

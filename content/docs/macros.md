@@ -104,12 +104,9 @@ case "reading-time": {
 }
 ```
 
-Now `{{reading-time}}` works everywhere. You have the current `page`, every other
-`page`, and the frontmatter in scope.
-
-There's no plugin system and no registration step, on purpose. A plugin API would mean
-this build system had a public interface to keep stable — and the moment it has one of
-those, it's a dependency rather than part of your site.
+Now `{{reading-time}}` works everywhere. You have the current `page`, every other `page`,
+and the frontmatter in scope. There's no registration step because the switch *is* the
+registry — the case you just wrote is the whole thing.
 
 ## How expansion actually runs
 
