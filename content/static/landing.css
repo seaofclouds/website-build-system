@@ -129,6 +129,12 @@ html[theme="dark"] #features .unit p { color: var(--silver); }
   text-align: center;
 }
 
+/* The h2 rule above zeroes its margins so the tagline under the wordmark can set its own,
+   and `p` is zeroed too — so without this the closing line and the paragraph under it touch. */
+#closing h2 {
+  margin-bottom: var(--space-md);
+}
+
 /* 404 *******************************************************************************************/
 
 #not-found {

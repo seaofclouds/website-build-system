@@ -11,5 +11,6 @@ content/static/fonts
 # Screenshots from local browser testing.
 .playwright-mcp
 
-# Working notes for in-flight work. Delete this line if you'd rather commit them.
+# Working notes for in-flight work. Delete these lines if you'd rather commit them.
 DOCS-PASS.md
+plan.md

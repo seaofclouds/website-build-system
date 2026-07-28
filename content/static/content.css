@@ -153,7 +153,7 @@ section + section {
   Scoped to prose so it can't reach the masthead links or the call-to-action buttons,
   which set their own colours and would be broken by a hover rule that outranks them.
 */
-main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
+main :is(p, li, td, th, dd, figcaption, aside, blockquote, footer) a:hover {
   color: var(--accent);
 }
 
@@ -192,14 +192,7 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   the link carries base.css's `plain` class so it isn't underlined.
   The accent-on-hover comes from the prose rule at the top of this file, which already covers
   a link inside an <li>.
-
-  The feed link is the one thing on the page that isn't a post, so it gets air above it.
-  display matters because margin-top does nothing to an inline element.
 */
-.subscribe {
-  display: inline-block;
-  margin-top: var(--space-2xl);
-}
 
 /* TABLE OF CONTENTS *****************************************************************************/
 
