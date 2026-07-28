@@ -1,112 +1,91 @@
 ---
 title: A build system that lives in your repo
-description: A small, hackable static site build system designed to be copied into your project and modified, not installed as a dependency.
+description: A small, hackable static site build system. Markdown and HTML in, a static website out — copied into your project and edited like your own code.
 template: landing
 ---
 
 <section id="tag">
   <h1>A build system you own.</h1>
-  <h2>
-    Markdown and HTML in, a static website out. About 1,800 lines of commented
-    TypeScript that you copy into your project and then edit until it's yours.
-  </h2>
+  {{# The non-breaking space keeps "in," with "HTML". Below about 700px the line wraps, and
+      left to itself it breaks after "HTML" and starts the second line on "in," — binding
+      the two makes the comma the only balanced place left to break. }}
+  <h2>Markdown and HTML&nbsp;in, a static website out.</h2>
   <div class="cta">
     <a href="{{repo-url}}/generate" class="button">Use this template</a>
     <a href="/docs/">Read the docs</a>
   </div>
-  <p class="cta-note">Makes you a new repo with a clean history — a copy to own, not a fork to track.</p>
+  <p class="cta-note">Makes you a new repo with a clean history, yours from the first commit.</p>
 </section>
 
-<section id="quickstart">
-  <md>Clone it, then:</md>
-
-<pre><code class="language-bash">npm install
-./site</code></pre>
-
-  <md>
-    That builds the site, watches for changes, and serves it at `localhost:3000` with
-    live reload. No compile step and no bundler — the TypeScript runs directly under
-    bun, deno, or node.
-  </md>
-</section>
-
-<section id="quote">
-  <blockquote>
-    <p>
-      I really don't want the build system to be a dependency. It was designed and built
-      around the idea of being part of the website that it's building. It should be a
-      ship of Theseus.
-    </p>
-    <cite>Ivy Reese, who wrote it for <a href="https://automerge.org">automerge.org</a></cite>
-  </blockquote>
-  <md>
-Replace a plank at a time until none of the original remains, and it's still your site's
-build system throughout. Everything below follows from that.
-  </md>
-</section>
-
-<section id="principles">
-
-  <div class="unit">
-    <h4>Meant to be edited</h4>
-    <p>
-      No config file, no plugin API, no version number. Settings are variables at the top
-      of one file. You add a macro by adding a <code>case</code> to a switch. The
-      extension mechanism is that you have the code.
-    </p>
-  </div>
-
-  <div class="unit">
-    <h4>Small enough to read</h4>
-    <p>
-      Six packages do the work — <code>markdown-it</code>, <code>markdown-it-footnote</code>,
-      <code>prismjs</code>, <code>chokidar</code>, <code>glob</code>, <code>ws</code> — all
-      at build time. Nothing ships to your visitors.
-    </p>
-  </div>
+<section id="features">
 
   <div class="unit">
     <h4>Content is just files</h4>
     <p>
-      Put a file in <code>content</code>, it appears on the site at that path. Everything
-      beyond that is opt-in through frontmatter, and an HTML file with none is copied
-      through untouched.
+      Put a file in <code>content</code> and it's on the site at that path. Frontmatter
+      opts each page into the rest — a template, a date, a draft flag — and a plain HTML
+      file is copied straight through.
+    </p>
+  </div>
+
+  <div class="unit">
+    <h4>A vocabulary for writing</h4>
+    <p>
+      Build a page out of macros and includes: <code>{{figure}}</code> for images and
+      video, <code>{{aside}}</code> for a note in the margin, <code>{{index}}</code> for a
+      listing. Footnotes, syntax highlighting and linkable headings come with the markdown.
+    </p>
+  </div>
+
+  <div class="unit">
+    <h4>Layout is a class on <code>&lt;body&gt;</code></h4>
+    <p>
+      Twelve columns and four page shapes: plain, wide, a navigation sidebar, a gutter for
+      marginalia. Figures break the measure by name, and the
+      <a href="/docs/styleguide/">styleguide</a> demonstrates every class on one page.
     </p>
   </div>
 
   <div class="unit">
     <h4>It checks its own work</h4>
     <p>
-      Every internal link and every anchor is verified against the pages just generated,
-      so renaming a heading someone linked to is caught at build time instead of by a
-      reader two years later.
+      Every internal link, anchor and asset path is verified against the pages just
+      generated, so renaming a heading someone linked to surfaces at build time instead of
+      reaching a reader two years later.
     </p>
   </div>
 
   <div class="unit">
-    <h4>Batteries, all removable</h4>
+    <h4>Everything a site needs, already there</h4>
     <p>
-      RSS, sitemaps, <code>llms.txt</code>, redirects, drafts, dark mode, and font
-      subsetting that cuts a typeface down to the characters you actually use. Each one
-      is a file you can delete.
+      RSS, a sitemap, <code>llms.txt</code>, redirects, drafts, dark mode, and font
+      subsetting that cuts a typeface down to the characters your site actually uses.
     </p>
   </div>
 
   <div class="unit">
-    <h4>Hosts anywhere</h4>
+    <h4>Edit it like your own code</h4>
     <p>
-      The output is a folder of static files. Node 24, bun, or deno to build it; any
-      static host to serve it. <a href="/docs/deployment/">GitHub Pages, Cloudflare, and
-      Netlify</a> are a build command and an output directory.
+      Settings are constants at the top of one file. Adding a macro means adding a
+      <code>case</code> to a switch. About 2,000 lines of commented TypeScript, run
+      directly by bun, deno or node.
     </p>
   </div>
 
 </section>
 
+<section id="thesis">
+  <p class="statement">
+    Replace a plank at a time until none of the original remains, and it's still your
+    site's build system throughout.
+  </p>
+</section>
+
 <section id="closing">
   <md>
-Pulled out of the [automerge.org](https://automerge.org) website so other sites could
-start from it. The [changelog](/blog/) records what changed on the way out.
+`./site` builds the site, watches for changes, and serves it at `localhost:3000` with live
+reload. What you deploy is a folder of static files — [GitHub Pages, Cloudflare and
+Netlify](/docs/deployment/) are a build command and an output directory.
   </md>
   <div class="cta">
     <a href="{{repo-url}}/generate" class="button">Use this template</a>

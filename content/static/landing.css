@@ -57,7 +57,7 @@ section {
 /* HOME PAGE *************************************************************************************/
 
 #tag {
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-3xl);
 }
 
 #tag h2 {
@@ -84,75 +84,44 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
   color: var(--inactive);
 }
 
-#quickstart {
-  max-width: 44rem;
-  margin-bottom: 5rem;
-  text-align: center;
-}
+/*
+  What the system gives you, in a grid that reflows to one column on a phone. The units are
+  left-aligned while the rest of the page is centred: this is the one stretch of the page
+  you read rather than take in at a glance.
+*/
 
-/* content.css holds <pre> to the measure; here the block is the composition, so it takes
-   whatever room the section gives it. */
-#quickstart pre {
-  max-width: none;
-  margin-block: var(--space-md);
-  text-align: left;
-}
-
-/* The pull quote that carries the whole argument */
-
-#quote {
-  max-width: 46rem;
-  margin-bottom: 5rem;
-  text-align: center;
-}
-
-#quote blockquote {
-  max-width: none;
-  margin: 0 0 1.5rem;
-  padding: 0;
-  border: 0;
-  font-style: normal;
-  color: var(--fg);
-}
-
-#quote blockquote p {
-  font: 280 26px / 1.45 var(--font-sans);
-}
-
-#quote cite {
-  display: block;
-  margin-top: var(--space-md);
-  font-size: 14px;
-  font-style: normal;
-  color: var(--inactive);
-}
-
-#quote > p {
-  color: var(--smoke);
-}
-
-html[theme="dark"] #quote > p { color: var(--silver); }
-
-.section-heading {
-  margin-bottom: var(--space-xl);
-}
-
-#principles {
+#features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
   gap: 2.5rem var(--space-xl);
   margin-bottom: var(--space-3xl);
 }
 
-#principles .unit h4 {
+#features .unit h4 {
   margin-bottom: var(--space-sm);
 }
 
-#principles .unit p {
+#features .unit p {
   color: var(--smoke);
 }
 
-html[theme="dark"] #principles .unit p { color: var(--silver); }
+html[theme="dark"] #features .unit p { color: var(--silver); }
+
+/*
+  The one idea the rest of it follows from, and the reason for the name — set large, and
+  left to make that connection on its own. It sits after the features rather than before
+  them, so the page says what it does first and why it's shaped that way second.
+*/
+
+#thesis {
+  max-width: 46rem;
+  margin-bottom: var(--space-3xl);
+  text-align: center;
+}
+
+#thesis .statement {
+  font: 280 26px / 1.45 var(--font-sans);
+}
 
 #closing {
   max-width: 40rem;
