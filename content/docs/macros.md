@@ -42,7 +42,8 @@ Use `{{title?}}` in a template when some pages have a title and some don't. Use
 | `{{aside …}}` | A note in the marginalia band, level with the paragraph after it. For what a reader can skip without losing the thread. |
 | `{{info: …}}`, `{{caution: …}}` | A callout in the flow of the text. For what a reader *can't* skip — that's the whole difference from an aside. |
 | `{{# …}}` | A comment. Disappears at build time, so use it to explain a template to whoever edits it next. |
-| `{{site-title}}`, `{{domain}}`, `{{href}}`, `{{head-title}}`, `{{og-description}}`, `{{og-image-tag}}`, `{{og-type}}`, `{{og-url}}`, `{{month-year}}` | Values you'd otherwise repeat by hand. Mostly used once each, in `head-stuff.html`. |
+| `{{site-title}}`, `{{domain}}`, `{{href}}`, `{{head-title}}`, `{{og-description}}`, `{{og-image-tag}}`, `{{og-type}}`, `{{og-url}}` | Values you'd otherwise repeat by hand. Mostly used once each, in `head-stuff.html`. |
+| `{{month-year}}`, `{{full-date}}` | The page's `date`, as `July 2026` or `2026·07·27`. The long one for a byline, where the date is part of a sentence; the short one for a label above a title, where it's a fact. |
 
 ### Ordering, for `{{index:}}`
 

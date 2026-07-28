@@ -11,10 +11,11 @@ header_anchors: true
   <input type="checkbox" id="burger-state" />
   {{include: site-header}}
   <nav class="site-nav">
-    <div class="subscribe"><strong>Subscribe via</strong> <a href="/index.xml">RSS</a></div>
-    {{ blog-sidebar }}
+    <ul class="post-list">{{ blog-sidebar }}</ul>
+    <a class="subscribe" href="/index.xml">Subscribe via RSS</a>
   </nav>
   <main id="content">
+    <p class="post-date">{{full-date}}</p>
     <h1>{{title?}}</h1>
     {{content}}
     <div class="page-nav">

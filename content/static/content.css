@@ -116,6 +116,21 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote) a:hover {
   color: var(--accent);
 }
 
+/*
+  The date above a post's title. A <p> rather than an <h5>, because a heading above the
+  <h1> puts the document outline out of order for anything reading it as a structure — but
+  the type is base.css's h5/h6 label, copied rather than shared. Adding .post-date to that
+  selector list would teach the reset what a blog post is, and the reset doesn't get to
+  know that. Four declarations you can diff is the cheaper trade.
+*/
+.post-date {
+  margin-bottom: var(--space-sm);
+  font: 500 13px / 24px var(--font-sans);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--inactive);
+}
+
 /* MARGINALIA ************************************************************************************/
 
 /*
@@ -861,26 +876,6 @@ pre > code:not(:has(> *)) {
 
 .highlighted-red-line {
   background: light-dark(#ffeef0, #3d1c1c);
-}
-
-/* BLOG BITS *************************************************************************************/
-
-a.blog-link {
-  display: flex; /* Removes the tiny gap between rows that makes the underline flicker on hover */
-  flex-flow: column;
-  max-width: max-content; /* Makes :focus outlines look nicer */
-  margin-bottom: var(--space-md);
-  text-decoration: none;
-}
-
-a.blog-link:hover .title {
-  text-decoration: underline;
-}
-
-.micro {
-  font-size: 12px;
-  line-height: 1.2;
-  color: var(--inactive);
 }
 
 /* FOOTNOTES *************************************************************************************/

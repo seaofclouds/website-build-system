@@ -448,10 +448,13 @@ main {
 }
 
 /*
-  The sidebar is a flat list of links, not an outline. The markdown that generates it uses
-  a heading and a list because that's the natural way to write it — but a list's indent
-  would set the links a third of a column off the grid line the wordmark sits on, and a
-  navigation of eight items doesn't need hierarchy to be legible.
+  The sidebar is a flat list of links, not an outline. The markdown that generates the docs
+  one uses a heading and a list because that's the natural way to write it — but a list's
+  indent would set the links a third of a column off the grid line the wordmark sits on,
+  and a navigation of eight items doesn't need hierarchy to be legible.
+
+  The blog sidebar is a list too, assembled from an include rather than written by hand, so
+  that both sidebars are the same markup and share every rule here.
 */
 .site-nav ul {
   margin-left: 0;
@@ -459,6 +462,15 @@ main {
 
 .site-nav li {
   list-style-type: none;
+}
+
+/*
+  The one place the two sidebars differ, and the content is what asks for it: docs labels
+  are a word or two and never wrap, post titles are sentences and usually do. At the li
+  spacing docs uses, two wrapped titles sit 8px apart and read as one paragraph.
+*/
+.site-nav .post-list li {
+  margin-top: var(--space-md);
 }
 
 /*
@@ -481,23 +493,15 @@ main {
   z-index: -1;
 }
 
+/*
+  The feed link, below the posts. It's an ordinary sidebar link — the rule above it is the
+  only thing saying it isn't another post. Nothing here touches type or colour, because a
+  second treatment for one link is how the two sidebars drifted apart in the first place.
+*/
 .subscribe {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: start;
-  align-items: baseline;
-  gap: .7em;
-  margin-left: -.5em;
-  padding-inline: .5em;
-  width: calc(100% + 1em);
-  margin-bottom: .8rem;
-  padding-bottom: .7rem;
-  border-bottom: 2px solid var(--separator);
-}
-
-.subscribe strong {
-  font: 500 14px / 14px var(--font-mono);
-  color: var(--inactive);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 2px solid var(--separator);
 }
 
 /* PREVIOUS / NEXT *******************************************************************************/

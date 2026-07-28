@@ -160,6 +160,19 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             if (!frontmatter.date) return bail(`This page's template requires a date: ` + green(path))
             return new Date(frontmatter.date).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })
 
+          // 2026·07·27 — for the label above a post title, where a date is a fact rather
+          // than a sentence. en-CA because it's the locale that formats year-first; the
+          // middots are a separator you don't read aloud.
+          //
+          // toLocaleDateString rather than toISOString: an unparseable date gives back the
+          // string "Invalid Date" here, and throws a RangeError there. A bad date in one
+          // post's frontmatter should show up on the page, not stop the build.
+          case "full-date":
+            if (!frontmatter.date) return bail(`This page's template requires a date: ` + green(path))
+            return new Date(frontmatter.date)
+              .toLocaleDateString("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "UTC" })
+              .replaceAll("-", "·")
+
           case "href":
             return page.url.pathname
 
