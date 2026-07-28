@@ -31,8 +31,10 @@
 /* THE MEASURE ***********************************************************************************/
 
 /*
-  Text stops at --measure — eight columns, 46rem. Applied per-element rather than to
-  <main>, so that a figure can be wider than a paragraph without needing a class for it.
+  Text stops at --measure, which is whatever the layout says it is: eight columns (46rem)
+  on an essay, six (34rem) on a docs or blog page, 100% once the columns have been given
+  up. Applied per-element rather than to <main>, so that a figure can be wider than a
+  paragraph without needing a class for it.
 
   Only on the layouts that are for reading. A landing page or a gallery sets its own widths
   and would fight this.

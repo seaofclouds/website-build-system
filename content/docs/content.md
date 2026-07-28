@@ -37,6 +37,10 @@ stylesheets, prefer one of the last two — the folder gives those assets somewh
 natural to live. If two files would produce the same URL, you'll get an error naming
 both.
 
+The two `.html` entries assume the file has frontmatter. One without any is copied
+through untouched and keeps its literal path, so a bare `head.html` is served at
+`/eraser/head.html` rather than `/eraser/head` — see below.
+
 Opt out for a single page with `clean: false`.
 
 ## Assets

@@ -13,9 +13,9 @@ Put a `.ttf` or `.otf` file in this folder and the next build will:
 2. Subset the font down to just those glyphs.
 3. Compress the result to `woff2` and write it to `content/static/fonts/`.
 
-Then point your CSS at the result — see the commented-out `@font-face` block near the
-top of `content/static/base.css`, and set `--font-sans` or `--font-mono` to the new
-family. Two lines and you're done.
+Then point your CSS at the result — write an `@font-face` in `content/static/base.css`,
+in the TYPOGRAPHIC HIERARCHY section where the comment says so, and set `--font-sans` or
+`--font-mono` to the new family in `content/static/variables.css`.
 
 Static fonts, variable fonts, TrueType outlines and CFF outlines all work. Variable
 fonts keep their axes, so one file covers every weight — use

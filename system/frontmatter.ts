@@ -61,8 +61,8 @@ export const validateFrontmatter = (path: string, fm: Frontmatter) => {
   // DATE
   if (isISOString(fm.date)) {
     // Pages with a date also need a title and description, for RSS
-    if (!fm.title) log(`Page with publish: YYYY-MM-DD must have a title: ${green(path)}`)
-    if (!fm.description) log(`Page with publish: YYYY-MM-DD must have a description: ${green(path)}`)
+    if (!fm.title) log(`A page with a ${yellow("date")} must also have a ${yellow("title")}, for the RSS feed: ${green(path)}`)
+    if (!fm.description) log(`A page with a ${yellow("date")} must also have a ${yellow("description")}, for the RSS feed: ${green(path)}`)
   } else if (fm.date) {
     log(`The ${yellow("date")} frontmatter must be ${yellow("YYYY-MM-DD")}, but isn't: ${green(path)}`)
     delete fm.date
@@ -71,7 +71,7 @@ export const validateFrontmatter = (path: string, fm: Frontmatter) => {
   // PUBLISH
   fm.publish ??= "true"
   if (!["true", "draft", "false"].includes(fm.publish)) {
-    log(`The ${yellow("publish")} frontmatter, if present, should be ${yellow("draft")} or ${yellow("false")}: ${green(path)}`)
+    log(`The ${yellow("publish")} frontmatter, if present, should be ${yellow("true")}, ${yellow("draft")} or ${yellow("false")}: ${green(path)}`)
     fm.publish = "false"
   }
 

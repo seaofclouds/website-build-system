@@ -43,6 +43,7 @@ the file itself.
 | Token | Use case |
 | --- | --- |
 | `--page-width` | The whole grid plus its padding, `72rem`. Change this and every region follows, because they're all derived from it. |
+| `--page-padding` | The page's edge margin, `1rem`. Read by `<main>` on every layout *and* by the masthead, which is what keeps the wordmark lined up with the content beneath it. It steps to `2rem` below 800px, where the navigation has stacked and `<main>` runs edge to edge, and back to `1rem` below 500px. Widen it here rather than in one layout's padding, or the two stop agreeing. |
 | `--grid-col`, `--grid-gap` | One column and one gutter, `4rem` and `2rem`. Use them when a width has to land on the grid — a table's first column, a figure that spans a known number of columns. |
 | `--grid-step` | A column plus its gap, `6rem`. This is the unit of *offset*: a region three steps in starts on column 4. |
 | `--measure` | How wide text is allowed to get. Eight columns on an essay, six on a docs page, and `100%` on any page narrow enough to have stacked its navigation. A layout class sets it; nothing else should. |

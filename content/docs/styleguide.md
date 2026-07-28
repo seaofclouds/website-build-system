@@ -10,7 +10,7 @@ This page demonstrates every layout pattern the stylesheets support. Use it as a
 
 It's a `docs` page, so it carries the sidebar — and it still has marginalia down the right, because the docs and blog layouts reserve that band too. The `essay` template gives the same vocabulary a wider body and no navigation. Everything below works the same on any of them.
 
-Each section ends with a table of the classes it covers. One rule runs through all of them: **modes are words, numeric modifiers are bare integers** — `wide` and `staggered`, but `tile-3` and `pos-2`. Where a table row reads `num`, substitute the number.
+Every section that covers classes ends with a table of them — Grid and Text don't, because they describe no classes. One rule runs through all of them: **modes are words, numeric modifiers are bare integers** — `wide` and `staggered`, but `tile-3` and `pos-2`. Where a table row reads `num`, substitute the number.
 
 ## Grid
 
@@ -423,6 +423,8 @@ The width that happens at depends on how much the layout was spending:
 | `layout-nav` | below 72em | Three columns each side is half the grid, and the grid is 72rem of fixed units. Below that the body was absorbing every pixel the two bands wouldn't give up — at 900px it had 292px, about 35 characters. |
 
 Below 800px the navigation stacks above the content too, and from there the body takes all twelve columns: no measure, no reserved bands, the viewport is what's left.
+
+At that same width the page's edge margin steps from `1rem` to `2rem`, because `<main>` now runs to both edges and text against the glass reads as cramped. It steps back to `1rem` below 500px, where `2rem` a side would be a sixth of the screen. That's `--page-padding`, and the masthead reads it too — so the wordmark stays lined up with the first line of text at every width, on every layout.
 
 This page is `layout-nav`, so narrowing it demonstrates the second row and not the first — nothing in the starter uses `layout-margin`, and `template/essay.html` ships unused. Put a page on it before you rely on the essay column.
 

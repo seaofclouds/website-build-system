@@ -82,8 +82,8 @@ automatic font subsetting that cuts a typeface down to just the characters you u
 
 Plus a layout vocabulary: four small stylesheets, four page shapes, marginalia in a
 right-hand gutter, and figures that tile, float, crop and arrange. The
-[styleguide](http://localhost:3000/docs/styleguide/) page demonstrates all of it and doubles
-as the regression test.
+[styleguide](https://theseus.seaofclouds.workers.dev/docs/styleguide/) page demonstrates all
+of it and doubles as the regression test.
 
 Build-time checking of every internal link and every anchor, which is the feature you'll
 end up appreciating most.
@@ -102,9 +102,10 @@ A clean build means no warnings printed, not a zero exit code. Read the output.
 
 ## Documentation
 
-The full docs are the site itself — run `./site` and open
-[localhost:3000/docs](http://localhost:3000/docs/). They live in `content/docs/`, and
-they're built by the thing they describe.
+The full docs are the site itself: **[theseus.seaofclouds.workers.dev/docs](https://theseus.seaofclouds.workers.dev/docs/)**.
+They live in `content/docs/`, and they're built by the thing they describe — so run
+`./site` and open [localhost:3000/docs](http://localhost:3000/docs/) to read your copy
+instead.
 
 <br>
 

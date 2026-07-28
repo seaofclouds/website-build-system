@@ -43,9 +43,9 @@ network, so you can open the site on your phone.
 ./site help      # every command
 ```
 
-`site` is a three-line shell script that runs `system/app.ts` with whichever of bun,
-deno, or node it finds first. There's no compile step and no bundler — the TypeScript
-runs directly.
+`site` is a short shell script that runs `system/app.ts` with whichever of bun, deno, or
+node it finds first. There's no compile step and no bundler — the TypeScript runs
+directly.
 
 {{info: Run it from the repo root. Every path in the system is relative, and the CLI
 refuses to run anywhere else rather than write files somewhere surprising.}}

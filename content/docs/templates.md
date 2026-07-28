@@ -66,13 +66,16 @@ Any other key is just data, readable from a macro.
 {{include: footer}}
 ```
 
-That looks for `template/includes/footer.html`, falling back to `footer.md`. Markdown
+That looks for `template/includes/footer.md`, falling back to `footer.html`. Markdown
 includes are rendered as blocks by default; add the `inline` flag to render them
 without a wrapping paragraph:
 
 ```html
-{{include: byline.md inline}}
+{{include: tagline inline}}
 ```
+
+Name the include without its extension — the build appends one. `{{include: tagline.md}}`
+goes looking for `tagline.md.md`, doesn't find it, and reports a missing include.
 
 Includes can contain macros, and those macros expand in the context of whatever page
 pulled the include in. The site logo is an include. So is everything in `<head>`.

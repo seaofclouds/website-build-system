@@ -37,8 +37,11 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case "content":
             return page.compiledBody // Note: don't change indentation, because that messes up <pre> tags
 
-          // {{include:FILENAME}} — replaced with the content of /template/includes/FILENAME.{html,md}
-          // {{include:FILENAME.md inline}} — same as above, but using Markdown.renderInline()
+          // {{include:FILENAME}} — replaced with the content of /template/includes/FILENAME.md,
+          //   falling back to FILENAME.html. Name it *without* the extension — one is appended
+          //   below, so {{include:footer.html}} goes looking for footer.html.md and reports it missing.
+          // {{include:FILENAME inline}} — same, but a markdown include is rendered with
+          //   Markdown.renderInline(), so it arrives without a wrapping <p>. No effect on an .html one.
           case macro.startsWith("include") && macro: {
             let [name, flag] = stripName(macro, "include").split(" ")
 
@@ -73,8 +76,10 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           // {{aside SOME TEXT}} — a note in the right-hand gutter, level with the paragraph that follows it
           // {{aside 2 SOME TEXT}} — the same, pulled up 2 body lines so it lands beside the line you mean
           // Colons are optional and tolerated, so {{aside: …}} and {{aside 2: …}} both work.
-          // The gutter only exists on the essay template — see .layout-margin in content.css.
-          // Anywhere else the aside stays in normal flow, which is a reasonable fallback rather than a bug.
+          // The gutter exists on the layouts that reserve a band for it — .layout-margin (essay)
+          // and .layout-nav (docs, blog); see content.css. On .layout-plain and .layout-wide, and
+          // on any layout once the screen is too narrow to afford the band, the aside stays in
+          // normal flow. That's a designed fallback rather than a bug, and the markup is the same.
           case macro.startsWith("aside") && macro: {
             let content = stripName(macro, "aside")
 

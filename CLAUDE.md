@@ -43,7 +43,7 @@ Note the inverted draft default: `build` excludes drafts unless `--draft`; every
 
 `site` is a shell script that runs `system/app.ts` with bun, else deno, else node. It must be run from the repo root — `isSafeInvocation()` in `io.ts` enforces this, because all path handling is relative.
 
-There is no test suite, no linter, and no typecheck in CI. Prettier config exists but is not run automatically. `npx tsc --noEmit` typechecks (`tsconfig.json` sets `noEmit`).
+There is no test suite and no linter. Prettier config exists but is not run automatically. `npx tsc --noEmit` typechecks (`tsconfig.json` sets `noEmit`), and CI runs it as `npm run check` before the build — it is the one check that can actually fail the pipeline.
 
 ## Verifying your work
 
@@ -80,7 +80,7 @@ Redirects.txt ────────┘
 
 Braces are matched by **counting**, in `findMacroEnd`, not by regex. Macros nest — a figure caption can hold an aside, a comment can quote a macro while explaining it — and a lazy `/{{(.+?)}}/` ends the outer match at the inner macro's closing braces, silently swallowing half of one and leaking the other half into the page. Counting means the outermost macro resolves first, and the inner one expands on the next pass of the loop. Don't reintroduce a regex here.
 
-`{{content}}` marks template insertion. `{{include:name}}` inlines `template/includes/name.{html,md}`. `{{index:name}}` renders each child page through an include — note the trick it uses: it recursively calls `expandMacros` with the *child* page as context.
+`{{content}}` marks template insertion. `{{include:name}}` inlines `template/includes/name.md` if it exists, else `name.html` — name it without the extension, because the build appends one. `{{index:name}}` renders each child page through an include — note the trick it uses: it recursively calls `expandMacros` with the *child* page as context.
 
 Macros like `blog-sidebar`, `prev-in-docs`, `next-in-docs`, `newer-in-blog`, `older-in-blog`, `figure`, `aside`, `info`, and `caution` are **site-specific examples**, not framework features. Keep them in a clearly marked section; adopters adapt or delete them.
 
@@ -100,10 +100,10 @@ Three constraints worth knowing before editing:
 - **Bare `<aside>` is marginalia**, not the nav sidebar (that's `nav.site-nav`). These collided when both used the element, and the collision is silent.
 - **`46rem` is a literal in every media query that needs it** — currently sixteen of them; recount with `grep -h '@media.*46rem' content/static/*.css | wc -l` rather than trusting this number. It has to be a literal, because a media query can't read a custom property. It *can* assign one, which is how `--content-gutter` collapses without duplicating the geometry.
 - **The two gutter layouts collapse at different widths, and it's deliberate.** `layout-margin` spends four columns on the right and none on the left, so it holds until 46rem. `layout-nav` spends three on each side — half the grid — and only fits while all 72rem of the grid does, so it closes below `72em`. Each width appears twice: once in `layout.css` where the gutter closes, once in `content.css` where marginalia stops being lifted into it. Change one without the other and asides get absolutely positioned into a band that isn't there, on top of the body text. Below 800px the nav stacks and `--measure` becomes `100%` — all twelve columns are body.
-- **Everything sits on one twelve-column grid**, declared in `variables.css`: page 72rem = 2×1rem padding + 70rem of grid; 70rem = 12 columns × 4rem + 11 gaps × 2rem. `--measure` is 8 columns (46rem), `--band` is 3 (16rem). The essay is `body 1-8 · space 9 · marginalia 10-12`; docs/blog is the mirror, `nav 1-3 · space 4 · body 5-12`. `--band` is one token on purpose — the nav and the marginalia are the same three columns, and naming them separately would let them drift. `--rail` (column 1) is declared but unused: the body absorbs it until something needs section marks.
+- **Everything sits on one twelve-column grid**, declared in `variables.css`: page 72rem = 2×1rem padding + 70rem of grid; 70rem = 12 columns × 4rem + 11 gaps × 2rem. `--band` is 3 columns (16rem), and it's one token on purpose — the nav and the marginalia are the same three columns, and naming them separately would let them drift. The essay is `body 1-8 · space 9 · marginalia 10-12`, so `--measure` is 8 columns (46rem). Docs/blog is **not** the mirror of that: it's `nav 1-3 · body 4-9 · marginalia 10-12` with no space column, because four regions don't fit twelve columns with a gap between each, so `.layout-nav main` overrides `--measure` down to 6 columns (34rem) and spends the spare column on the body. Three columns each side, not four. `--rail` (column 1) is declared but unused: the body absorbs it until something needs section marks.
 - **`layout-nav` and `layout-margin` don't compose** — one spends columns 1-3, the other 10-12, and a page with both leaves nowhere for the body. Left undefined rather than shipped broken.
 
-`content/docs/styleguide.md` exercises the whole vocabulary and is the regression test — check it after any change to `content.css`. Each of its sections ends with a class table, so a new class needs a row there as well as a demo. `./site --fluid` / `--fixed` paint the column guides.
+`content/docs/styleguide.md` exercises the whole vocabulary and is the regression test — check it after any change to `content.css`. Every section that covers classes ends with a table of them, so a new class needs a row there as well as a demo. (Grid and Text have no table because they describe no classes.) `./site --fluid` / `--fixed` paint the column guides.
 
 ### Where the system knows about this site's shape
 
@@ -121,7 +121,7 @@ Check this list against the code before relying on it — an earlier version of 
 
 `system/font.ts` implements automatic subsetting: it collects every unique character across the whole built site, and if that set changed since last build, regenerates `content/static/fonts/` from the `.ttf`/`.otf` sources in `/fonts` using `hb-subset` + `woff2_compress` (`brew install harfbuzz woff2`).
 
-Two consequences: the generated `content/static/fonts/` folder is committed and is build output — never hand-edit it; and to force regeneration you delete `content/static/fonts/chars.txt`. If the binaries are missing the build logs one warning and carries on with stale fonts.
+Two consequences: the generated `content/static/fonts/` folder is build output and is gitignored — never hand-edit it, and if your host can't install the binaries, the fix is to commit it and drop the `.gitignore` line, as `deployment.md` describes; and to force regeneration you delete `content/static/fonts/chars.txt`. If the binaries are missing the build logs one warning and carries on with stale fonts.
 
 ### Style conventions
 

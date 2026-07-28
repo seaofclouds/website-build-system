@@ -179,7 +179,11 @@ const generateSitemap = (pages: Page[]) => {
 
 function generateRobots() {
   // If we're publishing draft pages (eg: on the private mirror), we shouldn't be crawled.
-  // TODO: Are we not generating a robots.txt in prod? Is that what we want?
+  //
+  // Production deliberately gets no robots.txt at all, rather than a permissive one. A file
+  // that allows everything says exactly what its absence says, so it would buy nothing and
+  // add one more thing to keep in step with the condition below. Write one when you actually
+  // have something to disallow.
   if (Env.draft) write("public/robots.txt", `User-agent: *\nDisallow: /`)
 }
 
