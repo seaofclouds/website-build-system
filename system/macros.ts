@@ -270,20 +270,22 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             return `<a class="right" href="${href}"><span>Next page</span> ${nextPage.frontmatter.title}</a>`
           }
 
-          // Previous/next links that follow the publish dates of sibling blog posts.
-          case "newer-in-blog":
-            if (page.parent) {
-              let children = page.parent.children.toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
-              let next = children[children.indexOf(page) + 1]
-              if (next) return `<a href="${next.url.pathname}"><span>Newer post</span> ${next.frontmatter.title}</a>`
-            }
-            return ""
-
+          // Previous/next links that follow the publish dates of sibling blog posts. Older
+          // sits on the left and newer on the right, the same way back and forward sit in
+          // docs — time reads left to right, so the pair points the way the dates run.
           case "older-in-blog":
             if (page.parent) {
               let children = page.parent.children.toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
               let prev = children[children.indexOf(page) - 1]
-              if (prev) return `<a class="right" href="${prev.url.pathname}"><span>Older post</span> ${prev.frontmatter.title}</a>`
+              if (prev) return `<a href="${prev.url.pathname}"><span>Older post</span> ${prev.frontmatter.title}</a>`
+            }
+            return ""
+
+          case "newer-in-blog":
+            if (page.parent) {
+              let children = page.parent.children.toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
+              let next = children[children.indexOf(page) + 1]
+              if (next) return `<a class="right" href="${next.url.pathname}"><span>Newer post</span> ${next.frontmatter.title}</a>`
             }
             return ""
 
