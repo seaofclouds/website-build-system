@@ -53,18 +53,23 @@ the file itself.
 | `--space-xs` … `--space-3xl` | The general spacing ramp, for everything that doesn't. |
 | `--accent` | The only hue on the site. Change this first. |
 
-Each layout gives the band up at its own width, because they aren't spending the same
-amount. The essay layout reserves four columns on the right and none on the left, so it
-holds until `46rem`. A docs or blog page reserves three on each side — half the grid —
-so it gives the marginalia band up below `72em`, and below `800px` the navigation stacks
-above the content and the body takes all twelve columns.
+Both layouts give the band up at `72em`, and they have to do it together. The grid is
+`72rem` of fixed units, so below that neither can keep what it reserved without the body
+absorbing every lost pixel — four fixed columns starve a narrowing page as effectively as
+six. On the essay that width is also where the change is invisible: inside the gutter the
+body is exactly the measure, so closing it leaves the text at the same width and the same
+left edge, and only the asides move. Below `800px` a docs or blog page additionally stacks
+its navigation above the content, and the body takes all twelve columns.
 
-{{info: Those widths are written as literals — sixteen media queries use `46rem` alone —
-because a media query can't read a custom property. It *can* assign one, which is how
-`--content-gutter` collapses at each breakpoint without the geometry being duplicated.
-Each width appears twice, once where the gutter closes in `layout.css` and once where
-marginalia stops being positioned into it in `content.css`. Change one, change the other,
-or asides get placed into a band that isn't there.}}
+{{caution: The width appears twice — once where the gutter closes in `layout.css`, once
+where marginalia stops being positioned into it in `content.css` — and the two are written
+to be strictly complementary, `width < 72em` against `min-width: 72em`. Let them overlap by
+a single pixel and asides get absolutely positioned into a band that isn't there, landing
+on top of the body text. That has happened once per layout so far.}}
+
+{{info: These widths are literals — thirteen media queries still use `46rem` for other
+things — because a media query can't read a custom property. It *can* assign one, which is
+how `--content-gutter` collapses at the breakpoint without the geometry being duplicated.}}
 
 ## Layouts
 

@@ -443,16 +443,28 @@ main {
   padding-top: var(--space-lg);
 }
 
-/* Below the breakpoint there's no room for a gutter, so everything falls back to block
-   flow. 46rem is a literal here and in content.css, and has to stay one — see above.
+/*
+  The same width the nav layout gives its bands up at, and for the same reason: the grid is
+  72rem of fixed rem units, so below that the viewport cannot hold it, every region keeps
+  the width it reserved, and the body is the only one left to absorb the loss.
 
-   Strictly less-than, for the same reason the nav layout's is: content.css positions
-   marginalia on `min-width: 46rem`, so a `<=` here would make both apply at exactly 736px —
-   the gutter closed, and asides still absolutely positioned into it, sitting on top of the
-   body text. That is the identical off-by-one already fixed at 72em for .layout-nav, and it
-   survived here only because nothing in the starter rendered .layout-margin to show it.
-   Measured before the fix at 736px: the byline spanned x 448-704 over a body of 32-704. */
-@media (width < 46rem) {
+  This layout used to hold its gutter all the way down to 46rem, on the grounds that it
+  spends four columns where the nav layout spends six and could therefore afford to. Putting
+  a page on it showed that reasoning doesn't survive contact: four *fixed* columns starve a
+  shrinking viewport just as effectively. The body fell to 288px — 35 characters — at 736px,
+  with 384px of near-empty gutter beside it, then snapped back to 671px at 735px when the
+  gutter finally closed. One pixel of resize more than doubled the line length.
+
+  72em is also the one width where the change is invisible. Inside the gutter the body is
+  1152 - 16 - (16 + 384) = 736px, which is exactly --measure — so when the gutter closes and
+  paragraphs fall back to being capped by --measure, they keep both the width and the left
+  edge they already had, and only the asides move. Any other breakpoint leaves a step.
+
+  Strictly less-than, because content.css positions marginalia on `min-width: 72em` and the
+  two must never both apply — that off-by-one put a byline on top of the body text at exactly
+  736px. Now that both layouts share the width, that block is written once for the pair.
+*/
+@media (width < 72em) {
   .layout-margin main {
     --content-gutter: 0rem;
     padding-left: var(--page-padding);

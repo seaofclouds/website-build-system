@@ -269,22 +269,15 @@ body:not(.layout-margin, .layout-nav) main aside {
 }
 
 /*
-  The same treatment on the gutter layouts, at the widths where their gutter has closed and
+  The same treatment on the gutter layouts, at the width where their gutter has closed and
   the aside has fallen back into flow. "In the gutter it doesn't need an indent" is a
-  statement about position, not about which layout you're on, so these widths mirror the
-  ones in PLACING THINGS IN THE GUTTER exactly — change one, change the other.
+  statement about position, not about which layout you're on, so this width mirrors the one
+  in PLACING THINGS IN THE GUTTER exactly — change one, change the other.
 
   Not .meta: the byline is deliberately flush, and it has its own padding rule below.
 */
-@media (width < 46rem) {
-  .layout-margin main > aside:not(.meta) {
-    padding-left: var(--space-md);
-    border-left: 2px solid var(--separator);
-  }
-}
-
 @media (width < 72em) {
-  .layout-nav main > aside:not(.meta) {
+  :is(.layout-margin, .layout-nav) main > aside:not(.meta) {
     padding-left: var(--space-md);
     border-left: 2px solid var(--separator);
   }
@@ -365,78 +358,53 @@ main aside.meta h6 {
   the negative offset, which lands it on the same line. Both are --band wide — columns
   10 to 12 — with the empty space column between them and the text.
 
-  Gated on .layout-margin, not just on --content-gutter being non-zero: an absolutely
+  Gated on the layout class, not just on --content-gutter being non-zero: an absolutely
   positioned aside at right: 0 would still sit on top of the text if only the token were
-  zeroed. And gated on a literal 46rem, because a media query can't read a custom property.
+  zeroed. And gated on a literal 72em, because a media query can't read a custom property.
 */
 
 /*
-  The two layouts open their gutter at different widths, so they lift things into it at
-  different widths, and the condition has to be written twice rather than shared.
+  One block for both layouts, because both give their bands up at the same width — the grid
+  is 72rem of fixed units, and below that neither can hold what it reserved without starving
+  the body. layout.css closes both gutters on `width < 72em`; this opens the positioning on
+  `min-width: 72em`. Strictly complementary, and they have to stay that way.
 
-  The essay layout spends four columns on the right and nothing on the left, so it fits
-  from 46rem. The nav layout spends three on each side — half the grid — and only fits when
-  the whole 72rem of it does; layout.css closes its gutter below that.
-
-  Getting this wrong is not subtle, and it was wrong: the positioning was gated on 46rem
-  for both, so between 736px and 800px a nav-layout aside was still absolutely positioned
-  at `right: --page-padding` into a gutter that had already closed. The aside sat on top of
-  the body text — measured on the styleguide at 799px, the aside spanned x 527-783 and the
-  paragraph 32-576.
+  It used to be written twice, at two widths, and both spellings had the same off-by-one at
+  different moments. The nav layout's was found first: positioning gated on 46rem while its
+  gutter closed at 72em meant that between 736px and 800px an aside was absolutely
+  positioned into a gutter that wasn't there, sitting on the body text — measured on the
+  styleguide at 799px, the aside spanned x 527-783 and the paragraph 32-576. The essay
+  layout's survived longer because nothing rendered it: at exactly 736px, `<=` in layout.css
+  and `min-width` here both matched, and the byline landed at x 448-704 over a body of
+  32-704. Sharing one condition is what makes that class of bug unavailable.
 */
-@media (min-width: 46rem) {
-  .layout-margin main {
+@media (min-width: 72em) {
+  :is(.layout-margin, .layout-nav) main {
     position: relative;
   }
 
-  .layout-margin main > aside,
-  .layout-margin figcaption {
+  :is(.layout-margin, .layout-nav) main > aside,
+  :is(.layout-margin, .layout-nav) figcaption {
     position: absolute;
     width: var(--band);
   }
 
   /* Columns 10-12. Positioned against <main>, whose padding box ends one page-padding
      past the grid's right edge. */
-  .layout-margin main > aside {
+  :is(.layout-margin, .layout-nav) main > aside {
     right: var(--page-padding);
   }
 
   /* Also columns 10-12, but positioned against its own <figure>, which sits in the body
      columns — so the offset is the whole reserved gutter, and it lands on the same line
      as the asides above. */
-  .layout-margin figcaption {
+  :is(.layout-margin, .layout-nav) figcaption {
     top: 0;
     right: calc(-1 * var(--content-gutter));
   }
 
   /* See the {{ aside N }} note above — only meaningful out of flow. */
-  .layout-margin .move-up {
-    margin-top: calc(-1 * var(--baseline) * var(--move-up));
-  }
-}
-
-@media (min-width: 72em) {
-  .layout-nav main {
-    position: relative;
-  }
-
-  .layout-nav main > aside,
-  .layout-nav figcaption {
-    position: absolute;
-    width: var(--band);
-  }
-
-  .layout-nav main > aside {
-    right: var(--page-padding);
-  }
-
-  .layout-nav figcaption {
-    top: 0;
-    right: calc(-1 * var(--content-gutter));
-  }
-
-  /* See the {{ aside N }} note above — only meaningful out of flow. */
-  .layout-nav .move-up {
+  :is(.layout-margin, .layout-nav) .move-up {
     margin-top: calc(-1 * var(--baseline) * var(--move-up));
   }
 }

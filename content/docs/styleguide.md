@@ -419,7 +419,7 @@ The width that happens at depends on how much the layout was spending:
 
 | Layout | Gutter closes | Why |
 | --- | --- | --- |
-| `layout-margin` | below 46rem | Four columns on the right and none on the left, so it fits until the measure itself won't. |
+| `layout-margin` | below 72em | Four fixed columns on the right starve a shrinking viewport just as well as six do — the body fell to 288px, about 35 characters, at 736px. It's also the width where closing the gutter changes nothing else: inside it the body is exactly the measure, so the text keeps its width and its left edge and only the asides move. |
 | `layout-nav` | below 72em | Three columns each side is half the grid, and the grid is 72rem of fixed units. Below that the body was absorbing every pixel the two bands wouldn't give up — at 900px it had 292px, about 35 characters. |
 
 Below 800px the navigation stacks above the content too, and from there the body takes all twelve columns: no measure, no reserved bands, the viewport is what's left.
