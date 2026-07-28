@@ -51,7 +51,7 @@ body {
   to match.
 
   Using a webfont? Declare it here with @font-face, then point --font-sans (or --font-serif)
-  at it in variables.css. See /docs/assets/.
+  at it in variables.css. See /docs/fonts/.
 */
 
 h1   { font: 280 32px / 36px var(--font-sans); }

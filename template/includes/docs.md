@@ -25,7 +25,7 @@ Guide
 Style
 
 - [Stylesheets](/docs/styles/)
-- [Assets & Fonts](/docs/assets/)
+- [Fonts](/docs/fonts/)
 
 [Styleguide](/docs/styleguide/)
 

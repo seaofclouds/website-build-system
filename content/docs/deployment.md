@@ -19,7 +19,7 @@ that, or a transpiler.
 **To host:** anything that serves files. There's nothing to run.
 
 **Optional:** `hb-subset` and `woff2_compress` if you use
-[font subsetting](/docs/assets/). Without them the build logs a warning and falls back to
+[font subsetting](/docs/fonts/). Without them the build logs a warning and falls back to
 system fonts.
 
 The build command is the same everywhere:
@@ -105,7 +105,7 @@ different extensionless file, add it there.
 
 ## Fonts in CI
 
-If you use [font subsetting](/docs/assets/), the build machine needs `hb-subset` and
+If you use [font subsetting](/docs/fonts/), the build machine needs `hb-subset` and
 `woff2_compress` on its PATH. Without them, the build skips regeneration and pages fall
 back to system fonts.
 

@@ -141,7 +141,7 @@ html {
   /*
     Want a serif body, the way Ink & Switch and automerge.org read? Drop the font files
     into /fonts, run the build, add the @font-face in base.css, then uncomment this and
-    swap `body` over to it. See /docs/assets/ for the whole procedure.
+    swap `body` over to it. See /docs/fonts/ for the whole procedure.
 
     --font-serif: "Merriweather", Charter, Cambria, Georgia, serif;
   */

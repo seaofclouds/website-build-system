@@ -12,6 +12,12 @@ Write `content/rams/index.md` and it's converted to HTML and served at `/rams/`.
 In short, `content/` should feel like an FTP server. You put things in, they show up on
 the site. Everything clever is opt-in.
 
+There's only one kind of page. An album, an essay and a gallery aren't things the build
+system knows about — each is a [template](/docs/templates/) plus a few classes from the
+[styleguide](/docs/styleguide/). A page says which template wraps it with `template:` in
+its frontmatter, and that is the entire content model. This is a build system, not a CMS:
+if you want a new kind of page, you write a template, not a schema.
+
 ## Clean URLs
 
 Most web servers let you drop `index.html` from a URL. To make the most of that, the
@@ -32,6 +38,43 @@ natural to live. If two files would produce the same URL, you'll get an error na
 both.
 
 Opt out for a single page with `clean: false`.
+
+## Assets
+
+Anything in `content/` that isn't a page is copied to the built site at the same path.
+An image at `content/about/portrait.jpg` is served at `/about/portrait.jpg`. They're
+hardlinked rather than copied, which is why builds stay fast even when the repo is full
+of images.
+
+So an asset can sit next to the page that uses it, instead of in one big pile — which is
+the other reason to prefer the folder form of a clean URL:
+
+```
+content/about/
+  index.md
+  portrait.jpg
+  about.css
+```
+
+Then reference them relatively from the page, or add `styles: /about/about.css` to its
+frontmatter.
+
+### Committing images
+
+Git is fine at versioning text and bad at versioning binaries — they bloat clones and
+never diff usefully. Before committing an image:
+
+**Resize it.** An image displayed at 600px wide needs to be about 1200px, not 4000px. A
+little extra detail is enough to read as crisp on a retina screen.
+
+**Pick the right format.** Line art and screenshots: PNG or WebP. Photographs: WebP or
+JPG. Anything that could be vector: SVG.
+
+**Compress it.** [ImageOptim](https://imageoptim.com) or [Squoosh](https://squoosh.app)
+will typically halve a file with no visible loss. Aim for 100–300 kB for large photos,
+10–100 kB for screenshots.
+
+Fonts are the exception — they get [subsetted](/docs/fonts/) rather than copied.
 
 ## Frontmatter
 
