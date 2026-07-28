@@ -13,7 +13,7 @@ export const Env = {
 
   // Used to build absolute URLs for RSS, the sitemap, and Open Graph tags.
   // No protocol, no trailing slash.
-  domain: "example.com",
+  domain: "theseus-build-system.pages.dev",
 
   // The name of your site. Used for the RSS channel title, and as the fallback
   // <title> for any page that doesn't set one in its frontmatter.
