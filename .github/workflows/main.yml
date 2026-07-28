@@ -5,10 +5,21 @@ name: Build and Deploy
 # What gets deployed, and where, is in wrangler.jsonc — this file only builds public/
 # and hands it to wrangler. To deploy under a different name, edit that file, not this one.
 #
-# You need two repository secrets, under Settings → Secrets and variables → Actions:
+# You need two secrets on the GitHub repository, under
+# Settings → Secrets and variables → Actions:
 #
-#   CLOUDFLARE_API_TOKEN    an API token from the "Edit Cloudflare Workers" template
+#   CLOUDFLARE_API_TOKEN    created at Cloudflare → My Profile → API Tokens
 #   CLOUDFLARE_ACCOUNT_ID   the account ID, shown by `wrangler whoami`
+#
+# They belong to the repo, not to the Worker. An assets-only Worker has no code, so it has
+# no bindings and no secrets — there is nowhere in the Cloudflare dashboard to put these,
+# and there doesn't need to be. The token is how GitHub authenticates to Cloudflare.
+#
+# For the token, the "Edit Cloudflare Workers" template works as-is. The minimum is
+# narrower — Account → Workers Scripts (Edit), plus Account → Account Settings (Read) —
+# and you'd add Zone → Workers Routes (Edit) if you move the site to a custom domain, or
+# the matching Workers KV / R2 permission if you ever add a binding. See
+# /docs/deployment/ for the full table.
 #
 # Deploying somewhere else instead? Delete this file. The build output is a plain folder
 # of static files in public/, which any host will serve.

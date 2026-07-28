@@ -64,13 +64,45 @@ wrangler deploy
 That serves the site at `<name>.<your-subdomain>.workers.dev`, at the root of the domain.
 
 **Or let CI do it.** `.github/workflows/main.yml` runs the same build and deploy on every
-push to `main`. It needs two repository secrets, under
+push to `main`. It needs two secrets, added to **GitHub** under
 **Settings → Secrets and variables → Actions**:
 
 | Secret | Value |
 | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | A token from the **Edit Cloudflare Workers** template |
+| `CLOUDFLARE_API_TOKEN` | A token you create at **Cloudflare → My Profile → API Tokens** |
 | `CLOUDFLARE_ACCOUNT_ID` | Your account ID, which `wrangler whoami` prints |
+
+{{caution: These go on the GitHub repository, not on the Worker. Don't go looking for a
+place to add them in the Cloudflare dashboard — an assets-only Worker has no code, so it
+has no bindings and no secrets, and Cloudflare won't offer you anywhere to put one. The
+token is how GitHub authenticates *to* Cloudflare; it never travels to the Worker.}}
+
+### What the token needs
+
+The quickest route is the **Edit Cloudflare Workers** template, which works as-is. To
+scope it down instead, use **Create Custom Token** with just these, and set
+**Account Resources** to the one account rather than all of them:
+
+| Type | Permission | Why |
+| --- | --- | --- |
+| Account | **Workers Scripts** → Edit | The one that matters. Uploads the script and the static assets. |
+| Account | **Account Settings** → Read | Account lookup. Skippable when `CLOUDFLARE_ACCOUNT_ID` is set, and read-only either way. |
+
+The template is broader than that because it covers every kind of Worker. What it adds,
+and when you'd actually want it back:
+
+| Permission | Add it when |
+| --- | --- |
+| Zone → **Workers Routes** → Edit | You put the site on a custom domain. Nothing on `workers.dev` needs a zone permission, so this is the one that catches people out later. |
+| Account → **Workers KV Storage** → Edit | You add a KV binding |
+| Account → **Workers R2 Storage** → Edit | You add an R2 binding |
+
+It has to be a *user* token — account-owned tokens aren't supported for this yet — and
+Cloudflare shows the value once, so copy it before closing the page.
+
+An under-scoped token fails at the deploy step and nowhere earlier, so the build, the
+typecheck and the link checking all still run and report. If CI goes red only on
+**Deploy to Cloudflare Workers**, it's the token.
 
 {{caution: `not_found_handling` is the line to keep. Cloudflare Pages used to detect a
 `404.html` and wire it up for you; Workers makes it explicit so a misconfiguration can't
