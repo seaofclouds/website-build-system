@@ -1,8 +1,4 @@
-// Server
-// This is a super-simple live-reloading web server for local development,
-// using websockets & an injected <script> tag to trigger browser refresh.
-// Adapted from please-reload, by Ivy Reese: https://github.com/ivyreese/please-reload
-// If our needs change, it'll be easy to replace this with something else.
+// Server This is a super-simple live-reloading web server for local development, using websockets & an injected <script> tag to trigger browser refresh. Adapted from please-reload, by Ivy Reese: https://github.com/ivyreese/please-reload If our needs change, it'll be easy to replace this with something else.
 
 import { Buffer } from "node:buffer"
 import * as FS from "node:fs"
@@ -13,8 +9,7 @@ import * as WS from "ws"
 import { exists } from "./io.ts"
 import { green, log, logError, logIndented, red, yellow } from "./logging.ts"
 
-// Add to this list as needed.
-// If you don't know what mime type to use, just ask jeeves (or gee-pee-tee)
+// Add to this list as needed. If you don't know what mime type to use, just ask jeeves (or gee-pee-tee)
 const mimeTypes: Record<string, string> = {
   css: "text/css",
   gif: "image/gif",

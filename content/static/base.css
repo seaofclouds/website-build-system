@@ -1,15 +1,11 @@
 /*
-  The reset and the element defaults — what a plain HTML document should look like on this
-  site before anything else has an opinion about it.
+  The reset and the element defaults — what a plain HTML document should look like on this site before anything else has an opinion about it.
 
-  This is the normalize layer. Nothing here knows about layout (that's layout.css) or about
-  the prose and figure vocabulary (that's content.css). If a rule would stop making sense on
-  a page with no <main> at all, it belongs in one of those files instead.
+  This is the normalize layer. Nothing here knows about layout (that's layout.css) or about the prose and figure vocabulary (that's content.css). If a rule would stop making sense on a page with no <main> at all, it belongs in one of those files instead.
 
   Load order is variables -> base -> layout -> content. Later files win ties.
 
-  Please don't use a formatter (like Prettier). The file has been laid out by hand, with
-  intentional use of whitespace and occasional one-lining to aid readability.
+  Please don't use a formatter (like Prettier). The file has been laid out by hand, with intentional use of whitespace and occasional one-lining to aid readability.
 */
 
 /* RESET *****************************************************************************************/
@@ -45,13 +41,9 @@ body {
 /* TYPOGRAPHIC HIERARCHY *************************************************************************/
 
 /*
-  Sizes are in px and line-heights are multiples of 24px, so that everything lands on the
-  same vertical rhythm — see --baseline in variables.css. The aside and figure machinery in
-  content.css counts in those 24px lines, so changing `body` here means changing --baseline
-  to match.
+  Sizes are in px and line-heights are multiples of 24px, so that everything lands on the same vertical rhythm — see --baseline in variables.css. The aside and figure machinery in content.css counts in those 24px lines, so changing `body` here means changing --baseline to match.
 
-  Using a webfont? Declare it here with @font-face, then point --font-sans (or --font-serif)
-  at it in variables.css. See /docs/fonts/.
+  Using a webfont? Declare it here with @font-face, then point --font-sans (or --font-serif) at it in variables.css. See /docs/fonts/.
 */
 
 h1   { font: 280 32px / 36px var(--font-sans); }
@@ -71,8 +63,7 @@ h5, h6 {
 
 strong { font-weight: 650; }
 
-/* The UA styles for sub/sup mess up line-height. This tweak (borrowed from normalize.css)
-   fixes it by removing them from line-height calculations entirely. */
+/* The UA styles for sub/sup mess up line-height. This tweak (borrowed from normalize.css) fixes it by removing them from line-height calculations entirely. */
 sub, sup {
   font-size: 75%;
   line-height: 0;
@@ -169,11 +160,7 @@ svg,
 video,
 iframe {
   /*
-    To make your element responsive while avoiding layout shift:
-    a) set width and height attributes on the tag, or
-    b) set width and aspect-ratio properties in CSS.
-    (There are other more advanced options, but the above are the simplest best practice.)
-    The following rules make (a) and (b) do the right thing.
+    To make your element responsive while avoiding layout shift: a) set width and height attributes on the tag, or b) set width and aspect-ratio properties in CSS. (There are other more advanced options, but the above are the simplest best practice.) The following rules make (a) and (b) do the right thing.
   */
   max-width: 100%;
   height: auto;
@@ -194,13 +181,9 @@ iframe.youtube {
 /* FIGURES ***************************************************************************************/
 
 /*
-  Only the shared baseline lives here — the part both the reading layout and the gallery
-  arrangements agree on. Everything else (gutter captions, wide/tile/float modes, grids,
-  arrangements) is in content.css.
+  Only the shared baseline lives here — the part both the reading layout and the gallery arrangements agree on. Everything else (gutter captions, wide/tile/float modes, grids, arrangements) is in content.css.
 
-  position: relative matters more than it looks: a figcaption in the right gutter is
-  positioned against its figure, not against <main>, which is why it can sit level with the
-  image rather than at the top of the page.
+  position: relative matters more than it looks: a figcaption in the right gutter is positioned against its figure, not against <main>, which is why it can sit level with the image rather than at the top of the page.
 */
 
 figure {

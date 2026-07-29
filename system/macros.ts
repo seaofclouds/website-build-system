@@ -1,6 +1,4 @@
-// Macros
-// The build system supports a special {{ macro }} syntax in Markdown and HTML.
-// This file contains all the rewrite rules to apply when a macro is encountered.
+// Macros The build system supports a special {{ macro }} syntax in Markdown and HTML. This file contains all the rewrite rules to apply when a macro is encountered.
 
 import { Env } from "./env.ts"
 import { exists, read } from "./io.ts"
@@ -14,10 +12,7 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
   let { frontmatter, path } = page
   let limit = 100
 
-  // We expand repeatedly, because a macro's output can itself contain macros — that's how
-  // {{index:…}} renders an include for each child page. We stop when a pass changes nothing,
-  // rather than when no braces remain, because braces can legitimately survive a pass inside
-  // a code sample. The limit catches a macro that keeps producing itself.
+  // We expand repeatedly, because a macro's output can itself contain macros — that's how {{index:…}} renders an include for each child page. We stop when a pass changes nothing, rather than when no braces remain, because braces can legitimately survive a pass inside a code sample. The limit catches a macro that keeps producing itself.
   while (true) {
     if (limit-- <= 0) {
       log(`Detected an infinite loop of nested macros while compiling ${green(path)}`)
@@ -61,30 +56,21 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             }
           }
 
-          // {{ index:FILENAME }} — generate an index of all child pages of the current page, using a FILENAME include to render each child
-          // {{ index:FILENAME reverse }} — the default is chronological, so specify "reverse" for reverse-chronological
+          // {{ index:FILENAME }} — generate an index of all child pages of the current page, using a FILENAME include to render each child {{ index:FILENAME reverse }} — the default is chronological, so specify "reverse" for reverse-chronological
           case macro.startsWith("index:") && macro: {
             let [template, reverse] = stripName(macro, "index").split(" ")
-            // In practice, it doesn't seem to matter whether the children are fully compiled or not when we do this.
-            // But in theory it *might* matter, so we might want to somehow guarantee that children are compiled before parents.
+            // In practice, it doesn't seem to matter whether the children are fully compiled or not when we do this. But in theory it *might* matter, so we might want to somehow guarantee that children are compiled before parents.
             let children = page.children.toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
             if (reverse) children = children.reverse()
             // Cool trick — we expand an include macro in the context of each child page to generate the html for each item in the index
             return children.map((child) => expandMacros(`{{include:${template}}}`, child, pages)).join("\n")
           }
 
-          // {{aside SOME TEXT}} — a note in the right-hand gutter, level with the paragraph that follows it
-          // {{aside 2 SOME TEXT}} — the same, pulled up 2 body lines so it lands beside the line you mean
-          // Colons are optional and tolerated, so {{aside: …}} and {{aside 2: …}} both work.
-          // The gutter exists on the layouts that reserve a band for it — .layout-margin (essay)
-          // and .layout-nav (docs, blog); see content.css. On .layout-plain and .layout-wide, and
-          // on any layout once the screen is too narrow to afford the band, the aside stays in
-          // normal flow. That's a designed fallback rather than a bug, and the markup is the same.
+          // {{aside SOME TEXT}} — a note in the right-hand gutter, level with the paragraph that follows it {{aside 2 SOME TEXT}} — the same, pulled up 2 body lines so it lands beside the line you mean Colons are optional and tolerated, so {{aside: …}} and {{aside 2: …}} both work. The gutter exists on the layouts that reserve a band for it — .layout-margin (essay) and .layout-nav (docs, blog); see content.css. On .layout-plain and .layout-wide, and on any layout once the screen is too narrow to afford the band, the aside stays in normal flow. That's a designed fallback rather than a bug, and the markup is the same.
           case macro.startsWith("aside") && macro: {
             let content = stripName(macro, "aside")
 
-            // A leading integer is the move-up count; everything else is content. If the
-            // aside genuinely starts with a number, write it as {{aside 0 42 is the answer}}.
+            // A leading integer is the move-up count; everything else is content. If the aside genuinely starts with a number, write it as {{aside 0 42 is the answer}}.
             let moveUp = "0"
             const leadingInteger = content.match(/^(\d+)\s*:?\s+([\s\S]*)$/)
             if (leadingInteger) [, moveUp, content] = leadingInteger
@@ -92,17 +78,11 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             return `<aside class="move-up" style="--move-up: ${moveUp}">${stripColon(content)}</aside>`
           }
 
-          // {{figure ![](src.ext)}} — A <figure> with some media (image or video)
-          // {{figure wide border ![](src.ext) }} — with class="wide border"
-          // {{figure autoplay ![](src.mp4) }} — the "autoplay" class is special, and adds "autoplay loop muted" to the <video>
-          // {{figure ![Photograph of a brown dog on a grassy field](src.ext)}} — with alt text
-          // {{figure ![](src.ext) *This* image is, as they say, "cute"}} — with caption, which can be multiline and contain md/html
+          // {{figure ![](src.ext)}} — A <figure> with some media (image or video) {{figure wide border ![](src.ext) }} — with class="wide border" {{figure autoplay ![](src.mp4) }} — the "autoplay" class is special, and adds "autoplay loop muted" to the <video> {{figure ![Photograph of a brown dog on a grassy field](src.ext)}} — with alt text {{figure ![](src.ext) *This* image is, as they say, "cute"}} — with caption, which can be multiline and contain md/html
           case macro.startsWith("figure") && macro: {
             macro = stripName(macro, "figure")
 
-            // Macro expansion happens after markdown conversion, so at this point prop will look like:
-            // `classes <img src="src.ext" alt="alt text"> caption <b>text</b> etc etc`
-            // But, if the macro was nested inside some HTML, it'll still be raw markdown, so we must convert it:
+            // Macro expansion happens after markdown conversion, so at this point prop will look like: `classes <img src="src.ext" alt="alt text"> caption <b>text</b> etc etc` But, if the macro was nested inside some HTML, it'll still be raw markdown, so we must convert it:
             if (macro.includes("![")) macro = Markdown.renderInline(macro)
 
             // If the macro includes any words before the image, we use them as CSS classes
@@ -119,25 +99,18 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             let isVideo = ["mov", "mp4", "webm"].includes(ext)
             if (isVideo) {
               let alt = getValuesOfAttributes(img, "alt")[0] ?? ""
-              // We preload the whole video, not just the metadata, because otherwise browsers don't render the poster frame!
-              // Our videos are all rather small, so this is fine — akin to loading a few images.
+              // We preload the whole video, not just the metadata, because otherwise browsers don't render the poster frame! Our videos are all rather small, so this is fine — akin to loading a few images.
               let attrs = "controls playsinline preload"
               if (classes.includes("autoplay")) attrs += " autoplay loop muted"
               img = `<video ${attrs} src="${src}" alt="${alt}"></video>`
             }
 
-            // Remove empty alt text attrs, which signal "this image doesn't need alt text".
-            // TODO: I suspect we should almost always add alt text, and it definitely shouldn't be the same as the caption.
+            // Remove empty alt text attrs, which signal "this image doesn't need alt text". TODO: I suspect we should almost always add alt text, and it definitely shouldn't be the same as the caption.
             img = img.replace(` alt=""`, "")
 
             // If there's a caption, add a <figcaption> element.
             //
-            // A caption can hold a nested {{aside}}. Markdown would fold that into the
-            // caption's own paragraph — and a <p> can't contain an <aside>, so the browser
-            // closes the paragraph early and the caption comes apart. So lift any macro
-            // sitting on its own line out of the caption before rendering, then append it
-            // after, as a sibling of the caption text. That's the shape the gutter CSS
-            // expects: figcaption > p, then figcaption > aside.
+            // A caption can hold a nested {{aside}}. Markdown would fold that into the caption's own paragraph — and a <p> can't contain an <aside>, so the browser closes the paragraph early and the caption comes apart. So lift any macro sitting on its own line out of the caption before rendering, then append it after, as a sibling of the caption text. That's the shape the gutter CSS expects: figcaption > p, then figcaption > aside.
             let figcaption = null
             if (caption) {
               let lifted: string[] = []
@@ -161,14 +134,9 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case macro.startsWith("#") && macro:
             return ""
 
-          // 2026·07·27 — the site's one date format, used by the byline on a post and by each
-          // row of the blog index. A date is a fact here rather than a sentence, so it's set as
-          // a label and not written out. en-CA because it's the locale that formats year-first;
-          // the middots are a separator you don't read aloud.
+          // 2026·07·27 — the site's one date format, used by the byline on a post and by each row of the blog index. A date is a fact here rather than a sentence, so it's set as a label and not written out. en-CA because it's the locale that formats year-first; the middots are a separator you don't read aloud.
           //
-          // toLocaleDateString rather than toISOString: an unparseable date gives back the
-          // string "Invalid Date" here, and throws a RangeError there. A bad date in one
-          // post's frontmatter should show up on the page, not stop the build.
+          // toLocaleDateString rather than toISOString: an unparseable date gives back the string "Invalid Date" here, and throws a RangeError there. A bad date in one post's frontmatter should show up on the page, not stop the build.
           case "full-date":
             if (!frontmatter.date) return bail(`This page's template requires a date: ` + green(path))
             return new Date(frontmatter.date)
@@ -178,35 +146,19 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case "href":
             return page.url.pathname
 
-          // The first segment of this page's URL — "docs" for /docs/pages/, blank for the
-          // home page. Templates put it on <body> so CSS can mark which section you're in.
-          // The built-in is-current attribute only matches an exact URL, which is right for
-          // a table of contents and wrong for a nav link that should stay lit across a
-          // whole section.
+          // The first segment of this page's URL — "docs" for /docs/pages/, blank for the home page. Templates put it on <body> so CSS can mark which section you're in. The built-in is-current attribute only matches an exact URL, which is right for a table of contents and wrong for a nav link that should stay lit across a whole section.
           case "section":
             return page.url.pathname.split("/")[1] ?? ""
 
-          // {{toc}} — a table of contents for this page, built from its own <h2> headings.
-          // For a long page someone might want to skim, or link into a section of.
+          // {{toc}} — a table of contents for this page, built from its own <h2> headings. For a long page someone might want to skim, or link into a section of.
           //
-          // Put it in a *template*, not in a page. It reads page.compiledBody after the
-          // header-anchor pass has run over it, which is true when the template is expanded
-          // and not while the page's own body is still compiling — so {{toc}} written into
-          // a page's markdown quietly returns nothing. It also needs `header_anchors: true`
-          // on the template, since without ids there is nothing to link to.
+          // Put it in a *template*, not in a page. It reads page.compiledBody after the header-anchor pass has run over it, which is true when the template is expanded and not while the page's own body is still compiling — so {{toc}} written into a page's markdown quietly returns nothing. It also needs `header_anchors: true` on the template, since without ids there is nothing to link to.
           //
-          // Fewer than two headings gets you nothing, because a contents list of one item
-          // is a heading you have written out twice.
-          // {{excerpt}} — the page's opening paragraph, for a listing.
+          // Fewer than two headings gets you nothing, because a contents list of one item is a heading you have written out twice. {{excerpt}} — the page's opening paragraph, for a listing.
           //
-          // Reads page.body, the raw markdown, rather than page.compiledBody — and that isn't an
-          // oversight. {{index:}} expands its include in the context of each child, and pages are
-          // compiled in glob order, so /blog/ is built before the posts nested inside it. At that
-          // moment a child's compiledBody is still just its source. The raw body is the one thing
-          // that's there whoever asks and whenever, so this reads that and renders it itself.
+          // Reads page.body, the raw markdown, rather than page.compiledBody — and that isn't an oversight. {{index:}} expands its include in the context of each child, and pages are compiled in glob order, so /blog/ is built before the posts nested inside it. At that moment a child's compiledBody is still just its source. The raw body is the one thing that's there whoever asks and whenever, so this reads that and renders it itself.
           //
-          // Skips anything that isn't prose — a leading figure, an aside, a heading, raw HTML — so
-          // that a post opening with an image still gets a sentence into the listing.
+          // Skips anything that isn't prose — a leading figure, an aside, a heading, raw HTML — so that a post opening with an image still gets a sentence into the listing.
           case "excerpt": {
             const blocks = page.body.split(/\n\s*\n/).map((block) => block.trim())
             const prose = blocks.find((b) => b && !b.startsWith("{{") && !b.startsWith("<") && !b.startsWith("#") && !b.startsWith("!["))
@@ -227,8 +179,7 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             return title + subtitle
           }
 
-          // The whole <meta> tag, not just the URL — so that a site with no share
-          // image emits nothing at all, rather than an empty content="".
+          // The whole <meta> tag, not just the URL — so that a site with no share image emits nothing at all, rather than an empty content="".
           case "og-image-tag": {
             const image = frontmatter.image || Env.ogImage
             return image ? `<meta property="og:image" content="${toFullUrl(image)}">` : ""
@@ -237,9 +188,7 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
           case "og-description":
             return plainify(frontmatter.description || Env.description)
 
-          // A page with a publish date is a post — the same signal the RSS feed reads to decide
-          // what belongs in it. Keyed on the date rather than on a template name, so that a post
-          // keeps its type when you move it onto a different template.
+          // A page with a publish date is a post — the same signal the RSS feed reads to decide what belongs in it. Keyed on the date rather than on a template name, so that a post keeps its type when you move it onto a different template.
           case "og-type":
             return frontmatter.date ? "article" : "website"
 
@@ -257,10 +206,7 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
 
           // ─── SITE-SPECIFIC MACROS ───────────────────────────────────────────────────────
           //
-          // Everything below this line exists to serve one particular website's structure —
-          // a blog whose posts are children of /blog, and a docs section whose running order
-          // is defined by the sidebar include. They are examples of the kind of thing this
-          // system is for, not features of it.
+          // Everything below this line exists to serve one particular website's structure — a blog whose posts are children of /blog, and a docs section whose running order is defined by the sidebar include. They are examples of the kind of thing this system is for, not features of it.
           //
           // Adapt them, or delete them and write your own. That's the point.
 
@@ -287,9 +233,7 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
             return `<a class="right" href="${href}"><span>Next page</span> ${nextPage.frontmatter.title}</a>`
           }
 
-          // Previous/next links that follow the publish dates of sibling blog posts. Older
-          // sits on the left and newer on the right, the same way back and forward sit in
-          // docs — time reads left to right, so the pair points the way the dates run.
+          // Previous/next links that follow the publish dates of sibling blog posts. Older sits on the left and newer on the right, the same way back and forward sit in docs — time reads left to right, so the pair points the way the dates run.
           case "older-in-blog":
             if (page.parent) {
               let children = page.parent.children.toSorted((a, b) => compare(a.frontmatter.date, b.frontmatter.date))
@@ -339,15 +283,12 @@ export function expandMacros(text: string, page: Page, pages: Page[]) {
 
 type ReplaceHbarFn = (contents: string, spaces: string) => string
 
-// Code samples are the one place where {{ braces }} usually mean themselves rather than a
-// macro — most obviously in documentation about this build system, but equally in any page
-// showing a template language, a shell variable, or Handlebars.
+// Code samples are the one place where {{ braces }} usually mean themselves rather than a macro — most obviously in documentation about this build system, but equally in any page showing a template language, a shell variable, or Handlebars.
 const CODE_REGIONS = /<pre[\s\S]*?<\/pre>|<code[\s\S]*?<\/code>/g
 
 const MACRO_OPEN = /( *){{/g
 
-// Find the }} that closes the {{ at `open`, counting nested pairs along the way.
-// Returns the index just past the closing braces, or -1 if it never closes.
+// Find the }} that closes the {{ at `open`, counting nested pairs along the way. Returns the index just past the closing braces, or -1 if it never closes.
 const findMacroEnd = (html: string, open: number) => {
   let depth = 0
   for (let i = open; i < html.length - 1; i++) {
@@ -363,15 +304,9 @@ const findMacroEnd = (html: string, open: number) => {
 }
 
 /*
-  Macros nest — a figure's caption can hold an aside, and a comment can quote a macro while
-  explaining it — so we match braces by counting rather than with a regex. A lazy /{{(.+?)}}/
-  ends the outer macro's match at the *inner* macro's closing braces, which silently
-  swallows half of one and leaks the other half into the page.
+  Macros nest — a figure's caption can hold an aside, and a comment can quote a macro while explaining it — so we match braces by counting rather than with a regex. A lazy /{{(.+?)}}/ ends the outer macro's match at the *inner* macro's closing braces, which silently swallows half of one and leaks the other half into the page.
 
-  Counting means the outermost macro matches first. That's the right way round: a comment
-  containing an example gets removed whole, and a figure receives its caption with the
-  aside still written as a macro — which is fine, because expandMacros runs the whole thing
-  again until nothing changes, and the aside expands on the next pass.
+  Counting means the outermost macro matches first. That's the right way round: a comment containing an example gets removed whole, and a figure receives its caption with the aside still written as a macro — which is fine, because expandMacros runs the whole thing again until nothing changes, and the aside expands on the next pass.
 */
 const expandAllMacros = (html: string, cb: ReplaceHbarFn) => {
   // Work out where the code samples are, so we can tell whether a given {{ sits inside one.
@@ -387,10 +322,7 @@ const expandAllMacros = (html: string, cb: ReplaceHbarFn) => {
     const spaces = match[1]
     const open = match.index + spaces.length
 
-    // We test where the macro *opens*, not whether it overlaps a code sample at all. A macro
-    // shown as an example opens inside the sample, and should stay exactly as written. But a
-    // real macro can perfectly well have code in its arguments — {{caution: run `./site build`}}
-    // opens in the prose and merely happens to contain a <code> — and that must still expand.
+    // We test where the macro *opens*, not whether it overlaps a code sample at all. A macro shown as an example opens inside the sample, and should stay exactly as written. But a real macro can perfectly well have code in its arguments — {{caution: run `./site build`}} opens in the prose and merely happens to contain a <code> — and that must still expand.
     if (startsInsideCode(open)) continue
 
     // Unbalanced braces are left exactly as written rather than guessed at.

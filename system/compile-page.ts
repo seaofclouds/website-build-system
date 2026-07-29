@@ -1,7 +1,4 @@
-// Compile Page
-// All the steps needed to produce the final HTML for every page,
-// everything from markdown conversion to macro expansion,
-// is applied and/or orchestrated here.
+// Compile Page All the steps needed to produce the final HTML for every page, everything from markdown conversion to macro expansion, is applied and/or orchestrated here.
 
 import { Env } from "./env.ts"
 import { log } from "./logging.ts"
@@ -68,8 +65,7 @@ function compileHtml(page: Page, pages: Page[]) {
 
   let html = template.body
 
-  // Add extra CSS or scripts
-  // We accept both the singular and the plural, from both the page and the template
+  // Add extra CSS or scripts We accept both the singular and the plural, from both the page and the template
   let styles = [frontmatter.styles, frontmatter.style, template.frontmatter.styles, template.frontmatter.style]
   let scripts = [frontmatter.scripts, frontmatter.script, template.frontmatter.scripts, template.frontmatter.script]
   // combine and then filter empty values
@@ -81,8 +77,7 @@ function compileHtml(page: Page, pages: Page[]) {
 
   html = expandMacros(html, page, pages)
 
-  // Grid guides, when the build was run with --fluid or --fixed. Written onto <html> here
-  // rather than into every template, so that a template you write yourself gets them too.
+  // Grid guides, when the build was run with --fluid or --fixed. Written onto <html> here rather than into every template, so that a template you write yourself gets them too.
   if (Env.gridDebug) html = html.replace("<html", `<html ${Env.gridDebug}`)
 
   html = replaceHtmlTag(html, "a", (content, attrs, spaces) => {

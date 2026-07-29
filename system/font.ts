@@ -1,12 +1,8 @@
-// Font
-// This file holds the logic for our automatic font subsetting and optimization behaviour.
+// Font This file holds the logic for our automatic font subsetting and optimization behaviour.
 //
-// Drop a .ttf or .otf into /fonts and the build system will scan every page of the
-// site, collect every character actually used, and emit a woff2 containing only
-// those glyphs. Static and variable fonts both work, as do TrueType and CFF outlines.
+// Drop a .ttf or .otf into /fonts and the build system will scan every page of the site, collect every character actually used, and emit a woff2 containing only those glyphs. Static and variable fonts both work, as do TrueType and CFF outlines.
 //
-// Leave /fonts empty and none of this happens — the feature costs you nothing
-// until you decide to use it.
+// Leave /fonts empty and none of this happens — the feature costs you nothing until you decide to use it.
 
 import { basename, copy, exec, extname, glob, mkdir, read, rm, write } from "./io.ts"
 import { log, logIndented, yellow } from "./logging.ts"
@@ -17,14 +13,9 @@ const FONT_FORMATS = ["otf", "ttf"]
 
 // Which OpenType features survive subsetting.
 //
-// Leave this blank to use hb-subset's own defaults. That's the recommended setting:
-// it keeps the features text actually depends on — ligatures, contextual alternates,
-// kerning, mark positioning, localised forms — and drops the rest.
+// Leave this blank to use hb-subset's own defaults. That's the recommended setting: it keeps the features text actually depends on — ligatures, contextual alternates, kerning, mark positioning, localised forms — and drops the rest.
 //
-// Be careful if you do set it. Passing a bare list *replaces* those defaults rather
-// than adding to them, so asking for "kern" alone silently drops every ligature and
-// stylistic set, which is a miserable bug to track down. Prefix a tag with + to add
-// to the defaults instead (eg: "+ss01"). Use "*" to keep absolutely everything.
+// Be careful if you do set it. Passing a bare list *replaces* those defaults rather than adding to them, so asking for "kern" alone silently drops every ligature and stylistic set, which is a miserable bug to track down. Prefix a tag with + to add to the defaults instead (eg: "+ss01"). Use "*" to keep absolutely everything.
 //
 // Measured on Overpass, subset to the ~120 characters this starter happens to use:
 //
@@ -34,12 +25,9 @@ const FONT_FORMATS = ["otf", "ttf"]
 //                                             that nothing on the site references
 const LAYOUT_FEATURES = ""
 
-// Variable fonts keep all of their axes by default, which is usually what you want —
-// a single file covering every weight. To pin a fixed instance instead (smaller file,
-// no variation), set this to something like "wght=400".
+// Variable fonts keep all of their axes by default, which is usually what you want — a single file covering every weight. To pin a fixed instance instead (smaller file, no variation), set this to something like "wght=400".
 //
-// Remember to match your @font-face to this choice: a variable font wants
-// `format("woff2-variations")` and a `font-weight` range, a pinned one doesn't.
+// Remember to match your @font-face to this choice: a variable font wants `format("woff2-variations")` and a `font-weight` range, a pinned one doesn't.
 const INSTANCE = ""
 
 let lastChars: string
@@ -49,8 +37,7 @@ export const generateFontSubsets = (text: string): boolean => {
   const outPath = "content/static/fonts"
   const charFile = `${outPath}/chars.txt`
 
-  // If there are no fonts to subset, there's nothing to do. That's the default state
-  // of a fresh copy of this build system, so we return quietly rather than warn.
+  // If there are no fonts to subset, there's nothing to do. That's the default state of a fresh copy of this build system, so we return quietly rather than warn.
   const sourceFiles = glob("fonts/**.*")
   if (!sourceFiles.some((file) => FONT_FORMATS.includes(extname(file)))) return true
 
@@ -71,8 +58,7 @@ export const generateFontSubsets = (text: string): boolean => {
 
     log("Regenerating Fonts")
 
-    // Make sure we have the necessary binary dependencies.
-    // It's not a big deal if these are missing — see the README for more.
+    // Make sure we have the necessary binary dependencies. It's not a big deal if these are missing — see the README for more.
     try {
       exec("which -s hb-subset woff2_compress")
     } catch {
@@ -99,8 +85,7 @@ export const generateFontSubsets = (text: string): boolean => {
         exec(`woff2_compress ${dest}`)
         rm(dest) // Remove the subset (but non-woff) file
       } else if (base != "_README") {
-        // Non-font files, like a License, just need to be copied straight across and then we're done.
-        // But we don't copy the _README, because we write a different readme down below.
+        // Non-font files, like a License, just need to be copied straight across and then we're done. But we don't copy the _README, because we write a different readme down below.
         copy(file, dest)
         continue
       }

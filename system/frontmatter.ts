@@ -1,5 +1,4 @@
-// Frontmatter
-// This file handles parsing the frontmatter section of Markdown and HTML files.
+// Frontmatter This file handles parsing the frontmatter section of Markdown and HTML files.
 
 import { green, log, yellow } from "./logging.ts"
 import { Markdown } from "./markdown.ts"
@@ -12,24 +11,16 @@ export const extractFrontmatter = (source: string) => {
   // First, before anything else, trim the source.
   source = source.trim()
 
-  // Now, there are a handful of different formats we want to support:
-  // (1) ---, fm, ---, body
-  // (2) fm, ---, body
-  // (3) ---, body
-  // (4) fm, ---
-  // (5) body
+  // Now, there are a handful of different formats we want to support: (1) ---, fm, ---, body (2) fm, ---, body (3) ---, body (4) fm, --- (5) body
 
-  // If the first line is "---", strip it.
-  // This turns (1) into (2), and (3) into (5)
+  // If the first line is "---", strip it. This turns (1) into (2), and (3) into (5)
   const [firstLine, rest] = splitOnce(source, "\n")
   if (firstLine.trim() === "---") source = rest
 
   // (5) If there's no frontmatter, we're done
   if (!hasFrontmatter(source)) return { frontmatter: {}, body: source }
 
-  // Now, we just need to handle 2 formats:
-  // (2) fm, ---, body
-  // (4) fm, ---
+  // Now, we just need to handle 2 formats: (2) fm, ---, body (4) fm, ---
 
   // Split the frontmatter from the body
   const [fm, body] = trimAll(splitOnce(source, "---"))
@@ -75,7 +66,6 @@ export const validateFrontmatter = (path: string, fm: Frontmatter) => {
     fm.publish = "false"
   }
 
-  // DESCRIPTION
-  // You can use inline markdown for the description.
+  // DESCRIPTION You can use inline markdown for the description.
   if (fm.description) fm.description = Markdown.renderInline(fm.description)
 }

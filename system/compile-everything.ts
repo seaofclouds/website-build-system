@@ -1,7 +1,4 @@
-// Compile Everything
-// This file does the main orchestration logic for building the website.
-// It creates the /public folder, loads templates, builds all the pages, generates feeds,
-// reports any broken or missing links, and wrangles fonts and static assets.
+// Compile Everything This file does the main orchestration logic for building the website. It creates the /public folder, loads templates, builds all the pages, generates feeds, reports any broken or missing links, and wrangles fonts and static assets.
 
 import { compilePage } from "./compile-page.ts"
 import { Env } from "./env.ts"
@@ -42,24 +39,17 @@ export const compileEverything = () => {
     return !skipProcessing
   })
 
-  // This function loads the redirects file, copies redirected static assets, and
-  // generates pages with `template: redirect` as needed.
+  // This function loads the redirects file, copies redirected static assets, and generates pages with `template: redirect` as needed.
   pageSources = pageSources.concat(generateRedirectPages())
 
   // Extract the frontmatter and body of each page
   let pages: Page[] = pageSources.map(({ path, source, stats }) => {
     const { frontmatter, body } = extractFrontmatter(source)
 
-    // We want the frontmatter to be quite flexible — opt-in, low-ceremony, etc.
-    // In the spirit of "the right thing" (vs "worse is better"), we need to do a
-    // bunch of work here to pull various frontmatter values together into the right
-    // shape for later compilation stages, and log warnings when things go awry.
+    // We want the frontmatter to be quite flexible — opt-in, low-ceremony, etc. In the spirit of "the right thing" (vs "worse is better"), we need to do a bunch of work here to pull various frontmatter values together into the right shape for later compilation stages, and log warnings when things go awry.
     validateFrontmatter(path, frontmatter)
 
-    // Next, figure out the destination file path the compiled page will be written to:
-    // * content/ -> public/
-    // * .md -> .html
-    // * The optional "clean URLs" rewrite rule: /name.html -> /name/index.html
+    // Next, figure out the destination file path the compiled page will be written to: * content/ -> public/ * .md -> .html * The optional "clean URLs" rewrite rule: /name.html -> /name/index.html
     let dest = replace(path, { "content/": "public/", ".md": ".html" })
     if (frontmatter.clean != "false") {
       if (!dest.endsWith("/index.html")) {
@@ -96,8 +86,7 @@ export const compileEverything = () => {
   // Figure out the parent & children for each page, based solely on their href
   buildTree(pages)
 
-  // Compile each page — markdown, macros, and most other transformations are applied here.
-  // After this point, page.body and page.html will be ready to publish.
+  // Compile each page — markdown, macros, and most other transformations are applied here. After this point, page.body and page.html will be ready to publish.
   for (const page of pages) {
     try {
       compilePage(page, pages)
@@ -117,13 +106,9 @@ export const compileEverything = () => {
   // Generate font subsets which include only the characters used on our site.
   subsetFonts(pages)
 
-  // Now we take everything that's not a page and hardlink it into the public folder.
-  // We use hardlinks, rather than copying, because it's much faster.
-  // We use path.replace(), rather than the replace({}) helper, because there can be subfolders named "content"
+  // Now we take everything that's not a page and hardlink it into the public folder. We use hardlinks, rather than copying, because it's much faster. We use path.replace(), rather than the replace({}) helper, because there can be subfolders named "content"
   //
-  // The glob needs a file extension to match, so the extensionless files that various hosts
-  // look for have to be named individually: CNAME for GitHub Pages, _redirects and _headers
-  // for Netlify and Cloudflare Pages. Add yours here if your host wants something else.
+  // The glob needs a file extension to match, so the extensionless files that various hosts look for have to be named individually: CNAME for GitHub Pages, _redirects and _headers for Netlify and Cloudflare Pages. Add yours here if your host wants something else.
   glob("content/**/*.!(md|html)", "content/CNAME", "content/_redirects", "content/_headers").forEach((path) =>
     linkFile(path, path.replace("content/", "public/"))
   )
@@ -166,8 +151,7 @@ const generateSitemap = (pages: Page[]) => {
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">`,
     ...pages
       .filter(({ frontmatter }) => frontmatter.index != "false")
-      // Redirects aren't destinations. The ones generated from Redirects.txt already opt out
-      // via index: false, but a page can also use the redirect template directly.
+      // Redirects aren't destinations. The ones generated from Redirects.txt already opt out via index: false, but a page can also use the redirect template directly.
       .filter(({ frontmatter }) => frontmatter.template != "redirect")
       .toSorted((a, b) => compare(a.url.pathname, b.url.pathname))
       .map((page) => [page.url, page.stats.modified.toISOString()])
@@ -180,10 +164,7 @@ const generateSitemap = (pages: Page[]) => {
 function generateRobots() {
   // If we're publishing draft pages (eg: on the private mirror), we shouldn't be crawled.
   //
-  // Production deliberately gets no robots.txt at all, rather than a permissive one. A file
-  // that allows everything says exactly what its absence says, so it would buy nothing and
-  // add one more thing to keep in step with the condition below. Write one when you actually
-  // have something to disallow.
+  // Production deliberately gets no robots.txt at all, rather than a permissive one. A file that allows everything says exactly what its absence says, so it would buy nothing and add one more thing to keep in step with the condition below. Write one when you actually have something to disallow.
   if (Env.draft) write("public/robots.txt", `User-agent: *\nDisallow: /`)
 }
 

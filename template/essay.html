@@ -1,19 +1,9 @@
 ---
-Long-form pages with a gutter down the right-hand side. Asides and figure captions sit in
-that gutter, level with the paragraph they annotate, rather than interrupting the text.
-This is the shape Ink & Switch essays use, and the one the figure vocabulary in
-content.css was designed against — see /styleguide/ for everything it can do.
-
+Long-form pages with a gutter down the right-hand side. Asides and figure captions sit in that gutter, level with the paragraph they annotate, rather than interrupting the text.
+This is the shape Ink & Switch essays use, and the one the figure vocabulary in content.css was designed against — see /styleguide/ for everything it can do.
 Requires a `date` in the page's frontmatter, for the byline. `authors` is optional.
-
-Two kinds of navigation, at the two ends. {{toc}} at the head builds a contents list from
-the page's own h2s, and emits nothing if there are fewer than two — that answers "where am
-I inside this". Older/newer at the foot answer "what else is near this one".
-
-Note they aren't the same claim as the docs template's previous/next, which follow a
-running order you're meant to read in sequence. These follow dates, which is only a
-statement that more of these exist. An essay is a thing you decide whether to read, not a
-step in a sequence, so it gets its own shape at the top and a nudge sideways at the bottom.
+Two kinds of navigation, at the two ends. {{toc}} at the head builds a contents list from the page's own h2s, and emits nothing if there are fewer than two — that answers "where am I inside this". Older/newer at the foot answer "what else is near this one".
+Note they aren't the same claim as the docs template's previous/next, which follow a running order you're meant to read in sequence. These follow dates, which is only a statement that more of these exist. An essay is a thing you decide whether to read, not a step in a sequence, so it gets its own shape at the top and a nudge sideways at the bottom.
 header_anchors: true
 ---
 
@@ -21,8 +11,7 @@ header_anchors: true
 <html lang="en">
 <head>{{include: head-stuff}}</head>
 <body class="layout-margin" data-section="{{section}}">
-  {{# No sidebar to open, so the burger stays hidden — but the checkbox is kept so that
-      every template has the same shape and the masthead include works unchanged. }}
+  {{# No sidebar to open, so the burger stays hidden — but the checkbox is kept so that every template has the same shape and the masthead include works unchanged. }}
   <input type="checkbox" id="burger-state" />
   {{include: site-header}}
   <main id="content">

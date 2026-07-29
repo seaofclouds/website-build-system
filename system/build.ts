@@ -1,6 +1,4 @@
-// Build
-// This file wraps a bit of retry logic and error handling
-// around the main website compilation process.
+// Build This file wraps a bit of retry logic and error handling around the main website compilation process.
 
 import { compileEverything } from "./compile-everything.ts"
 import { Env } from "./env.ts"

@@ -1,5 +1,4 @@
-// Logging
-// A collection of helper functions for consistent, nicely-formatted console messages.
+// Logging A collection of helper functions for consistent, nicely-formatted console messages.
 
 import { Env } from "./env.ts"
 import { indent } from "./util.ts"

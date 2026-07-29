@@ -1,5 +1,4 @@
-// RSS
-// This file handles RSS feed generation.
+// RSS This file handles RSS feed generation.
 
 import { Env } from "./env.ts"
 import { write } from "./io.ts"

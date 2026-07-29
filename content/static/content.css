@@ -1,29 +1,17 @@
 /*
-  Everything inside the content area: prose, marginalia, figures, arrangements, callouts,
-  code, footnotes.
+  Everything inside the content area: prose, marginalia, figures, arrangements, callouts, code, footnotes.
 
-  One stylesheet for all content, deliberately. An essay may contain a gallery; a gallery
-  page may contain paragraphs. Splitting "prose" from "gallery" would mean deciding which
-  one a page is, and pages aren't like that. What *does* vary is the shape of the page
-  around the content — where the nav is, whether there's a gutter — and that's layout.css.
+  One stylesheet for all content, deliberately. An essay may contain a gallery; a gallery page may contain paragraphs. Splitting "prose" from "gallery" would mean deciding which one a page is, and pages aren't like that. What *does* vary is the shape of the page around the content — where the nav is, whether there's a gutter — and that's layout.css.
 
   Two vocabularies live here, from two different sites.
 
-    The reading layout comes from Ink & Switch: a measure with a gutter beside it, and
-    figures that break out of the measure in named ways (wide, tile-3, float-left).
+    The reading layout comes from Ink & Switch: a measure with a gutter beside it, and figures that break out of the measure in named ways (wide, tile-3, float-left).
 
-    The arrangements come from seaofclouds: twelve-column compositions that place images
-    in deliberate, slightly irregular groupings (staggered, diagonal, organic).
+    The arrangements come from seaofclouds: twelve-column compositions that place images in deliberate, slightly irregular groupings (staggered, diagonal, organic).
 
-  They are different design languages, not two themes of one. They overlap almost nowhere
-  except that both style <figure> — and they disagree about it, so whichever loaded last
-  would win for every figure on the site. The resolution: bare figure/figcaption carry only
-  the shared baseline (in base.css) plus the reading layout below, and every arrangement
-  rule is scoped to its container. A figure inside .arrangement behaves one way; the same
-  figure in a paragraph behaves the other.
+  They are different design languages, not two themes of one. They overlap almost nowhere except that both style <figure> — and they disagree about it, so whichever loaded last would win for every figure on the site. The resolution: bare figure/figcaption carry only the shared baseline (in base.css) plus the reading layout below, and every arrangement rule is scoped to its container. A figure inside .arrangement behaves one way; the same figure in a paragraph behaves the other.
 
-  The governing naming rule, worth keeping: modes are words, numeric modifiers are bare
-  integers. `wide`, `staggered`, `float-left` — but `tile-3`, `pos-2`, `space-top-4`.
+  The governing naming rule, worth keeping: modes are words, numeric modifiers are bare integers. `wide`, `staggered`, `float-left` — but `tile-3`, `pos-2`, `space-top-4`.
 
   Please don't use a formatter (like Prettier).
 */
@@ -31,34 +19,20 @@
 /* THE MEASURE ***********************************************************************************/
 
 /*
-  Text stops at --measure, which is whatever the layout says it is: eight columns (46rem)
-  on an essay, six (34rem) on a docs or blog page, 100% once the columns have been given
-  up. Applied per-element rather than to <main>, so that a figure can be wider than a
-  paragraph without needing a class for it.
+  Text stops at --measure, which is whatever the layout says it is: eight columns (46rem) on an essay, six (34rem) on a docs or blog page, 100% once the columns have been given up. Applied per-element rather than to <main>, so that a figure can be wider than a paragraph without needing a class for it.
 
-  Only on the layouts that are for reading — which is all of them except .layout-wide, where
-  a landing page or a gallery sets its own widths and would fight this.
+  Only on the layouts that are for reading — which is all of them except .layout-wide, where a landing page or a gallery sets its own widths and would fight this.
 */
 :is(.layout-plain, .layout-nav, .layout-margin) main :is(p, ul, ol, blockquote) {
   max-width: var(--measure);
 }
 
 /*
-  Tables are the exception, and they're left out of the rule above rather than fighting it
-  later — a `main table` override would tie on specificity and win only by source order.
+  Tables are the exception, and they're left out of the rule above rather than fighting it later — a `main table` override would tie on specificity and win only by source order.
 
-  A reference table is two columns of unequal appetite: a class name, which has a fixed
-  width, and a sentence about when to use it, which wants every pixel left. At the measure
-  the sentence column came out around forty characters on a docs page, which reads as a
-  column of fragments. So a table takes the marginalia band as well, the way an
-  arrangement or a gallery does. Nothing is lost: a table is declarative, and a reader
-  doesn't annotate one from the margin.
+  A reference table is two columns of unequal appetite: a class name, which has a fixed width, and a sentence about when to use it, which wants every pixel left. At the measure the sentence column came out around forty characters on a docs page, which reads as a column of fragments. So a table takes the marginalia band as well, the way an arrangement or a gallery does. Nothing is lost: a table is declarative, and a reader doesn't annotate one from the margin.
 
-  Note that this widens by `width` and NOT by the negative margin the figures use. A table
-  carries `width: 100%` from base.css, and a block box with a specified width plus a
-  specified margin is over-constrained — CSS resolves that by ignoring margin-right
-  outright, so the negative-margin idiom silently does nothing here. Percentages resolve
-  against <main>'s content box, which *is* the measure, so the width has to say so.
+  Note that this widens by `width` and NOT by the negative margin the figures use. A table carries `width: 100%` from base.css, and a block box with a specified width plus a specified margin is over-constrained — CSS resolves that by ignoring margin-right outright, so the negative-margin idiom silently does nothing here. Percentages resolve against <main>'s content box, which *is* the measure, so the width has to say so.
 */
 @media (min-width: 46rem) {
   :is(.layout-nav, .layout-margin) main > table {
@@ -67,12 +41,7 @@
 }
 
 /*
-  Both columns land on the grid. The first cell's box is two columns plus the gap — 12rem
-  — of which 2rem is padding, so the class name occupies columns 4-5 on a docs page and
-  the sentence starts on the line of column 6. Widening the name column this way *widens*
-  the sentence too: auto table layout was handing the first column far more than it needed
-  in order to avoid breaking `grid-columns-num` mid-token, and 10rem fits every class name
-  in the vocabulary on one line.
+  Both columns land on the grid. The first cell's box is two columns plus the gap — 12rem — of which 2rem is padding, so the class name occupies columns 4-5 on a docs page and the sentence starts on the line of column 6. Widening the name column this way *widens* the sentence too: auto table layout was handing the first column far more than it needed in order to avoid breaking `grid-columns-num` mid-token, and 10rem fits every class name in the vocabulary on one line.
 */
 main :is(th, td):first-child {
   /* border-box, so this is 2 columns + 1 gap of content plus a 1 gap of padding. */
@@ -81,33 +50,17 @@ main :is(th, td):first-child {
 }
 
 /*
-  Below the breakpoint there is no grid for a cell to land on, so it stops asking for two
-  columns of one — and a long token is allowed to break rather than push the page wide.
+  Below the breakpoint there is no grid for a cell to land on, so it stops asking for two columns of one — and a long token is allowed to break rather than push the page wide.
 
-  The break is the part that matters. A table can't get narrower than its widest
-  unbreakable word, and a docs table holds things like
-  `npm ci && node --disable-warning=ExperimentalWarning`, which is one 380px `<code>` token
-  with nowhere to wrap. On a phone that made the *page* scroll sideways, not the table.
-  `anywhere` rather than `break-word`, because only `anywhere` shrinks min-content and
-  min-content is exactly what the table was sizing itself to.
+  The break is the part that matters. A table can't get narrower than its widest unbreakable word, and a docs table holds things like `npm ci && node --disable-warning=ExperimentalWarning`, which is one 380px `<code>` token with nowhere to wrap. On a phone that made the *page* scroll sideways, not the table. `anywhere` rather than `break-word`, because only `anywhere` shrinks min-content and min-content is exactly what the table was sizing itself to.
 
   Scoped twice over, and both scopes are load-bearing.
 
-  To <code>: applied to the whole cell it breaks ordinary prose too, and the browser then
-  had licence to squeeze the first column to one character — "Setting" came out as
-  "Settin / g". Code is the only thing in a table that can't wrap on its own, so it's the
-  only thing that may break mid-token.
+  To <code>: applied to the whole cell it breaks ordinary prose too, and the browser then had licence to squeeze the first column to one character — "Setting" came out as "Settin / g". Code is the only thing in a table that can't wrap on its own, so it's the only thing that may break mid-token.
 
-  And away from the first column, because a column's min-content is what the table
-  guarantees it. Let the name break anywhere and its min-content is one character, so auto
-  layout hands almost everything to the sentence column and breaks the name to fit whatever
-  is left — `template` came out as `templat / e` at 735px, with room to spare. Keeping the
-  name unbreakable makes its longest token the floor, which is exactly the guarantee it
-  needs. Nothing in the first column of a docs table is long enough for that floor to be a
-  problem; the long tokens are all on the right.
+  And away from the first column, because a column's min-content is what the table guarantees it. Let the name break anywhere and its min-content is one character, so auto layout hands almost everything to the sentence column and breaks the name to fit whatever is left — `template` came out as `templat / e` at 735px, with room to spare. Keeping the name unbreakable makes its longest token the floor, which is exactly the guarantee it needs. Nothing in the first column of a docs table is long enough for that floor to be a problem; the long tokens are all on the right.
 
-  Kept off the wide layouts on purpose: up there the column has room, and breaking
-  `grid-columns-num` across two lines to save space nobody needed reads as a typo.
+  Kept off the wide layouts on purpose: up there the column has room, and breaking `grid-columns-num` across two lines to save space nobody needed reads as a typo.
 */
 @media (width <= 46rem) {
   main :is(th, td):first-child {
@@ -120,13 +73,9 @@ main :is(th, td):first-child {
 }
 
 /*
-  Figures are held to the measure too, so a default figure lines up with the text above it
-  rather than running past it. This is also what makes `wide` mean the same thing on every
-  layout: without the cap, a figure on a nav layout already filled the content box and
-  `wide` had nothing left to give it.
+  Figures are held to the measure too, so a default figure lines up with the text above it rather than running past it. This is also what makes `wide` mean the same thing on every layout: without the cap, a figure on a nav layout already filled the content box and `wide` had nothing left to give it.
 
-  Direct children only — a figure inside an arrangement or a gallery is sized by its
-  container, not by the measure.
+  Direct children only — a figure inside an arrangement or a gallery is sized by its container, not by the measure.
 */
 :is(.layout-nav, .layout-margin) main > figure {
   max-width: var(--measure);
@@ -137,8 +86,7 @@ section + section {
   margin-top: var(--space-xl);
 }
 
-/* Highlight a phrase in the body that an aside is talking about. A class, not bare <i>:
-   Ink & Switch styles the element itself, which catches every italic on the site. */
+/* Highlight a phrase in the body that an aside is talking about. A class, not bare <i>: Ink & Switch styles the element itself, which catches every italic on the site. */
 .highlight {
   padding: .15em .1em;
   border-radius: 2px;
@@ -146,12 +94,9 @@ section + section {
 }
 
 /*
-  Links in the content area take --accent on hover. It defaults to the body colour, so
-  this does nothing visible until you set a brand hue in variables.css — which is exactly
-  the point: change one value and every prose link on the site picks it up.
+  Links in the content area take --accent on hover. It defaults to the body colour, so this does nothing visible until you set a brand hue in variables.css — which is exactly the point: change one value and every prose link on the site picks it up.
 
-  Scoped to prose so it can't reach the masthead links or the call-to-action buttons,
-  which set their own colours and would be broken by a hover rule that outranks them.
+  Scoped to prose so it can't reach the masthead links or the call-to-action buttons, which set their own colours and would be broken by a hover rule that outranks them.
 */
 main :is(p, li, td, th, dd, figcaption, aside, blockquote, footer) a:hover {
   color: var(--accent);
@@ -160,12 +105,9 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote, footer) a:hover {
 /* THE BLOG INDEX ********************************************************************************/
 
 /*
-  The list at /blog/, built by {{index:blog-item reverse}}. Each row is a title, its date,
-  and the post's opening paragraph — a post in miniature, in a post's own order.
+  The list at /blog/, built by {{index:blog-item reverse}}. Each row is a title, its date, and the post's opening paragraph — a post in miniature, in a post's own order.
 
-  Flat, like the sidebars and the contents list: a marker and an indent would set three
-  stacked blocks a third of a column off the line the title starts on, and a list of two
-  things doesn't need to announce that it's a list.
+  Flat, like the sidebars and the contents list: a marker and an indent would set three stacked blocks a third of a column off the line the title starts on, and a list of two things doesn't need to announce that it's a list.
 
   Site-specific, like everything it's built from. Delete it with the blog.
 */
@@ -174,9 +116,7 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote, footer) a:hover {
   list-style-type: none;
 }
 
-/* Zero on the first row, so the list starts flush against the masthead the way a docs page's
-   <h1> does. base.css gives every <li> a top margin, which is right inside prose and wrong
-   on the first row of a page that opens with a list. */
+/* Zero on the first row, so the list starts flush against the masthead the way a docs page's <h1> does. base.css gives every <li> a top margin, which is right inside prose and wrong on the first row of a page that opens with a list. */
 .post-index li {
   margin-top: 0;
 }
@@ -186,37 +126,24 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote, footer) a:hover {
 }
 
 /*
-  Nothing here styles the title, the date or the excerpt, and that's the point. The row
-  is a real <h1> at the size base.css says an h1 is, the date is base.css's h6 label — the
-  same element and the same rule the byline on a post uses — the excerpt is a paragraph, and
-  the link carries base.css's `plain` class so it isn't underlined.
-  The accent-on-hover comes from the prose rule at the top of this file, which already covers
-  a link inside an <li>.
+  Nothing here styles the title, the date or the excerpt, and that's the point. The row is a real <h1> at the size base.css says an h1 is, the date is base.css's h6 label — the same element and the same rule the byline on a post uses — the excerpt is a paragraph, and the link carries base.css's `plain` class so it isn't underlined. The accent-on-hover comes from the prose rule at the top of this file, which already covers a link inside an <li>.
 */
 
 /* TABLE OF CONTENTS *****************************************************************************/
 
 /*
-  Emitted by {{toc}} from the page's own h2s — see macros.ts. The essay template puts it at
-  the top, above the first paragraph, which is where a reader decides whether to read the
-  thing or skim it.
+  Emitted by {{toc}} from the page's own h2s — see macros.ts. The essay template puts it at the top, above the first paragraph, which is where a reader decides whether to read the thing or skim it.
 
-  Held to the measure rather than lifted into the gutter, even though it looks like the sort
-  of thing that belongs out there. The gutter is for notes *about* a passage, and a contents
-  list isn't about a passage — it's the shape of the whole page. It would also land on top
-  of the byline, which is already the topmost thing in the band.
+  Held to the measure rather than lifted into the gutter, even though it looks like the sort of thing that belongs out there. The gutter is for notes *about* a passage, and a contents list isn't about a passage — it's the shape of the whole page. It would also land on top of the byline, which is already the topmost thing in the band.
 
-  It's the same object as a sidebar — a flat list of links to somewhere else. The links are
-  styled by nothing here: they carry base.css's `plain` class, and the accent-on-hover comes
-  from the prose rule at the top of this file, which already covers a link inside an <li>.
+  It's the same object as a sidebar — a flat list of links to somewhere else. The links are styled by nothing here: they carry base.css's `plain` class, and the accent-on-hover comes from the prose rule at the top of this file, which already covers a link inside an <li>.
 */
 .toc {
   max-width: var(--measure);
   margin-block: var(--space-lg) var(--space-xl);
   padding-left: var(--space-md);
 
-  /* A rule rather than a box. A boxed contents list reads as a callout, which is the one
-     thing it isn't — nothing here is being said, it's all pointing elsewhere. */
+  /* A rule rather than a box. A boxed contents list reads as a callout, which is the one thing it isn't — nothing here is being said, it's all pointing elsewhere. */
   border-left: 2px solid var(--separator);
 }
 
@@ -224,8 +151,7 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote, footer) a:hover {
   margin: 0;
 }
 
-/* Flat, like the sidebars: a list's marker and indent would buy hierarchy that a handful of
-   section links doesn't have, and cost the alignment with the paragraph below. */
+/* Flat, like the sidebars: a list's marker and indent would buy hierarchy that a handful of section links doesn't have, and cost the alignment with the paragraph below. */
 .toc ul {
   margin: 0;
   list-style-type: none;
@@ -235,17 +161,13 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote, footer) a:hover {
 /* MARGINALIA ************************************************************************************/
 
 /*
-  An <aside> inside <main> is a note in the right-hand gutter. (The navigation sidebar is
-  <nav class="site-nav">, not an aside — see layout.css. The two used to share the bare
-  element, and every rule below applied to the navigation as well.)
+  An <aside> inside <main> is a note in the right-hand gutter. (The navigation sidebar is <nav class="site-nav">, not an aside — see layout.css. The two used to share the bare element, and every rule below applied to the navigation as well.)
 
   Written with the aside macro:
 
-    {{ aside A note that sits beside the paragraph after it. }}
-    {{ aside 2 The same, pulled up two body lines so it aligns with the line you mean. }}
+    {{ aside A note that sits beside the paragraph after it. }} {{ aside 2 The same, pulled up two body lines so it aligns with the line you mean. }}
 
-  Asides and captions share one treatment — same size, same line-height as the body, so
-  their baselines land on the same rhythm as the main column.
+  Asides and captions share one treatment — same size, same line-height as the body, so their baselines land on the same rhythm as the main column.
 */
 
 aside,
@@ -256,33 +178,22 @@ figcaption {
 }
 
 /*
-  Horizontal padding only, so the aside's text aligns with a figcaption's text (both inset
-  1rem from the gutter edge) while still top-aligning with the paragraph that follows it.
-  The byline (.meta) and figcaption-nested asides take full padding instead.
+  Horizontal padding only, so the aside's text aligns with a figcaption's text (both inset 1rem from the gutter edge) while still top-aligning with the paragraph that follows it. The byline (.meta) and figcaption-nested asides take full padding instead.
 */
 main aside {
-  /* On a layout with no gutter the aside stays in normal flow, so hold it to the measure
-     like any other block — otherwise an inline note runs wider than the text it annotates.
-     Harmless in the gutter, where the aside is already held to --band. */
+  /* On a layout with no gutter the aside stays in normal flow, so hold it to the measure like any other block — otherwise an inline note runs wider than the text it annotates. Harmless in the gutter, where the aside is already held to --band. */
   max-width: var(--measure);
 }
 
-/* In normal flow an aside needs an indent to read as an aside at all. In the gutter it
-   doesn't — its position says what it is — and an indent there would push its text a
-   rem off column 10, which is the one thing the grid is for. */
-/* body:not(...), not a bare :not(...). `:not(.layout-margin) main aside` reads as "an
-   aside inside a main inside anything that isn't .layout-margin" — and <html> isn't, so
-   it matches on every page including the ones it was meant to exclude. */
+/* In normal flow an aside needs an indent to read as an aside at all. In the gutter it doesn't — its position says what it is — and an indent there would push its text a rem off column 10, which is the one thing the grid is for. */
+/* body:not(...), not a bare :not(...). `:not(.layout-margin) main aside` reads as "an aside inside a main inside anything that isn't .layout-margin" — and <html> isn't, so it matches on every page including the ones it was meant to exclude. */
 body:not(.layout-margin, .layout-nav) main aside {
   padding-left: var(--space-md);
   border-left: 2px solid var(--separator);
 }
 
 /*
-  The same treatment on the gutter layouts, at the width where their gutter has closed and
-  the aside has fallen back into flow. "In the gutter it doesn't need an indent" is a
-  statement about position, not about which layout you're on, so this width mirrors the one
-  in PLACING THINGS IN THE GUTTER exactly — change one, change the other.
+  The same treatment on the gutter layouts, at the width where their gutter has closed and the aside has fallen back into flow. "In the gutter it doesn't need an indent" is a statement about position, not about which layout you're on, so this width mirrors the one in PLACING THINGS IN THE GUTTER exactly — change one, change the other.
 
   Not .meta: the byline is deliberately flush, and it has its own padding rule below.
 */
@@ -297,8 +208,7 @@ main aside p {
   margin: 0 0 var(--space-md);
 }
 
-/* Zero the last child's bottom margin so the box's bottom padding matches its top —
-   otherwise the inner <p>'s margin-bottom stacks on top of the padding. */
+/* Zero the last child's bottom margin so the box's bottom padding matches its top — otherwise the inner <p>'s margin-bottom stacks on top of the padding. */
 main aside > *:last-child,
 figcaption > *:last-child {
   margin-bottom: 0;
@@ -326,20 +236,11 @@ main aside.meta {
 }
 
 /*
-  The {{ aside N }} macro emits class="move-up" and sets --move-up (default 0). A positive
-  N pulls the aside up by N body lines so it can annotate text higher up the page than the
-  point it was written at.
+  The {{ aside N }} macro emits class="move-up" and sets --move-up (default 0). A positive N pulls the aside up by N body lines so it can annotate text higher up the page than the point it was written at.
 
-  Ink & Switch defines this twice with different values — one with a -13px baseline
-  correction, one without — in two files loaded in an order that means the correction never
-  applies. Kept here without it: it's the newer of the two, and it's the one that has
-  actually been rendering on their site for two years.
+  Ink & Switch defines this twice with different values — one with a -13px baseline correction, one without — in two files loaded in an order that means the correction never applies. Kept here without it: it's the newer of the two, and it's the one that has actually been rendering on their site for two years.
 
-  The declaration itself lives in the two gutter blocks below rather than here, because
-  pulling an aside up N lines only makes sense while it's out of flow beside the text. In
-  flow it has nothing to align to and the negative margin just slides it under the
-  paragraph above — which is what it did, on every layout without a gutter and on the nav
-  layout at every width below 72em.
+  The declaration itself lives in the two gutter blocks below rather than here, because pulling an aside up N lines only makes sense while it's out of flow beside the text. In flow it has nothing to align to and the negative margin just slides it under the paragraph above — which is what it did, on every layout without a gutter and on the nav layout at every width below 72em.
 */
 
 /* PLACING THINGS IN THE GUTTER ******************************************************************/
@@ -347,37 +248,17 @@ main aside.meta {
 /*
   This is the mechanism the whole reading layout turns on, and it's worth reading slowly.
 
-  <main> reserves the gutter as padding — nothing flows into it. Asides and captions are
-  then lifted out of the flow and positioned into it. Because they're absolutely positioned
-  rather than laid out in a grid column, they can sit level with an arbitrary *line* of a
-  paragraph instead of starting their own row. That's what makes marginalia feel like
-  marginalia.
+  <main> reserves the gutter as padding — nothing flows into it. Asides and captions are then lifted out of the flow and positioned into it. Because they're absolutely positioned rather than laid out in a grid column, they can sit level with an arbitrary *line* of a paragraph instead of starting their own row. That's what makes marginalia feel like marginalia.
 
-  An aside is positioned against <main>, so `right: --page-padding` puts its right edge on
-  the gutter's outer edge. A figcaption is positioned against its own <figure> (which is
-  position: relative, from base.css), whose right edge is the measure's right edge — hence
-  the negative offset, which lands it on the same line. Both are --band wide — columns
-  10 to 12 — with the empty space column between them and the text.
+  An aside is positioned against <main>, so `right: --page-padding` puts its right edge on the gutter's outer edge. A figcaption is positioned against its own <figure> (which is position: relative, from base.css), whose right edge is the measure's right edge — hence the negative offset, which lands it on the same line. Both are --band wide — columns 10 to 12 — with the empty space column between them and the text.
 
-  Gated on the layout class, not just on --content-gutter being non-zero: an absolutely
-  positioned aside at right: 0 would still sit on top of the text if only the token were
-  zeroed. And gated on a literal 72em, because a media query can't read a custom property.
+  Gated on the layout class, not just on --content-gutter being non-zero: an absolutely positioned aside at right: 0 would still sit on top of the text if only the token were zeroed. And gated on a literal 72em, because a media query can't read a custom property.
 */
 
 /*
-  One block for both layouts, because both give their bands up at the same width — the grid
-  is 72rem of fixed units, and below that neither can hold what it reserved without starving
-  the body. layout.css closes both gutters on `width < 72em`; this opens the positioning on
-  `min-width: 72em`. Strictly complementary, and they have to stay that way.
+  One block for both layouts, because both give their bands up at the same width — the grid is 72rem of fixed units, and below that neither can hold what it reserved without starving the body. layout.css closes both gutters on `width < 72em`; this opens the positioning on `min-width: 72em`. Strictly complementary, and they have to stay that way.
 
-  It used to be written twice, at two widths, and both spellings had the same off-by-one at
-  different moments. The nav layout's was found first: positioning gated on 46rem while its
-  gutter closed at 72em meant that between 736px and 800px an aside was absolutely
-  positioned into a gutter that wasn't there, sitting on the body text — measured on the
-  styleguide at 799px, the aside spanned x 527-783 and the paragraph 32-576. The essay
-  layout's survived longer because nothing rendered it: at exactly 736px, `<=` in layout.css
-  and `min-width` here both matched, and the byline landed at x 448-704 over a body of
-  32-704. Sharing one condition is what makes that class of bug unavailable.
+  It used to be written twice, at two widths, and both spellings had the same off-by-one at different moments. The nav layout's was found first: positioning gated on 46rem while its gutter closed at 72em meant that between 736px and 800px an aside was absolutely positioned into a gutter that wasn't there, sitting on the body text — measured on the styleguide at 799px, the aside spanned x 527-783 and the paragraph 32-576. The essay layout's survived longer because nothing rendered it: at exactly 736px, `<=` in layout.css and `min-width` here both matched, and the byline landed at x 448-704 over a body of 32-704. Sharing one condition is what makes that class of bug unavailable.
 */
 @media (min-width: 72em) {
   :is(.layout-margin, .layout-nav) main {
@@ -390,15 +271,12 @@ main aside.meta {
     width: var(--band);
   }
 
-  /* Columns 10-12. Positioned against <main>, whose padding box ends one page-padding
-     past the grid's right edge. */
+  /* Columns 10-12. Positioned against <main>, whose padding box ends one page-padding past the grid's right edge. */
   :is(.layout-margin, .layout-nav) main > aside {
     right: var(--page-padding);
   }
 
-  /* Also columns 10-12, but positioned against its own <figure>, which sits in the body
-     columns — so the offset is the whole reserved gutter, and it lands on the same line
-     as the asides above. */
+  /* Also columns 10-12, but positioned against its own <figure>, which sits in the body columns — so the offset is the whole reserved gutter, and it lands on the same line as the asides above. */
   :is(.layout-margin, .layout-nav) figcaption {
     top: 0;
     right: calc(-1 * var(--content-gutter));
@@ -410,14 +288,9 @@ main aside.meta {
   }
 
   /*
-    The byline's date, pulled up so its small-cap baseline lands on body line 1 and each
-    line under it lands on the next. Like .move-up above, this is only meaningful out in the
-    gutter: there's a body line to land on there, and in normal flow there isn't.
+    The byline's date, pulled up so its small-cap baseline lands on body line 1 and each line under it lands on the next. Like .move-up above, this is only meaningful out in the gutter: there's a body line to land on there, and in normal flow there isn't.
 
-    It used to sit outside this block and apply at every width, which squashed the date to
-    2px under the title once the byline dropped into flow — against 16px on the blog index,
-    where the same date under the same title is set by the same rule. Two dates that were
-    supposed to be identical, differing by a number nothing had chosen.
+    It used to sit outside this block and apply at every width, which squashed the date to 2px under the title once the byline dropped into flow — against 16px on the blog index, where the same date under the same title is set by the same rule. Two dates that were supposed to be identical, differing by a number nothing had chosen.
   */
   main aside.meta h6 {
     margin: -14px 0 0;
@@ -427,35 +300,25 @@ main aside.meta {
 @media (min-width: 46rem) {
 
   /*
-    A gutter caption is a light recessed box — it needs an edge, because it's floating in
-    whitespace with no image beneath it to belong to. A caption in normal flow doesn't:
-    it sits directly under its image and reads as quiet text. So the box is only here,
-    inside the gutter rules, rather than on figcaption generally.
+    A gutter caption is a light recessed box — it needs an edge, because it's floating in whitespace with no image beneath it to belong to. A caption in normal flow doesn't: it sits directly under its image and reads as quiet text. So the box is only here, inside the gutter rules, rather than on figcaption generally.
 
-    Ink & Switch hardcodes this grey as #f2f2f2. Themed here, or every caption on the site
-    is a bright slab in dark mode.
+    Ink & Switch hardcodes this grey as #f2f2f2. Themed here, or every caption on the site is a bright slab in dark mode.
   */
   /*
-    Ink & Switch fills the gutter caption with a light grey box, which is what tells you
-    it belongs to the image rather than to the paragraph beside it. On this grid the
-    position already says that, and a box with padding would set the caption's text a rem
-    off column 10 while the asides above it sat on the line. Type and position, no fill.
+    Ink & Switch fills the gutter caption with a light grey box, which is what tells you it belongs to the image rather than to the paragraph beside it. On this grid the position already says that, and a box with padding would set the caption's text a rem off column 10 while the asides above it sat on the line. Type and position, no fill.
   */
   :is(.layout-margin, .layout-nav) figcaption {
     margin-top: 0;
   }
 
   /*
-    A caption containing a nested aside splits into two stacked boxes rather than one
-    merged one: the figcaption becomes a transparent shell, and its first paragraph and the
-    inner aside each get their own box with matching padding so their text edges line up.
+    A caption containing a nested aside splits into two stacked boxes rather than one merged one: the figcaption becomes a transparent shell, and its first paragraph and the inner aside each get their own box with matching padding so their text edges line up.
   */
   :is(.layout-margin, .layout-nav) figcaption:has(aside) > p {
     margin: 0;
   }
 
-  /* A nested aside stops being marginalia — it's already in the gutter — and becomes a
-     second paragraph of the caption, set apart by a rule rather than by a box. */
+  /* A nested aside stops being marginalia — it's already in the gutter — and becomes a second paragraph of the caption, set apart by a rule rather than by a box. */
   :is(.layout-margin, .layout-nav) figcaption aside {
     position: static;
     width: auto;
@@ -473,12 +336,9 @@ main aside.meta {
 /* FIGURES ***************************************************************************************/
 
 /*
-  Every layout mode below works the same way: it releases the caption from the gutter back
-  into normal flow beneath the image. `wide` additionally reclaims the gutter so the figure
-  spans the whole content area.
+  Every layout mode below works the same way: it releases the caption from the gutter back into normal flow beneath the image. `wide` additionally reclaims the gutter so the figure spans the whole content area.
 
-  Below 46rem none of it applies — there's no gutter to release from, and everything falls
-  back to block flow.
+  Below 46rem none of it applies — there's no gutter to release from, and everything falls back to block flow.
 */
 
 figure img,
@@ -515,13 +375,9 @@ figure video {
    cap and the figure fills whatever the content box gives it. */
 
 /*
-  Releasing the measure cap isn't enough on its own: <main> reserves the gutter as
-  padding, so its content box *is* the measure and a figure can't grow past it however
-  large a max-width you allow. The negative margin is what reclaims that padding.
+  Releasing the measure cap isn't enough on its own: <main> reserves the gutter as padding, so its content box *is* the measure and a figure can't grow past it however large a max-width you allow. The negative margin is what reclaims that padding.
 
-  Expressed this way it needs no per-layout value. On the essay it reclaims columns 9-12
-  and the figure spans 2-12; on a nav layout --content-gutter is 0, so the figure simply
-  fills the content box out to column 12.
+  Expressed this way it needs no per-layout value. On the essay it reclaims columns 9-12 and the figure spans 2-12; on a nav layout --content-gutter is 0, so the figure simply fills the content box out to column 12.
 */
 @media (min-width: 46rem) {
   :is(.layout-nav, .layout-margin) main > figure.wide {
@@ -536,16 +392,9 @@ figure video {
      {{ figure tile-3 ![](c.webp) Three. }}
    For a wide row sharing ONE caption, use the .grid wrapper below.
 
-   Floated, not inline-block. Each figure macro emits its own <figure> with no wrapper
-   around the row, so an inline-block layout has a whitespace character between every
-   pair — and its width depends on the font. Ink & Switch compensates with a literal
-   (.25rem per gap), which is right for Merriweather and wrong here: the system stack's
-   space is 4.19px, so a three-tile row came to 688.35px inside a 688px column and the
-   third tile wrapped to its own line. A third of a pixel.
+   Floated, not inline-block. Each figure macro emits its own <figure> with no wrapper around the row, so an inline-block layout has a whitespace character between every pair — and its width depends on the font. Ink & Switch compensates with a literal (.25rem per gap), which is right for Merriweather and wrong here: the system stack's space is 4.19px, so a three-tile row came to 688.35px inside a 688px column and the third tile wrapped to its own line. A third of a pixel.
 
-   Floats ignore that whitespace entirely, so the arithmetic is exact at any font size.
-   The cost is that floats have to be cleared, which the rule below does by targeting the
-   first element after the row. */
+   Floats ignore that whitespace entirely, so the arithmetic is exact at any font size. The cost is that floats have to be cleared, which the rule below does by targeting the first element after the row. */
 
 @media (min-width: 46rem) {
   figure.tile-2,
@@ -565,9 +414,7 @@ figure video {
     margin-left: var(--space-md);
   }
 
-  /* Whatever follows the last tile ends the row. Scoped to a change of class, so it can't
-     fire between two tiles, and can't touch the float-left / float-right figures, which
-     are meant to have text wrapping around them. */
+  /* Whatever follows the last tile ends the row. Scoped to a change of class, so it can't fire between two tiles, and can't touch the float-left / float-right figures, which are meant to have text wrapping around them. */
   figure.tile-2 + :not(figure.tile-2),
   figure.tile-3 + :not(figure.tile-3),
   figure.tile-4 + :not(figure.tile-4) {
@@ -624,8 +471,7 @@ figure.border .grid > video {
   border: 1px solid var(--sunken-edge);
 }
 
-/* GRID WRAPPER — several images in ONE <figure> sharing ONE caption. The figure macro emits
-   a single <img>, so this one needs raw HTML in the markdown:
+/* GRID WRAPPER — several images in ONE <figure> sharing ONE caption. The figure macro emits a single <img>, so this one needs raw HTML in the markdown:
 
      <figure class="wide">
        <div class="grid grid-columns-3">
@@ -681,9 +527,7 @@ figure .grid-columns-4 { grid-template-columns: repeat(4, 1fr); }
 .space-bottom-6 { margin-bottom: calc(var(--baseline) * 6); }
 .space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
 
-/* The layout classes above set margin shorthands on the figure, which outrank a plain
-   .space-* utility on specificity. Matching that specificity with `figure.` lets the
-   utility win on source order instead. */
+/* The layout classes above set margin shorthands on the figure, which outrank a plain .space-* utility on specificity. Matching that specificity with `figure.` lets the utility win on source order instead. */
 figure.space-top-1    { margin-top: calc(var(--baseline) * 1); }
 figure.space-top-2    { margin-top: calc(var(--baseline) * 2); }
 figure.space-top-3    { margin-top: calc(var(--baseline) * 3); }
@@ -701,9 +545,7 @@ figure.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
 /* ARRANGEMENTS **********************************************************************************/
 
 /*
-  Compositions of images on a twelve-column grid — the seaofclouds vocabulary. Where the
-  figure modes above are about one image's relationship to a column of text, these are
-  about several images' relationship to each other.
+  Compositions of images on a twelve-column grid — the seaofclouds vocabulary. Where the figure modes above are about one image's relationship to a column of text, these are about several images' relationship to each other.
 
   A container class picks the composition; children take a numbered slot:
 
@@ -713,11 +555,9 @@ figure.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
       <figure class="pos-3">…</figure>
     </div>
 
-  Slots beyond the ones a composition names fall into the grid's normal flow, so an
-  arrangement doesn't break if you add a figure without labelling it.
+  Slots beyond the ones a composition names fall into the grid's normal flow, so an arrangement doesn't break if you add a figure without labelling it.
 
-  Everything is scoped to .arrangement. A bare <figure> keeps the reading-layout behaviour
-  defined above — that's the whole reason these two systems can share a stylesheet.
+  Everything is scoped to .arrangement. A bare <figure> keeps the reading-layout behaviour defined above — that's the whole reason these two systems can share a stylesheet.
 */
 
 .arrangement {
@@ -735,8 +575,7 @@ figure.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
   }
 }
 
-/* A figure inside an arrangement is a block that fills its slot, not a floated or
-   inline-block element sitting in a column of text. */
+/* A figure inside an arrangement is a block that fills its slot, not a floated or inline-block element sitting in a column of text. */
 .arrangement figure {
   display: flex;
   flex-direction: column;
@@ -784,8 +623,7 @@ figure.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
 .arrangement.staggered .pos-2 { grid-column: 6 / 12; grid-row: 3 / 5; }
 .arrangement.staggered .pos-3 { grid-column: 3 / 9;  grid-row: 5 / 7; }
 
-/* ORGANIC — four images in a loose, deliberately irregular scatter. Two variants, plus a
-   mixed form that runs A then B for a longer sequence. */
+/* ORGANIC — four images in a loose, deliberately irregular scatter. Two variants, plus a mixed form that runs A then B for a longer sequence. */
 
 .arrangement.organic-a .pos-1 { grid-column: 1 / 9;  grid-row: 1 / 4; }
 .arrangement.organic-a .pos-2 { grid-column: 9 / 13; grid-row: 2 / 3; }
@@ -815,17 +653,11 @@ figure.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
 .arrangement.narrative-right .pos-2 { grid-column: 8 / 13; grid-row: 1 / 3; }
 
 /*
-  EMPHASIS — which figure dominates. What that means depends on the container, because the
-  two containers place their children differently.
+  EMPHASIS — which figure dominates. What that means depends on the container, because the two containers place their children differently.
 
-  In an arrangement the slots are explicit, so pos-1 is already the dominant one and a
-  width modifier would just fight it. What emphasis adds there is stacking order, for
-  compositions whose grid areas overlap.
+  In an arrangement the slots are explicit, so pos-1 is already the dominant one and a width modifier would just fight it. What emphasis adds there is stacking order, for compositions whose grid areas overlap.
 
-  In a gallery there are no slots — items flow — so `primary` is what makes one of them
-  take the room of two. (This is where the class came from: it spanned two columns of an
-  auto-fill album grid. On a twelve-column arrangement the same `span 2` would be a sixth
-  of the width, which reads as the opposite of primary.)
+  In a gallery there are no slots — items flow — so `primary` is what makes one of them take the room of two. (This is where the class came from: it spanned two columns of an auto-fill album grid. On a twelve-column arrangement the same `span 2` would be a sixth of the width, which reads as the opposite of primary.)
 */
 
 .arrangement figure.primary   { z-index: 2; }
@@ -834,14 +666,12 @@ figure.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
 
 .gallery figure.primary { grid-column: span 2; }
 
-/* At narrow widths the gallery is a single column, and spanning two would create an
-   implicit second one and overflow the page. */
+/* At narrow widths the gallery is a single column, and spanning two would create an implicit second one and overflow the page. */
 @media (max-width: 46rem) {
   .gallery figure.primary { grid-column: auto; }
 }
 
-/* ORIENTATION — cap an image's width by its shape, so a tall photograph doesn't tower over
-   a wide one placed beside it. Different job from ratio-*: that crops, this restrains. */
+/* ORIENTATION — cap an image's width by its shape, so a tall photograph doesn't tower over a wide one placed beside it. Different job from ratio-*: that crops, this restrains. */
 
 :is(.arrangement, .gallery, .masonry) figure:is(.vertical, .square, .horizontal) img {
   margin-inline: auto;
@@ -868,8 +698,7 @@ figure.space-bottom-8 { margin-bottom: calc(var(--baseline) * 8); }
   }
 }
 
-/* GALLERY — an even grid that reflows by available width, for sets with no composition.
-   Use when the images are peers and the order is what matters. */
+/* GALLERY — an even grid that reflows by available width, for sets with no composition. Use when the images are peers and the order is what matters. */
 
 .gallery {
   display: grid;
@@ -982,8 +811,7 @@ pre code[class*="language-"] {
   line-height: 1.5;
 }
 
-/* Prism wraps each line in its own element, and the padding goes there so that a
-   highlighted line's background runs the full width of the block. */
+/* Prism wraps each line in its own element, and the padding goes there so that a highlighted line's background runs the full width of the block. */
 pre code > * {
   padding-inline: var(--space-md);
 }
@@ -993,9 +821,17 @@ pre > code:not(:has(> *)) {
   padding-inline: var(--space-md);
 }
 
+/*
+  Inline code is a chip, and a chip is an inline-block, and an inline-block joins the line box as its whole *margin* box — border and padding included. So it inherited `code`'s 24px line-height (base.css, right for a <pre> on the rhythm) and came to 27.4px inside a 24px line: every line holding a `<code>` sat 3.4px lower than the one above it, and the paragraph stopped counting in --baseline. Most visible in asides and figcaptions, where the text is 14px and a run of short chips can push most of the lines apart.
+
+  16px is the tallest value that clears every context, and both ends of the box bind: headings (20px/24px, only 4px of leading) leave the least room below the baseline, and asides (14px/24px) the least above. Checked against system-ui/ui-monospace, Helvetica/Menlo, Georgia/Courier, Verdana/Consolas and Times/monospace, because the stacks in variables.css resolve to different metrics on someone else's machine.
+
+  padding-bottom stays 0 on purpose — it is what buys the headroom under the baseline. Balancing it to `.1em .2em` pushes the heading and body cases back over the line.
+*/
 :not(pre) > code {
   border: 1px solid var(--stark-shadow);
   padding: .1em .2em 0;
+  line-height: 16px;
   border-radius: 1px;
   background: var(--stark-bg);
 }

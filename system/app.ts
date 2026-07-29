@@ -1,6 +1,4 @@
-// App
-// This is the main entry point for the website build system.
-// It defines all the commands available via the `site` CLI.
+// App This is the main entry point for the website build system. It defines all the commands available via the `site` CLI.
 
 import { parseArgs } from "node:util"
 import { build } from "./build.ts"
@@ -47,8 +45,7 @@ const commands = {
   repo: {
     help: "Load the website repo in your default browser.",
     cmd: () => {
-      // We read the git remote rather than hardcoding a URL, so this keeps
-      // working after you fork, rename, or move the repo.
+      // We read the git remote rather than hardcoding a URL, so this keeps working after you fork, rename, or move the repo.
       const url = gitRemoteUrl()
       if (url) exec(`open "${url}"`)
       else console.log(yellow("\n  Couldn't determine a git remote to open.\n"))
@@ -93,8 +90,7 @@ Env.draft = !args.values["no-draft"]
 Env.subsetFonts = args.values.fonts
 Env.verbose = args.values.verbose
 
-// Paint the column guides over every page, so you can check what lines up with what.
-// One at a time — they'd cover each other. See the debug overlays in variables.css.
+// Paint the column guides over every page, so you can check what lines up with what. One at a time — they'd cover each other. See the debug overlays in variables.css.
 if (args.values.fluid) Env.gridDebug = "fluid outline"
 else if (args.values.fixed) Env.gridDebug = "fixed outline"
 

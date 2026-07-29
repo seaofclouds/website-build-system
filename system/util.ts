@@ -1,6 +1,4 @@
-// Util
-// Various little utility functions used throughout the build system.
-// None of these functions should know anything about the nature of our website.
+// Util Various little utility functions used throughout the build system. None of these functions should know anything about the nature of our website.
 
 import { Env } from "./env.ts"
 
@@ -20,17 +18,13 @@ export const splitLines = (str: string) => str.split("\n")
 export const trim = (s: string) => s.trim()
 export const trimAll = (arr: string[]) => arr.map(trim)
 
-// Split str to the left of the first occurrence of char
-// splitBefore("1234", "3") => ["12", "34"]
-// splitBefore("1234", "5") => ["", "1234"]
+// Split str to the left of the first occurrence of char splitBefore("1234", "3") => ["12", "34"] splitBefore("1234", "5") => ["", "1234"]
 export const splitBefore = (str: string, char: string) => {
   let index = Math.max(str.indexOf(char), 0)
   return [str.slice(0, index), str.slice(index)]
 }
 
-// Split str to the right of the first occurrence of char
-// splitAfter("1234", "3") => ["123", "4"]
-// splitAfter("1234", "5") => ["1234", ""]
+// Split str to the right of the first occurrence of char splitAfter("1234", "3") => ["123", "4"] splitAfter("1234", "5") => ["1234", ""]
 export const splitAfter = (str: string, char: string) => {
   const index = str.indexOf(char)
   const splitIndex = index === -1 ? str.length : index + 1
@@ -64,8 +58,7 @@ export const anchorize = (s: string) => s.toLowerCase().replaceAll("&amp;","and"
 
 export const cdata = (s: string) => `<![CDATA[${s}]]>`
 
-// Remove HTML tags — eg, for cleaning up the description frontmatter for inclusion in <meta>
-// TODO: make this smart enough to ignore code blocks inside <pre>
+// Remove HTML tags — eg, for cleaning up the description frontmatter for inclusion in <meta> TODO: make this smart enough to ignore code blocks inside <pre>
 export const plainify = (s: string) => s.replace(/<[^>]+>/g, "")
 
 // Replace all instances of an html tag in a string, using a given replacement function

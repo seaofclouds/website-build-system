@@ -1,8 +1,4 @@
-// Types
-// At time of writing, Node.js has mediocre support for TypeScript.
-// It helps to have exported types stored in a dedicated file,
-// and then imported using: import type { … } from "./types.ts"
-// So that's what this file is for.
+// Types At time of writing, Node.js has mediocre support for TypeScript. It helps to have exported types stored in a dedicated file, and then imported using: import type { … } from "./types.ts" So that's what this file is for.
 
 export type Stats = {
   modified: Date

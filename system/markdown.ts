@@ -1,5 +1,4 @@
-// Markdown
-// Here, we initialize and configure the markdown renderer.
+// Markdown Here, we initialize and configure the markdown renderer.
 
 import MarkdownIt from "markdown-it"
 import MarkdownItFootnote from "markdown-it-footnote"

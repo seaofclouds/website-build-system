@@ -1,11 +1,7 @@
 /*
-  The home page and the 404 — the two pages that are display surfaces rather than reading
-  surfaces. Loaded only by template/landing.html.
+  The home page and the 404 — the two pages that are display surfaces rather than reading surfaces. Loaded only by template/landing.html.
 
-  The page *shape* (full page width, no sidebar) is .layout-wide in layout.css. What's left
-  here is the display typography and the handful of sections the home page is made of. If
-  you're adapting this starter, this is the file to empty out first: nothing in it is
-  load-bearing for any other page.
+  The page *shape* (full page width, no sidebar) is .layout-wide in layout.css. What's left here is the display typography and the handful of sections the home page is made of. If you're adapting this starter, this is the file to empty out first: nothing in it is load-bearing for any other page.
 
   Please don't use a formatter (like Prettier).
 */
@@ -13,8 +9,7 @@
 /* DISPLAY TYPE **********************************************************************************/
 
 /*
-  Bigger and lighter than the reading hierarchy in base.css. Centred, because on both of
-  these pages the text is the whole composition rather than something you read through.
+  Bigger and lighter than the reading hierarchy in base.css. Centred, because on both of these pages the text is the whole composition rather than something you read through.
 */
 
 h1 {
@@ -85,9 +80,7 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
 }
 
 /*
-  What the system gives you, in a grid that reflows to one column on a phone. The units are
-  left-aligned while the rest of the page is centred: this is the one stretch of the page
-  you read rather than take in at a glance.
+  What the system gives you, in a grid that reflows to one column on a phone. The units are left-aligned while the rest of the page is centred: this is the one stretch of the page you read rather than take in at a glance.
 */
 
 #features {
@@ -108,9 +101,7 @@ html[theme="dark"] #tag h2 { color: var(--silver); }
 html[theme="dark"] #features .unit p { color: var(--silver); }
 
 /*
-  The one idea the rest of it follows from, and the reason for the name — set large, and
-  left to make that connection on its own. It sits after the features rather than before
-  them, so the page says what it does first and why it's shaped that way second.
+  The one idea the rest of it follows from, and the reason for the name — set large, and left to make that connection on its own. It sits after the features rather than before them, so the page says what it does first and why it's shaped that way second.
 */
 
 #thesis {
@@ -129,8 +120,7 @@ html[theme="dark"] #features .unit p { color: var(--silver); }
   text-align: center;
 }
 
-/* The h2 rule above zeroes its margins so the tagline under the wordmark can set its own,
-   and `p` is zeroed too — so without this the closing line and the paragraph under it touch. */
+/* The h2 rule above zeroes its margins so the tagline under the wordmark can set its own, and `p` is zeroed too — so without this the closing line and the paragraph under it touch. */
 #closing h2 {
   margin-bottom: var(--space-md);
 }

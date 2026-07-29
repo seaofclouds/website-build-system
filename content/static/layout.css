@@ -1,22 +1,13 @@
 /*
-  The page shell: where the masthead, the navigation, the content area and the footer sit.
-  Nothing in here styles the content itself — that's content.css.
+  The page shell: where the masthead, the navigation, the content area and the footer sit. Nothing in here styles the content itself — that's content.css.
 
   A page picks its shape with a class on <body>:
 
-    .layout-plain    content only, held to the measure          template/default.html
-    .layout-wide     content only, held to the full page width  template/landing.html
-    .layout-nav      left navigation + content                  template/docs.html, blog.html
-    .layout-margin   content + a right gutter for marginalia    template/essay.html
+    .layout-plain    content only, held to the measure          template/default.html .layout-wide     content only, held to the full page width  template/landing.html .layout-nav      left navigation + content                  template/docs.html, blog.html .layout-margin   content + a right gutter for marginalia    template/essay.html
 
-  This is the layer that makes one stylesheet set dress more than one site. A documentation
-  site is .layout-nav; a long-form essay site is .layout-margin; a gallery is .layout-wide.
-  Add a shape by adding a class here, not by writing a new stylesheet.
+  This is the layer that makes one stylesheet set dress more than one site. A documentation site is .layout-nav; a long-form essay site is .layout-margin; a gallery is .layout-wide. Add a shape by adding a class here, not by writing a new stylesheet.
 
-  One combination is deliberately missing. .layout-nav spends columns 1-3 on navigation and
-  .layout-margin spends 10-12 on marginalia, and a page wanting both leaves nowhere for the
-  body that doesn't collide with one of them. That's also how Ink & Switch works: essays
-  have a gutter and no nav. If you want both, widen the grid first.
+  One combination is deliberately missing. .layout-nav spends columns 1-3 on navigation and .layout-margin spends 10-12 on marginalia, and a page wanting both leaves nowhere for the body that doesn't collide with one of them. That's also how Ink & Switch works: essays have a gutter and no nav. If you want both, widen the grid first.
 
   Please don't use a formatter (like Prettier).
 */
@@ -24,22 +15,13 @@
 /* THE MASTHEAD **********************************************************************************/
 
 /*
-  Every template includes template/includes/site-header.html and it's styled here, once,
-  rather than per-template, so that it lands in exactly the same place on every page. It
-  used to be styled twice — once for landing pages, once for pages with a sidebar — and the
-  two drifted 6px apart horizontally and 8px vertically, so the header visibly jumped as
-  you moved between sections.
+  Every template includes template/includes/site-header.html and it's styled here, once, rather than per-template, so that it lands in exactly the same place on every page. It used to be styled twice — once for landing pages, once for pages with a sidebar — and the two drifted 6px apart horizontally and 8px vertically, so the header visibly jumped as you moved between sections.
 
-  Wordmark on the left, section links and theme toggle on the right, all sharing a
-  baseline. The gutter matches the one <main> uses, so the wordmark lines up with the
-  content beneath it.
+  Wordmark on the left, section links and theme toggle on the right, all sharing a baseline. The gutter matches the one <main> uses, so the wordmark lines up with the content beneath it.
 
-  Fixed, so the wordmark stays put as you scroll. The outer element spans the window so its
-  background covers whatever passes underneath; the inner one holds the content to the page
-  width.
+  Fixed, so the wordmark stays put as you scroll. The outer element spans the window so its background covers whatever passes underneath; the inner one holds the content to the page width.
 
-  Centred with margin-inline: auto against the inline containing block, which excludes the
-  scrollbar gutter. The sidebar is centred off the same basis, so the two can't drift.
+  Centred with margin-inline: auto against the inline containing block, which excludes the scrollbar gutter. The sidebar is centred off the same basis, so the two can't drift.
 */
 
 .site-header {
@@ -52,11 +34,7 @@
 }
 
 /*
-  The height is set rather than left to the content, because <body> reserves exactly
-  --masthead-height above itself and the sidebar hangs from the same number. Letting the
-  content decide meant the bar came out 85px tall against 80px reserved, so the article
-  slipped underneath it — and it would have drifted again at the font-size breakpoint.
-  Padding only on top: the box-sizing reset means the height already accounts for it.
+  The height is set rather than left to the content, because <body> reserves exactly --masthead-height above itself and the sidebar hangs from the same number. Letting the content decide meant the bar came out 85px tall against 80px reserved, so the article slipped underneath it — and it would have drifted again at the font-size breakpoint. Padding only on top: the box-sizing reset means the height already accounts for it.
 */
 .site-header-inner {
   display: flex;
@@ -106,9 +84,7 @@ body {
 }
 
 /*
-  Mark the section you're in. The is-current attribute the build system adds only matches
-  an exact URL — right for a table of contents, wrong here, where /docs/ should stay lit
-  while you're reading /docs/content/. So <body> carries the section instead.
+  Mark the section you're in. The is-current attribute the build system adds only matches an exact URL — right for a table of contents, wrong here, where /docs/ should stay lit while you're reading /docs/content/. So <body> carries the section instead.
 */
 body[data-section="docs"] .site-header .nav-docs,
 body[data-section="blog"] .site-header .nav-blog {
@@ -129,11 +105,7 @@ body[data-section="blog"] .site-header .nav-blog {
 /* HEADER LOGO */
 
 /*
-  Deliberately not a flex container. The surrounding header aligns its items on the text
-  baseline, and a flex container exposes its *first item's* baseline — here the <svg>,
-  which has no text in it, so the browser synthesises one from the box edge and the
-  wordmark ends up sitting higher than the nav links beside it.
-  Left as an inline box, the <a> reports the baseline of its own text, which is what we want.
+  Deliberately not a flex container. The surrounding header aligns its items on the text baseline, and a flex container exposes its *first item's* baseline — here the <svg>, which has no text in it, so the browser synthesises one from the box edge and the wordmark ends up sitting higher than the nav links beside it. Left as an inline box, the <a> reports the baseline of its own text, which is what we want.
 */
 .logo svg {
   width: 32px;
@@ -156,10 +128,7 @@ body[data-section="blog"] .site-header .nav-blog {
 /* THE SKIP LINK */
 
 /*
-  Sits offscreen above the page until focused. It lives in the masthead, so it's styled
-  here alongside it — and it has to be in a stylesheet every page loads, not just the ones
-  with a sidebar, or a landing page renders it as an ordinary visible link that takes up
-  space in the header and shoves the wordmark sideways.
+  Sits offscreen above the page until focused. It lives in the masthead, so it's styled here alongside it — and it has to be in a stylesheet every page loads, not just the ones with a sidebar, or a landing page renders it as an ordinary visible link that takes up space in the header and shoves the wordmark sideways.
 */
 a.skip {
   position: absolute;
@@ -209,10 +178,7 @@ html[theme="dark"] #theme-toggle .light { display: none; }
   display: none;
 }
 
-/* <label> that toggles the burger state checkbox.
-   Hidden by default: it only earns its place on a narrow screen that has a sidebar to
-   open. The masthead is shared by every template, and a landing page has nothing for it
-   to toggle — so only .layout-nav reveals it, below. */
+/* <label> that toggles the burger state checkbox. Hidden by default: it only earns its place on a narrow screen that has a sidebar to open. The masthead is shared by every template, and a landing page has nothing for it to toggle — so only .layout-nav reveals it, below. */
 #burger {
   display: none;
   border-radius: 24px;
@@ -230,17 +196,14 @@ html[theme="dark"] #theme-toggle .light { display: none; }
   padding: 5px;
 }
 
-/* Toggle between the show (burger) and hide (X) icons.
-   General sibling, not adjacent — the burger sits inside the masthead. */
+/* Toggle between the show (burger) and hide (X) icons. General sibling, not adjacent — the burger sits inside the masthead. */
 #burger-state:checked       ~ * .show { display: none }
 #burger-state:not(:checked) ~ * .hide { display: none }
 
 /* THE CONTENT AREA ******************************************************************************/
 
 /*
-  The default: centred, held to the page width, with the same horizontal padding the
-  masthead uses so the first line of text starts under the wordmark. Each layout below
-  narrows or reshapes this.
+  The default: centred, held to the page width, with the same horizontal padding the masthead uses so the first line of text starts under the wordmark. Each layout below narrows or reshapes this.
 */
 main {
   max-width: var(--page-width);
@@ -251,19 +214,11 @@ main {
 /* PLAIN — content only, held to the measure. The most unopinionated shape. */
 
 /*
-  No max-width of its own. It used to cap <main> at the measure plus its padding, which
-  centred a 48rem box inside the viewport while the masthead stayed centred on the 72rem
-  page box — so on a wide screen the content sat 192px to the right of the wordmark above
-  it. That went unseen because no page rendered this layout until the blog index did.
+  No max-width of its own. It used to cap <main> at the measure plus its padding, which centred a 48rem box inside the viewport while the masthead stayed centred on the 72rem page box — so on a wide screen the content sat 192px to the right of the wordmark above it. That went unseen because no page rendered this layout until the blog index did.
 
-  Instead it takes the page box like every other layout, and content.css caps the text at
-  --measure the same way it does on the nav and margin layouts. One mechanism for "how wide
-  is a line of text" rather than two, and the left edge lines up with the masthead.
+  Instead it takes the page box like every other layout, and content.css caps the text at --measure the same way it does on the nav and margin layouts. One mechanism for "how wide is a line of text" rather than two, and the left edge lines up with the masthead.
 */
-/* No rule at all, deliberately. It used to cap <main> at the measure plus its padding and
-   centre that, and to add a --space-lg on top; the first put the content 192px right of the
-   wordmark on a wide screen, the second started the page a line lower than a docs page
-   does. Both are the base `main` rule's job, and it already does them. */
+/* No rule at all, deliberately. It used to cap <main> at the measure plus its padding and centre that, and to add a --space-lg on top; the first put the content 192px right of the wordmark on a wide screen, the second started the page a line lower than a docs page does. Both are the base `main` rule's job, and it already does them. */
 
 /* WIDE — the full page width. Landing pages, galleries, anything image-led. */
 
@@ -274,13 +229,9 @@ main {
 /* NAV — a fixed sidebar on the left, content to its right. */
 
 /*
-  The offset uses 100%, not 100vw, so it resolves against the same box the masthead is
-  centred in. 100vw includes the scrollbar gutter and would put the sidebar half a
-  scrollbar out of line with the wordmark above it — only on machines that show scrollbars,
-  which is a miserable way to find a bug.
+  The offset uses 100%, not 100vw, so it resolves against the same box the masthead is centred in. 100vw includes the scrollbar gutter and would put the sidebar half a scrollbar out of line with the wordmark above it — only on machines that show scrollbars, which is a miserable way to find a bug.
 */
-/* The navigation occupies columns 1-3 — the left band, which is the same three columns
-   the essay's marginalia occupies on the right. */
+/* The navigation occupies columns 1-3 — the left band, which is the same three columns the essay's marginalia occupies on the right. */
 .layout-nav .site-nav {
   position: fixed;
   top: var(--masthead-height);
@@ -288,10 +239,7 @@ main {
   width: calc(var(--band) + var(--page-padding));
 
   /*
-    Above <main>, below the masthead. <main> is position: relative (content.css needs it
-    as the containing block for marginalia) and comes later in the DOM, so with both at
-    z-index auto it paints over this — and since main's left padding spans exactly these
-    columns, the whole sidebar became unclickable while still being perfectly visible.
+    Above <main>, below the masthead. <main> is position: relative (content.css needs it as the containing block for marginalia) and comes later in the DOM, so with both at z-index auto it paints over this — and since main's left padding spans exactly these columns, the whole sidebar became unclickable while still being perfectly visible.
   */
   z-index: 5;
 
@@ -303,14 +251,9 @@ main {
   padding-bottom: var(--space-lg);
 
   /*
-    max-height rather than height: the sidebar is as tall as its links and no taller, so on
-    a normal window it isn't a scroll container at all. It only becomes one when the list
-    genuinely doesn't fit.
+    max-height rather than height: the sidebar is as tall as its links and no taller, so on a normal window it isn't a scroll container at all. It only becomes one when the list genuinely doesn't fit.
 
-    And no overscroll-behavior: contain here. Containing the scroll sounds tidy, but it
-    stops the wheel from reaching the page — so on a short window, where the sidebar does
-    overflow, pointing at it and scrolling moved the sidebar a few pixels and then nothing
-    at all, with the article refusing to move. Chaining to the page is what people expect.
+    And no overscroll-behavior: contain here. Containing the scroll sounds tidy, but it stops the wheel from reaching the page — so on a short window, where the sidebar does overflow, pointing at it and scrolling moved the sidebar a few pixels and then nothing at all, with the article refusing to move. Chaining to the page is what people expect.
   */
   max-height: calc(100% - var(--masthead-height));
   overflow: hidden auto;
@@ -318,14 +261,9 @@ main {
 }
 
 /*
-  3 · 0 · 6 · 3 — navigation, body, marginalia, with no space column between the nav and
-  the body. Four regions don't fit twelve columns with a gap between each, so this spends
-  the spare column on the body rather than on separation: 34rem of measure instead of
-  28rem, which is the difference between a comfortable line and a cramped one. The nav is
-  a fixed sidebar with its own visual separation, so a 2rem gap there costs little.
+  3 · 0 · 6 · 3 — navigation, body, marginalia, with no space column between the nav and the body. Four regions don't fit twelve columns with a gap between each, so this spends the spare column on the body rather than on separation: 34rem of measure instead of 28rem, which is the difference between a comfortable line and a cramped one. The nav is a fixed sidebar with its own visual separation, so a 2rem gap there costs little.
 
-  The cost, and it's real: the body sits 2rem from its marginalia, against 8rem on the
-  essay layout. Marginalia here reads closer to the text than it does on /docs/styleguide/.
+  The cost, and it's real: the body sits 2rem from its marginalia, against 8rem on the essay layout. Marginalia here reads closer to the text than it does on /docs/styleguide/.
 */
 .layout-nav main {
   --measure: calc(6 * var(--grid-col) + 5 * var(--grid-gap));   /* 6 cols — 34rem */
@@ -335,23 +273,13 @@ main {
 }
 
 /*
-  Once the page is narrower than it is wide, the sidebar can't hang off the centred box —
-  and the marginalia band stops being affordable at the same moment.
+  Once the page is narrower than it is wide, the sidebar can't hang off the centred box — and the marginalia band stops being affordable at the same moment.
 
-  The grid is 72rem of fixed rem units, so a viewport narrower than that can't hold all
-  twelve columns. Everything the layout reserves keeps its width anyway, and the body is
-  the only region left to absorb the loss: at 900px, nav (288px) + gutter (288px) +
-  padding took 608 of 900 and left the prose 292px, about 35 characters. A column of
-  fragments beside two full-width bands.
+  The grid is 72rem of fixed rem units, so a viewport narrower than that can't hold all twelve columns. Everything the layout reserves keeps its width anyway, and the body is the only region left to absorb the loss: at 900px, nav (288px) + gutter (288px) + padding took 608 of 900 and left the prose 292px, about 35 characters. A column of fragments beside two full-width bands.
 
-  So the marginalia band is the one that gives. Below 72em asides drop into normal flow
-  (content.css gates that on the same width) and the body grows back to its measure. The
-  nav band stays until 800px, because a sidebar you can still read is worth more than the
-  three columns it costs.
+  So the marginalia band is the one that gives. Below 72em asides drop into normal flow (content.css gates that on the same width) and the body grows back to its measure. The nav band stays until 800px, because a sidebar you can still read is worth more than the three columns it costs.
 */
-/* Strictly less-than, and content.css uses min-width: 72em, so the two never both apply.
-   72em is 1152px exactly — the page width — so at that one pixel `<=` here and `min-width`
-   there would close the gutter and go on positioning asides into it. */
+/* Strictly less-than, and content.css uses min-width: 72em, so the two never both apply. 72em is 1152px exactly — the page width — so at that one pixel `<=` here and `min-width` there would close the gutter and go on positioning asides into it. */
 @media (width < 72em) {
   .layout-nav .site-nav { left: 0 }
 
@@ -386,35 +314,17 @@ main {
   }
 
   /*
-    The sidebar has stacked, so nothing is spending columns any more and the body takes all
-    twelve. --measure is what holds it back: the nav layout caps it at six columns, and it
-    kept that cap long after the six columns stopped meaning anything — prose ended at
-    34rem with the rest of the page empty to its right. 100% rather than a larger fixed
-    measure, so the cap follows the width it's given instead of naming one.
+    The sidebar has stacked, so nothing is spending columns any more and the body takes all twelve. --measure is what holds it back: the nav layout caps it at six columns, and it kept that cap long after the six columns stopped meaning anything — prose ended at 34rem with the rest of the page empty to its right. 100% rather than a larger fixed measure, so the cap follows the width it's given instead of naming one.
 
-    Note that --measure caps more than paragraphs — asides, figures and the footnotes read
-    it too — so 100% means "all of whatever contains me" and not literally the viewport.
-    That's the intent in each case, but it isn't one number any more.
+    Note that --measure caps more than paragraphs — asides, figures and the footnotes read it too — so 100% means "all of whatever contains me" and not literally the viewport. That's the intent in each case, but it isn't one number any more.
 
-    --content-gutter is already 0 from the 72em block above; it's restated because this is
-    the width where its absence became load-bearing. This is also where the table rule
-    (min-width: 46rem) turns on, and the two together are what made the page scroll
-    sideways: a table asked for 100% + 18rem of a main that was already full width. Put the
-    gutter back at 760px and the styleguide overflows on `wide` figures, arrangements,
-    galleries and masonry too — everything that reaches right by a negative margin of it.
+    --content-gutter is already 0 from the 72em block above; it's restated because this is the width where its absence became load-bearing. This is also where the table rule (min-width: 46rem) turns on, and the two together are what made the page scroll sideways: a table asked for 100% + 18rem of a main that was already full width. Put the gutter back at 760px and the styleguide overflows on `wide` figures, arrangements, galleries and masonry too — everything that reaches right by a negative margin of it.
 
-    .layout-margin does the same at its own breakpoint, below. The two have to stay in
-    step: a layout that stops spending the columns has to stop advertising them.
+    .layout-margin does the same at its own breakpoint, below. The two have to stay in step: a layout that stops spending the columns has to stop advertising them.
 
-    padding-inline is what hands the nav's three columns back: the base rule offsets <main>
-    by 3 --grid-steps for a sidebar that is no longer beside it. Note it must stay a
-    shorthand, because that offset is on padding-left specifically and the 72em block above
-    only resets padding-right.
+    padding-inline is what hands the nav's three columns back: the base rule offsets <main> by 3 --grid-steps for a sidebar that is no longer beside it. Note it must stay a shorthand, because that offset is on padding-left specifically and the 72em block above only resets padding-right.
 
-    The value is --page-padding rather than a number. It used to be --space-lg, and no other
-    layout widened to match, so between 500px and 800px a docs page sat 1rem further in than
-    the home page and than its own wordmark. The token widens at this same breakpoint (see
-    variables.css), so <main> and the masthead now move together on every layout.
+    The value is --page-padding rather than a number. It used to be --space-lg, and no other layout widened to match, so between 500px and 800px a docs page sat 1rem further in than the home page and than its own wordmark. The token widens at this same breakpoint (see variables.css), so <main> and the masthead now move together on every layout.
   */
   .layout-nav main {
     --measure: 100%;
@@ -426,55 +336,32 @@ main {
 /* MARGIN — content with a gutter on the right for asides and captions. */
 
 /*
-  The body takes columns 1-8 and reserves 9-12: the space column, then the marginalia
-  band. Setting --content-gutter is what opens it; content.css reads it to position the
-  marginalia, and to let a `wide` figure reclaim the space.
+  The body takes columns 1-8 and reserves 9-12: the space column, then the marginalia band. Setting --content-gutter is what opens it; content.css reads it to position the marginalia, and to let a `wide` figure reclaim the space.
 
-  Note that the custom property is *set* inside a media query below. You can't read a
-  custom property in a media query condition, but you can assign one in a block — which is
-  what keeps the geometry in one place instead of duplicated at each breakpoint.
+  Note that the custom property is *set* inside a media query below. You can't read a custom property in a media query condition, but you can assign one in a block — which is what keeps the geometry in one place instead of duplicated at each breakpoint.
 */
 /*
-  Body text starts at column 1 — see --rail in variables.css for why the rail is folded in
-  rather than left empty. The gutter it reserves on the right is columns 9-12: the space
-  column plus the marginalia band.
+  Body text starts at column 1 — see --rail in variables.css for why the rail is folded in rather than left empty. The gutter it reserves on the right is columns 9-12: the space column plus the marginalia band.
 
-  That's four columns against the three the nav layout spends on its left, because this
-  layout can afford the space column and that one can't. The mirror the two layouts share
-  is the band itself, columns 10-12 either way. Both hang off the masthead's page box
-  rather than centring in a narrower one of their own.
+  That's four columns against the three the nav layout spends on its left, because this layout can afford the space column and that one can't. The mirror the two layouts share is the band itself, columns 10-12 either way. Both hang off the masthead's page box rather than centring in a narrower one of their own.
 */
 .layout-margin main {
   --content-gutter: calc(4 * var(--grid-step));
-  /* Body from column 1. Add `+ var(--rail) + var(--grid-gap)` here, and drop --measure to
-     7 columns, to open the rail — see variables.css. */
+  /* Body from column 1. Add `+ var(--rail) + var(--grid-gap)` here, and drop --measure to 7 columns, to open the rail — see variables.css. */
   padding-left: var(--page-padding);
   padding-right: calc(var(--page-padding) + var(--content-gutter));
 
-  /* No padding-top here either. It used to add a --space-lg, which started an essay 32px
-     lower than a docs page — two shapes you move between in the same navigation. */
+  /* No padding-top here either. It used to add a --space-lg, which started an essay 32px lower than a docs page — two shapes you move between in the same navigation. */
 }
 
 /*
-  The same width the nav layout gives its bands up at, and for the same reason: the grid is
-  72rem of fixed rem units, so below that the viewport cannot hold it, every region keeps
-  the width it reserved, and the body is the only one left to absorb the loss.
+  The same width the nav layout gives its bands up at, and for the same reason: the grid is 72rem of fixed rem units, so below that the viewport cannot hold it, every region keeps the width it reserved, and the body is the only one left to absorb the loss.
 
-  This layout used to hold its gutter all the way down to 46rem, on the grounds that it
-  spends four columns where the nav layout spends six and could therefore afford to. Putting
-  a page on it showed that reasoning doesn't survive contact: four *fixed* columns starve a
-  shrinking viewport just as effectively. The body fell to 288px — 35 characters — at 736px,
-  with 384px of near-empty gutter beside it, then snapped back to 671px at 735px when the
-  gutter finally closed. One pixel of resize more than doubled the line length.
+  This layout used to hold its gutter all the way down to 46rem, on the grounds that it spends four columns where the nav layout spends six and could therefore afford to. Putting a page on it showed that reasoning doesn't survive contact: four *fixed* columns starve a shrinking viewport just as effectively. The body fell to 288px — 35 characters — at 736px, with 384px of near-empty gutter beside it, then snapped back to 671px at 735px when the gutter finally closed. One pixel of resize more than doubled the line length.
 
-  72em is also the one width where the change is invisible. Inside the gutter the body is
-  1152 - 16 - (16 + 384) = 736px, which is exactly --measure — so when the gutter closes and
-  paragraphs fall back to being capped by --measure, they keep both the width and the left
-  edge they already had, and only the asides move. Any other breakpoint leaves a step.
+  72em is also the one width where the change is invisible. Inside the gutter the body is 1152 - 16 - (16 + 384) = 736px, which is exactly --measure — so when the gutter closes and paragraphs fall back to being capped by --measure, they keep both the width and the left edge they already had, and only the asides move. Any other breakpoint leaves a step.
 
-  Strictly less-than, because content.css positions marginalia on `min-width: 72em` and the
-  two must never both apply — that off-by-one put a byline on top of the body text at exactly
-  736px. Now that both layouts share the width, that block is written once for the pair.
+  Strictly less-than, because content.css positions marginalia on `min-width: 72em` and the two must never both apply — that off-by-one put a byline on top of the body text at exactly 736px. Now that both layouts share the width, that block is written once for the pair.
 */
 @media (width < 72em) {
   .layout-margin main {
@@ -486,14 +373,11 @@ main {
 /* SIDEBAR NAVIGATION ****************************************************************************/
 
 /*
-  <nav class="site-nav">, not <aside>. The bare element is reserved for marginalia in the
-  right gutter — see content.css — and when this was an <aside> the two collided: every
-  marginalia rule applied to the navigation and vice versa.
+  <nav class="site-nav">, not <aside>. The bare element is reserved for marginalia in the right gutter — see content.css — and when this was an <aside> the two collided: every marginalia rule applied to the navigation and vice versa.
 */
 
 /*
-  Group labels — GUIDE, STYLE. Uppercased in CSS rather than in the markdown, so the source
-  stays readable and a screen reader doesn't spell them out.
+  Group labels — GUIDE, STYLE. Uppercased in CSS rather than in the markdown, so the source stays readable and a screen reader doesn't spell them out.
 */
 .site-nav p {
   margin-bottom: var(--space-sm);
@@ -504,8 +388,7 @@ main {
   text-transform: uppercase;
 }
 
-/* The {{# comment }} at the top of the include leaves an empty paragraph behind, which
-   would otherwise open the list with a label-sized gap. */
+/* The {{# comment }} at the top of the include leaves an empty paragraph behind, which would otherwise open the list with a label-sized gap. */
 .site-nav p:empty {
   display: none;
 }
@@ -526,18 +409,11 @@ main {
 }
 
 /*
-  Top-level links sit flush left: a list's own indent would set them a third of a column off
-  the grid line the wordmark sits on, and a navigation of nine items doesn't need a hanging
-  indent to be legible. Bullets go too — the links are the list.
+  Top-level links sit flush left: a list's own indent would set them a third of a column off the grid line the wordmark sits on, and a navigation of nine items doesn't need a hanging indent to be legible. Bullets go too — the links are the list.
 
-  A nested list is indented, because that's the one place the sidebar is an outline rather
-  than a flat run of links: the styleguide's headings are anchors into a page that is itself
-  in the list, so they have to read as belonging to it. Indented under the parent link, not
-  under the group label, which is why this is scoped to `li ul` rather than to `ul` — and why
-  the top-level rule above still zeroes the margin the browser would give it.
+  A nested list is indented, because that's the one place the sidebar is an outline rather than a flat run of links: the styleguide's headings are anchors into a page that is itself in the list, so they have to read as belonging to it. Indented under the parent link, not under the group label, which is why this is scoped to `li ul` rather than to `ul` — and why the top-level rule above still zeroes the margin the browser would give it.
 
-  Nothing here knows it's the docs: a second sidebar written as the same markup gets the same
-  treatment, which is the point of styling the list rather than the include.
+  Nothing here knows it's the docs: a second sidebar written as the same markup gets the same treatment, which is the point of styling the list rather than the include.
 */
 .site-nav ul {
   margin-left: 0;
@@ -553,12 +429,9 @@ main {
 }
 
 /*
-  Highlight the page you're on, and the section within it. is-current is written by the
-  build (it knows every URL); is-here is written by nav.js as you scroll, because the
-  build can't know which heading you're looking at.
+  Highlight the page you're on, and the section within it. is-current is written by the build (it knows every URL); is-here is written by nav.js as you scroll, because the build can't know which heading you're looking at.
 
-  Scoped to the sidebar — the same is-current attribute appears in the masthead, where the
-  underline treatment above is what marks the current section instead.
+  Scoped to the sidebar — the same is-current attribute appears in the masthead, where the underline treatment above is what marks the current section instead.
 */
 .site-nav a:is([is-current], [is-here])::before {
   content: "";

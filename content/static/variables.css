@@ -1,16 +1,11 @@
 /*
   Every custom property used anywhere on the site is declared here, and only here.
 
-  That rule earns its keep because of how CSS handles a typo: an undefined custom property
-  fails *silently*. Misspell one — `--colour-text` where you meant `--color-text` — and the
-  declaration reading it doesn't warn and doesn't fall back. It's dropped at computed-value
-  time and the rule just quietly does nothing. The only defence is a single list you can
-  diff "what exists" against "what's used":
+  That rule earns its keep because of how CSS handles a typo: an undefined custom property fails *silently*. Misspell one — `--colour-text` where you meant `--color-text` — and the declaration reading it doesn't warn and doesn't fall back. It's dropped at computed-value time and the rule just quietly does nothing. The only defence is a single list you can diff "what exists" against "what's used":
 
       grep -ohr 'var[(]--[a-z0-9-]*' content/static | sed 's/var[(]//' | sort -u
 
-  Anything that prints and isn't declared below is a typo. (The pattern is written with
-  [(] rather than a bare ( so that this comment doesn't match its own search.)
+  Anything that prints and isn't declared below is a typo. (The pattern is written with [(] rather than a bare ( so that this comment doesn't match its own search.)
 
   1. Please don't use a formatter (like Prettier). Laid out by hand, with intentional
      whitespace and occasional one-lining to aid readability.
@@ -26,11 +21,7 @@ html {
   /*
     ONE GRID, TWELVE COLUMNS
 
-    Every region on every page is a whole number of columns on the same grid, so the
-    masthead, the navigation, the body text and the marginalia all hang off one set of
-    vertical lines. The split follows the Aria notebook — 1 rail · 7 body · 1 space · 3
-    marginalia — with the rail folded into the body, because this site has no section
-    marks to put in one and an empty rail is just an indent.
+    Every region on every page is a whole number of columns on the same grid, so the masthead, the navigation, the body text and the marginalia all hang off one set of vertical lines. The split follows the Aria notebook — 1 rail · 7 body · 1 space · 3 marginalia — with the rail folded into the body, because this site has no section marks to put in one and an empty rail is just an indent.
 
       essay   1 . . . . . . . . 8        9         10 . 11 . 12
               body                    │  space  │  marginalia
@@ -38,30 +29,17 @@ html {
       docs    1 . 2 . 3   4 . . . . . . . 9      10 . 11 . 12
               navigation  body                   marginalia
 
-    Both layouts use all twelve columns, and both hold marginalia in columns 10-12 — the
-    navigation is that same band mirrored to the left, which is what makes a documentation
-    page and an essay read as one grid rather than two designs sharing a header.
+    Both layouts use all twelve columns, and both hold marginalia in columns 10-12 — the navigation is that same band mirrored to the left, which is what makes a documentation page and an essay read as one grid rather than two designs sharing a header.
 
-    What differs is the body: 8 columns on an essay, 6 on a docs page, because a docs page
-    is spending three of them on navigation. Four regions don't fit twelve columns with a
-    gap between each, so that layout drops the space column between the nav and the body
-    rather than taking a fourth column out of the measure — the nav is a fixed sidebar with
-    its own visual separation, and 34rem of measure reads far better than 28rem would. The
-    override lives in .layout-nav main in layout.css, where the trade is written out.
+    What differs is the body: 8 columns on an essay, 6 on a docs page, because a docs page is spending three of them on navigation. Four regions don't fit twelve columns with a gap between each, so that layout drops the space column between the nav and the body rather than taking a fourth column out of the measure — the nav is a fixed sidebar with its own visual separation, and 34rem of measure reads far better than 28rem would. The override lives in .layout-nav main in layout.css, where the trade is written out.
 
     The numbers come out round, which is the reason for the 1rem page padding:
 
-      --page-width  72rem  =  2 x 1rem padding  +  70rem of grid
-      70rem                =  12 columns x 4rem  +  11 gaps x 2rem
+      --page-width  72rem  =  2 x 1rem padding  +  70rem of grid 70rem                =  12 columns x 4rem  +  11 gaps x 2rem
 
-    Everything below is derived from those two lines. Change --grid-col or --grid-gap and
-    the whole page follows; the only thing you must keep in step is --page-width, which is
-    12 columns + 11 gaps + 2 paddings.
+    Everything below is derived from those two lines. Change --grid-col or --grid-gap and the whole page follows; the only thing you must keep in step is --page-width, which is 12 columns + 11 gaps + 2 paddings.
 
-    That sum holds while the grid does. By 800px the viewport is well short of the 72rem the
-    grid needs, the navigation has stacked, and --page-padding stops being the number that
-    makes 72rem come out round — it becomes just the page's edge margin, and it widens. See
-    PAGE PADDING, after this block; a media query can't live inside a rule.
+    That sum holds while the grid does. By 800px the viewport is well short of the 72rem the grid needs, the navigation has stacked, and --page-padding stops being the number that makes 72rem come out round — it becomes just the page's edge margin, and it widens. See PAGE PADDING, after this block; a media query can't live inside a rule.
   */
   --page-width: 72rem;
   --page-padding: 1rem;
@@ -75,46 +53,29 @@ html {
 
   /* The regions, as spans of N columns including the gaps inside them.
 
-     --measure is the essay's, and it's the only one of these that gets overridden:
-     .layout-nav narrows it to 6 columns (34rem) to pay for the navigation, then takes it
-     to 100% once that navigation has stacked. See layout.css. */
+     --measure is the essay's, and it's the only one of these that gets overridden: .layout-nav narrows it to 6 columns (34rem) to pay for the navigation, then takes it to 100% once that navigation has stacked. See layout.css. */
   --measure: calc(8 * var(--grid-col) + 7 * var(--grid-gap));       /* 8 cols — 46rem */
   --band:    calc(3 * var(--grid-col) + 2 * var(--grid-gap));       /* 3 cols — 16rem */
 
   /*
-    The rail is column 1 — the narrow column the Aria notebook puts section marks in
-    (§II.1) and running heads. Nothing here uses it yet, so the body absorbs it and runs
-    from column 1. It stays declared because the affordance is the point: to turn it on,
-    drop --measure to 7 columns and add one --grid-step to .layout-margin's padding-left,
-    and every region downstream still lands on the same lines.
+    The rail is column 1 — the narrow column the Aria notebook puts section marks in (§II.1) and running heads. Nothing here uses it yet, so the body absorbs it and runs from column 1. It stays declared because the affordance is the point: to turn it on, drop --measure to 7 columns and add one --grid-step to .layout-margin's padding-left, and every region downstream still lands on the same lines.
   */
   --rail: var(--grid-col);                                          /* 1 col  —  4rem */
 
-  /* --band is deliberately one token, not two: the marginalia and the navigation are the
-     same three columns, mirrored. Naming them separately would let them drift. */
+  /* --band is deliberately one token, not two: the marginalia and the navigation are the same three columns, mirrored. Naming them separately would let them drift. */
 
-  /* The fixed masthead. Set rather than left to the content, because <body> reserves
-     exactly this much space above itself and the sidebar hangs from the same number. */
+  /* The fixed masthead. Set rather than left to the content, because <body> reserves exactly this much space above itself and the sidebar hangs from the same number. */
   --masthead-height: 5rem;
 
   /*
-    How much room <main> reserves on its right for marginalia. Zero by default — a landing
-    page has none — and set by the two layouts that do, in layout.css: .layout-margin takes
-    four steps (the space column plus the band, columns 9-12) and .layout-nav takes three
-    (the band alone, columns 10-12, since it has no space column to give). Both close it to
-    zero at their own breakpoint. Declared here so that every layout has a defined value
-    rather than inheriting one from somewhere unclear.
+    How much room <main> reserves on its right for marginalia. Zero by default — a landing page has none — and set by the two layouts that do, in layout.css: .layout-margin takes four steps (the space column plus the band, columns 9-12) and .layout-nav takes three (the band alone, columns 10-12, since it has no space column to give). Both close it to zero at their own breakpoint. Declared here so that every layout has a defined value rather than inheriting one from somewhere unclear.
   */
   --content-gutter: 0rem;
 
   /*
-    The grid is a convention, not a display: grid. Nothing below sets one. Regions are
-    sized and offset in whole columns using the tokens above, which means the marginalia
-    can stay absolutely positioned — and that matters, because an aside has to sit level
-    with an arbitrary *line* of a paragraph rather than starting its own grid row.
+    The grid is a convention, not a display: grid. Nothing below sets one. Regions are sized and offset in whole columns using the tokens above, which means the marginalia can stay absolutely positioned — and that matters, because an aside has to sit level with an arbitrary *line* of a paragraph rather than starting its own grid row.
 
-    Run `./site --fluid` or `./site --fixed` to paint the column guides over every page
-    and check what actually lines up.
+    Run `./site --fluid` or `./site --fixed` to paint the column guides over every page and check what actually lines up.
   */
 
 /* SPACING ***************************************************************************************/
@@ -122,20 +83,14 @@ html {
   /*
     One ramp, reconciling two systems that arrived here separately.
 
-    The reading layout counts in body lines — 24px, the line-height of body text — so that
-    an aside pulled up by N lines lands exactly on a line of the paragraph beside it. The
-    gallery layouts count in 8pt steps: 4, 8, 16, 32, 48, 64, 96.
+    The reading layout counts in body lines — 24px, the line-height of body text — so that an aside pulled up by N lines lands exactly on a line of the paragraph beside it. The gallery layouts count in 8pt steps: 4, 8, 16, 32, 48, 64, 96.
 
-    24 is divisible by 8, so one ramp holds both: 4, 8, 16, *24*, 32, 48, 64, 96. Use
-    --baseline for anything that has to land on the text rhythm, and the --space-* steps
-    for everything else.
+    24 is divisible by 8, so one ramp holds both: 4, 8, 16, *24*, 32, 48, 64, 96. Use --baseline for anything that has to land on the text rhythm, and the --space-* steps for everything else.
   */
   --baseline: 1.5rem;  /* 24px — the vertical rhythm unit */
 
   /*
-    How many body lines an aside is pulled up by. The {{aside N}} macro writes this onto
-    each aside as an inline style; the 0 here is the fallback for a .move-up element that
-    doesn't carry one, which would otherwise make the whole calc() invalid.
+    How many body lines an aside is pulled up by. The {{aside N}} macro writes this onto each aside as an inline style; the 0 here is the fallback for a .move-up element that doesn't carry one, which would otherwise make the whole calc() invalid.
   */
   --move-up: 0;
 
@@ -150,16 +105,13 @@ html {
 /* TYPOGRAPHY ************************************************************************************/
 
   /*
-    The system font stack. No webfont is downloaded, nothing blocks first paint, and the
-    site looks native on every platform. Change these to change every font on the site.
+    The system font stack. No webfont is downloaded, nothing blocks first paint, and the site looks native on every platform. Change these to change every font on the site.
   */
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   /*
-    Want a serif body, the way Ink & Switch and automerge.org read? Drop the font files
-    into /fonts, run the build, add the @font-face in base.css, then uncomment this and
-    swap `body` over to it. See /docs/fonts/ for the whole procedure.
+    Want a serif body, the way Ink & Switch and automerge.org read? Drop the font files into /fonts, run the build, add the @font-face in base.css, then uncomment this and swap `body` over to it. See /docs/fonts/ for the whole procedure.
 
     --font-serif: "Merriweather", Charter, Cambria, Georgia, serif;
   */
@@ -167,9 +119,7 @@ html {
 /* COLOUR ****************************************************************************************/
 
   /*
-    The palette is achromatic on purpose — a starter shouldn't pick your brand colour for
-    you. Change --accent first: it's the only place a hue is meant to go, and content.css
-    already hangs prose link hovers off it, so one value colours every link on the site.
+    The palette is achromatic on purpose — a starter shouldn't pick your brand colour for you. Change --accent first: it's the only place a hue is meant to go, and content.css already hangs prose link hovers off it, so one value colours every link on the site.
   */
   --true-white: #fff;
   --white: #fcfcfc;
@@ -211,16 +161,13 @@ html {
   --stark-sep: light-dark(var(--off-white), var(--slate));
 
   /*
-    Recessed surfaces — gutter captions, callouts, anything that should read as sitting
-    slightly behind the page. Ink & Switch hardcodes this as #f2f2f2; here it has to theme,
-    or every figcaption on the site is a bright grey slab in dark mode.
+    Recessed surfaces — gutter captions, callouts, anything that should read as sitting slightly behind the page. Ink & Switch hardcodes this as #f2f2f2; here it has to theme, or every figcaption on the site is a bright grey slab in dark mode.
   */
   --sunken: light-dark(var(--off-white), #2e2e2e);
   --sunken-edge: light-dark(var(--silver), #454545);
 
   /*
-    Callouts. These are the defaults, used by .info; .caution overrides them in
-    content.css, and a callout variant you add would do the same.
+    Callouts. These are the defaults, used by .info; .caution overrides them in content.css, and a callout variant you add would do the same.
   */
   --callout-bg: var(--sunken);
   --callout-edge: var(--sunken-edge);
@@ -233,22 +180,13 @@ html {
 /* PAGE PADDING **********************************************************************************/
 
 /*
-  The page's edge margin, read by <main> in every layout and by the masthead — which is why
-  the wordmark lines up with the content beneath it at every width.
+  The page's edge margin, read by <main> in every layout and by the masthead — which is why the wordmark lines up with the content beneath it at every width.
 
-  It used to be widened per layout instead: .layout-nav set its own padding-inline below
-  800px and nothing else did, so between 500px and 800px a docs page sat 1rem further in
-  than the home page, and 1rem further in than its own wordmark. Widening the token rather
-  than one layout's padding is what keeps the three in step — the same reason --band is one
-  token and not two.
+  It used to be widened per layout instead: .layout-nav set its own padding-inline below 800px and nothing else did, so between 500px and 800px a docs page sat 1rem further in than the home page, and 1rem further in than its own wordmark. Widening the token rather than one layout's padding is what keeps the three in step — the same reason --band is one token and not two.
 
-  The ramp: 1rem while the page is wide enough to hold its regions, 2rem once the navigation
-  has stacked and <main> runs edge to edge, then 1rem again on a phone, where 2rem a side is
-  a sixth of the screen.
+  The ramp: 1rem while the page is wide enough to hold its regions, 2rem once the navigation has stacked and <main> runs edge to edge, then 1rem again on a phone, where 2rem a side is a sixth of the screen.
 
-  800px is the width the navigation stacks at. .layout-margin holds its gutter down to
-  46rem, so on a viewport between those two it gives up 2rem of an already tight measure.
-  Nothing in the starter uses that layout; put a page on it and check that band.
+  800px is the width the navigation stacks at. .layout-margin holds its gutter down to 46rem, so on a viewport between those two it gives up 2rem of an already tight measure. Nothing in the starter uses that layout; put a page on it and check that band.
 */
 @media (width <= 800px) { html { --page-padding: var(--space-lg) } }  /* 2rem */
 @media (width <= 500px) { html { --page-padding: var(--space-md) } }  /* 1rem */
@@ -260,18 +198,12 @@ html[theme="dark"] { color-scheme: dark; }
 /* GRID DEBUG OVERLAYS ***************************************************************************/
 
 /*
-  Paint the column guides over the page so you can check whether things line up. Enable
-  with `./site --fluid` or `./site --fixed` (one at a time), or by adding the attribute to
-  <html> by hand in the web inspector.
+  Paint the column guides over the page so you can check whether things line up. Enable with `./site --fluid` or `./site --fixed` (one at a time), or by adding the attribute to <html> by hand in the web inspector.
 */
 
-/* The twelve columns, painted where they actually fall: a --grid-col stripe every
-   --grid-step, inside the page box.
+/* The twelve columns, painted where they actually fall: a --grid-col stripe every --grid-step, inside the page box.
 
-   The width is the grid's own arithmetic rather than --page-width minus its padding. The
-   two agree at 70rem, but --page-padding widens below 800px and the subtraction would then
-   paint 68rem of stripes and call them twelve columns — guides you can't trust are worse
-   than no guides. */
+   The width is the grid's own arithmetic rather than --page-width minus its padding. The two agree at 70rem, but --page-padding widens below 800px and the subtraction would then paint 68rem of stripes and call them twelve columns — guides you can't trust are worse than no guides. */
 html[fluid] body,
 html[fixed] body {
   background-image: repeating-linear-gradient(

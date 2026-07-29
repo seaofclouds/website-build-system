@@ -1,6 +1,4 @@
-// Redirects
-// This function loads the Redirects.txt file and generates pages that do a client-side redirect.
-// We opt to do redirects on the client so as to avoid depending on the particulars of any specific web host.
+// Redirects This function loads the Redirects.txt file and generates pages that do a client-side redirect. We opt to do redirects on the client so as to avoid depending on the particulars of any specific web host.
 
 import { exists, glob, linkFile, read } from "./io.ts"
 import { green, log } from "./logging.ts"
@@ -28,9 +26,7 @@ export const generateRedirectPages = () => {
       continue
     }
 
-    // If both the oldPath and the newPath include an extension, we'll assume they're static assets.
-    // In this case, we copy newPath->oldPath (using a hardlink). We have to do this because we don't
-    // control the server, so we can't do a 301 or 302, so this is the next best option.
+    // If both the oldPath and the newPath include an extension, we'll assume they're static assets. In this case, we copy newPath->oldPath (using a hardlink). We have to do this because we don't control the server, so we can't do a 301 or 302, so this is the next best option.
     if (oldPath.includes(".") && newPath.includes(".")) {
       // paths are relative to the public folder, so we need to find the source file
       const newFile = glob(`{content,template}${newPath}`)[0]

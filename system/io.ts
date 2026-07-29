@@ -1,6 +1,4 @@
-// I/O
-// This file wraps Chokidar, Glob, and Node, giving use nicer default behaviour
-// and more ability to remove or replace these dependencies without breaking anything.
+// I/O This file wraps Chokidar, Glob, and Node, giving use nicer default behaviour and more ability to remove or replace these dependencies without breaking anything.
 
 import Chokidar from "chokidar"
 import { globSync } from "glob"
@@ -22,8 +20,7 @@ export function runWatcher(paths: string[], actions: () => any, debounceTime = 1
   Chokidar.watch(paths, { ignored: dotfiles, ignoreInitial: true })
     .on("error", () => log(red(`Watching ${JSON.stringify(paths)} failed`)))
     .on("all", (event, path) => {
-      // There's a weird issue where empty files trigger a change event when used as the source of a hardlink.
-      // This leads to infinite recompile loops. To mitigate, we ignore them.
+      // There's a weird issue where empty files trigger a change event when used as the source of a hardlink. This leads to infinite recompile loops. To mitigate, we ignore them.
       if (event == "change") {
         const stats = FS.statSync(path)
         if (stats.size == 0 && stats.nlink > 1) {
@@ -37,8 +34,7 @@ export function runWatcher(paths: string[], actions: () => any, debounceTime = 1
     })
 }
 
-// Extend glob to support arrays of patterns
-// TODO: Can we use node's new built-in FS.globSync instead of the npm package?
+// Extend glob to support arrays of patterns TODO: Can we use node's new built-in FS.globSync instead of the npm package?
 export const glob = (...patterns: string[]) => toSorted(unique(patterns.flatMap((p) => globSync(p))))
 
 // Common file path ops
@@ -78,8 +74,7 @@ export const execCapture = (cmd: string) => {
   }
 }
 
-// The browsable URL of this repo's git remote, if it has one.
-// We read this rather than hardcoding a URL, so it survives forks and renames.
+// The browsable URL of this repo's git remote, if it has one. We read this rather than hardcoding a URL, so it survives forks and renames.
 export const gitRemoteUrl = () => {
   const remote = execCapture("git remote get-url origin")
   if (!remote) return null

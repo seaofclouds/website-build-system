@@ -1,10 +1,6 @@
-// LLMs
-// Generate llms.txt and llms-full.txt — a convention (see llmstxt.org) for offering
-// a site's documentation to language models as clean markdown, rather than making
-// them scrape the rendered HTML.
+// LLMs Generate llms.txt and llms-full.txt — a convention (see llmstxt.org) for offering a site's documentation to language models as clean markdown, rather than making them scrape the rendered HTML.
 //
-// The running order comes from your docs sidebar include, so the generated files
-// follow the same sequence a human reader would.
+// The running order comes from your docs sidebar include, so the generated files follow the same sequence a human reader would.
 
 import { Env } from "./env.ts"
 import { exists, read, write } from "./io.ts"
@@ -12,8 +8,7 @@ import type { Page } from "./types.ts"
 import { extractMdLinks, toFullUrl } from "./util.ts"
 
 export const generateLLMsTxt = (pages: Page[]) => {
-  // A site with no docs section doesn't need these files. Opt out by blanking
-  // `docsIndex` in env.ts, or simply by not having that include.
+  // A site with no docs section doesn't need these files. Opt out by blanking `docsIndex` in env.ts, or simply by not having that include.
   if (!Env.docsIndex) return
   const sidebar = `template/includes/${Env.docsIndex}.md`
   if (!exists(sidebar)) return
