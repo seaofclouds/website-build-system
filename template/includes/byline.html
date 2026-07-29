@@ -1,9 +1,9 @@
 {{# The byline, which lands in the right-hand gutter like any other aside.
 
-    move-up: 2 pulls it up two body lines, which puts its first line level with the title. Without it the byline floats between the title and whatever follows, belonging to neither. If your <h1> wraps to two lines, raise it to 3.
+    It carries no move-up. The gutter rules in content.css anchor .meta to the top of <main> — which is the top of the <h1> — and drop the date from there onto the title's baseline, so it stays level with the title however many lines the title runs to.
 
     Delete this file and the {{include: byline}} in template/essay.html if your essays don't want one. }}
-<aside class="meta move-up" style="--move-up: 2">
+<aside class="meta">
   <h6>{{full-date}}</h6>
   {{authors?}}
 </aside>

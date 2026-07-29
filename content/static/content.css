@@ -167,14 +167,19 @@ main :is(p, li, td, th, dd, figcaption, aside, blockquote, footer) a:hover {
 
     {{ aside A note that sits beside the paragraph after it. }} {{ aside 2 The same, pulled up two body lines so it aligns with the line you mean. }}
 
-  Asides and captions share one treatment — same size, same line-height as the body, so their baselines land on the same rhythm as the main column.
+  Asides and captions share one treatment, and it is set tighter than the body: 14px text on 18px leading, against the body's 16px on 24px. Marginalia is a quieter voice and reads better compressed, and the ratio is chosen so it still answers to the main column — four aside lines occupy exactly three body lines (4 × 18 = 3 × 24 = 72px). So aside line 1 sits on a body baseline, line 5 sits on the next one three body lines down, and lines 2-4 float between. It re-meets the rhythm rather than marching in step with it.
+
+  The padding-top is what makes line 1 land. Half the leading sits above the first baseline, so cutting the leading from 24px to 18px lifts that baseline 3px; the remaining 1px is a difference of ascent between 14px and 16px text that was always there and used to leave the two columns a pixel apart. 4px puts the first baselines exactly level. Recheck it if you change --font-sans, the aside font-size, or the body's 16px/24px — it is derived from all three.
+
+  Not on .meta: the byline sets its own relationship to the title, below.
 */
 
 aside,
 figcaption {
   margin: 0 0 var(--space-md);
+  padding-top: 4px;
   font-size: 14px;
-  line-height: 24px;
+  line-height: 18px;
 }
 
 /*
@@ -288,12 +293,18 @@ main aside.meta {
   }
 
   /*
-    The byline's date, pulled up so its small-cap baseline lands on body line 1 and each line under it lands on the next. Like .move-up above, this is only meaningful out in the gutter: there's a body line to land on there, and in normal flow there isn't.
+    The byline is the one aside that annotates the title rather than a paragraph, so it is anchored to the title rather than pulled up towards it. `top: 0` puts it at <main>'s padding-box top, which is the <h1>'s top edge — the h1 is main's first child and main has no padding-top — and 13px then drops the date's small-cap baseline onto the h1's first baseline. It is derived from the two: half of the h1's leading plus its ascent, less half the h6's leading plus its ascent. Recheck it if you change either line in base.css.
 
-    It used to sit outside this block and apply at every width, which squashed the date to 2px under the title once the byline dropped into flow — against 16px on the blog index, where the same date under the same title is set by the same rule. Two dates that were supposed to be identical, differing by a number nothing had chosen.
+    This replaces `class="move-up" --move-up: 2`, which pulled the byline two body lines up from wherever the title's box happened to end. That measured the wrong thing: it depended on the h1's height and margin rather than on its baseline, so the date landed 23px above the title's baseline — and, since the masthead is fixed and 80px tall, 10px of it sat behind the masthead. It also meant a title that wrapped to two lines needed --move-up raised to 3 by hand. Anchoring to the top edge makes the byline align with the title's *first* line whatever the title does.
+
+    Like .move-up, this is only meaningful out in the gutter: there's a title beside it to land on there, and in normal flow the byline sits under the title as ordinary text. Both declarations stay inside this block for that reason — an earlier version of the margin sat outside it and squashed the date to 2px under the title at narrow widths.
   */
+  main aside.meta {
+    top: 0;
+  }
+
   main aside.meta h6 {
-    margin: -14px 0 0;
+    margin: 13px 0 0;
   }
 }
 
@@ -824,13 +835,13 @@ pre > code:not(:has(> *)) {
 /*
   Inline code is a chip, and a chip is an inline-block, and an inline-block joins the line box as its whole *margin* box — border and padding included. So it inherited `code`'s 24px line-height (base.css, right for a <pre> on the rhythm) and came to 27.4px inside a 24px line: every line holding a `<code>` sat 3.4px lower than the one above it, and the paragraph stopped counting in --baseline. Most visible in asides and figcaptions, where the text is 14px and a run of short chips can push most of the lines apart.
 
-  16px is the tallest value that clears every context, and both ends of the box bind: headings (20px/24px, only 4px of leading) leave the least room below the baseline, and asides (14px/24px) the least above. Checked against system-ui/ui-monospace, Helvetica/Menlo, Georgia/Courier, Verdana/Consolas and Times/monospace, because the stacks in variables.css resolve to different metrics on someone else's machine.
+  So the chip has to fit inside the tightest line it can appear in, and that line is the 18px one in the marginalia above — not the body's 24px. 16px of leading plus a 1px border top and bottom and no vertical padding comes to exactly 18px, which is why there is no padding-block here: adding the `.1em` this rule used to carry on top takes it to 19.4px and every aside line holding a chip grows by 1.4px. Nothing is lost by dropping it. The mono stack's ascent and descent are asymmetric enough (13/3 against an ink height of 14.1) that the space sat above the glyphs rather than around them, and at 4× the two are indistinguishable.
 
-  padding-bottom stays 0 on purpose — it is what buys the headroom under the baseline. Balancing it to `.1em .2em` pushes the heading and body cases back over the line.
+  Checked against system-ui/ui-monospace, Helvetica/Menlo and Verdana/Consolas, where an aside line holding a chip stays exactly 18px. Two of the fallback stacks — Georgia/Courier and Times/generic-monospace — still cost 1px there, and no value fixes all five: an 18px line is simply tight for a bordered box around 14px type. The body, headings, callouts, lists and table cells are clean on every stack, because they all have 24px to spend.
 */
 :not(pre) > code {
   border: 1px solid var(--stark-shadow);
-  padding: .1em .2em 0;
+  padding: 0 .2em;
   line-height: 16px;
   border-radius: 1px;
   background: var(--stark-bg);
