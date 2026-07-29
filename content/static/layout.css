@@ -492,12 +492,8 @@ main {
 */
 
 /*
-  Group labels — GUIDE, STYLE, STYLEGUIDE. Uppercased in CSS rather than in the markdown,
-  so the source stays readable and a screen reader doesn't spell them out.
-
-  STYLEGUIDE is a label that happens to be a link, because unlike the other two it has a
-  page of its own; the headings beneath it are anchors into that page and read as its
-  contents, the way the page links read as the contents of GUIDE.
+  Group labels — GUIDE, STYLE. Uppercased in CSS rather than in the markdown, so the source
+  stays readable and a screen reader doesn't spell them out.
 */
 .site-nav p {
   margin-bottom: var(--space-sm);
@@ -506,11 +502,6 @@ main {
   font-weight: 500;
   letter-spacing: .06em;
   text-transform: uppercase;
-}
-
-.site-nav p a {
-  display: inline;
-  color: inherit;
 }
 
 /* The {{# comment }} at the top of the include leaves an empty paragraph behind, which
@@ -535,16 +526,26 @@ main {
 }
 
 /*
-  The sidebar is a flat list of links, not an outline. The markdown that generates the docs
-  one uses a heading and a list because that's the natural way to write it — but a list's
-  indent would set the links a third of a column off the grid line the wordmark sits on,
-  and a navigation of eight items doesn't need hierarchy to be legible.
+  Top-level links sit flush left: a list's own indent would set them a third of a column off
+  the grid line the wordmark sits on, and a navigation of nine items doesn't need a hanging
+  indent to be legible. Bullets go too — the links are the list.
 
-  The blog sidebar is a list too, assembled from an include rather than written by hand, so
-  that both sidebars are the same markup and share every rule here.
+  A nested list is indented, because that's the one place the sidebar is an outline rather
+  than a flat run of links: the styleguide's headings are anchors into a page that is itself
+  in the list, so they have to read as belonging to it. Indented under the parent link, not
+  under the group label, which is why this is scoped to `li ul` rather than to `ul` — and why
+  the top-level rule above still zeroes the margin the browser would give it.
+
+  Nothing here knows it's the docs: a second sidebar written as the same markup gets the same
+  treatment, which is the point of styling the list rather than the include.
 */
 .site-nav ul {
   margin-left: 0;
+}
+
+.site-nav li ul {
+  margin-bottom: 0;         /* base.css gives every list a bottom margin; the outer one carries it */
+  margin-left: var(--space-md);
 }
 
 .site-nav li {
