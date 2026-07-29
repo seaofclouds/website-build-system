@@ -5,11 +5,12 @@ template: landing
 ---
 
 <section id="tag">
-  <h1>A build system you own.</h1>
+  <h1>Build and ship with Theseus.</h1>
+
+  <h2>A build system you own.</h2>
   {{# The non-breaking space keeps "in," with "HTML". Below about 700px the line wraps, and
       left to itself it breaks after "HTML" and starts the second line on "in," — binding
       the two makes the comma the only balanced place left to break. }}
-  <h2>Markdown and HTML&nbsp;in, a static website out.</h2>
   <div class="cta">
     <a href="{{repo-url}}/generate" class="button">Use this template</a>
     <a href="/docs/">Read the docs</a>
@@ -19,77 +20,70 @@ template: landing
 
 <section id="features">
 
+  {{# Six units, one per question a reader actually asks, in the order they ask it: what am
+      I writing, what do I write it in, what don't I have to write, what does it catch, what
+      does it take to ship, and what can I change. Grouped by the question rather than by the
+      subsystem — which is why installing and hosting share a unit, since "how do my files
+      become a live site" is one question even though it touches two config files.
+
+      Layout used to have a unit of its own here. It describes the stylesheet vocabulary
+      rather than the build system, so it's a line in "everything a site needs" pointing at
+      the styleguide, where the demonstration lives. }}
+
   <div class="unit">
     <h4>Content is just files</h4>
     <p>
-      Put a file in <code>content</code> and it's on the site at that path. Frontmatter
-      opts each page into the rest — a template, a date, a draft flag — and a plain HTML
-      file is copied straight through.
+      Add <code>about.md</code> to <code>content</code> and it's at <code>/about/</code>. A
+      folder with an <code>index.html</code> and some photos is <code>/gallery/</code>.
+      Markdown and HTML become pages; every other file is served where it sits.
     </p>
   </div>
 
   <div class="unit">
-    <h4>A vocabulary for writing</h4>
+    <h4>Markdown, extended by macros</h4>
     <p>
-      Build a page out of macros and includes: <code>{{figure}}</code> for images and
-      video, <code>{{aside}}</code> for a note in the margin, <code>{{index}}</code> for a
-      listing. Footnotes, syntax highlighting and linkable headings come with the markdown.
+      Markdown by default, footnotes and syntax highlighting included. Extend it with
+      macros: <code>{{figure}}</code> for images and video, <code>{{aside}}</code> for a note
+      in the margin — or write your own.
     </p>
   </div>
 
   <div class="unit">
-    <h4>Layout is a class on <code>&lt;body&gt;</code></h4>
+    <h4>Everything a site needs</h4>
     <p>
-      Twelve columns and four page shapes: plain, wide, a navigation sidebar, a gutter for
-      marginalia. Figures break the measure by name, and the
-      <a href="/docs/styleguide/">styleguide</a> demonstrates every class on one page.
+      RSS, a sitemap, <code>llms.txt</code>, Open Graph tags, redirects, drafts and dark
+      mode. A <a href="/docs/styleguide/">twelve-column layout</a> with four page shapes, and
+      font subsetting that cuts a typeface down to the characters you actually use.
     </p>
   </div>
 
   <div class="unit">
     <h4>It checks its own work</h4>
     <p>
-      Every internal link, anchor and asset path is verified against the pages just
-      generated, so renaming a heading someone linked to surfaces at build time instead of
-      reaching a reader two years later.
+      Every internal link, anchor and asset is checked against the pages just built, and the
+      whole thing typechecks — a renamed heading turns up in the build output, not in
+      someone's broken bookmark.
     </p>
   </div>
 
   <div class="unit">
-    <h4>Everything a site needs, already there</h4>
+    <h4>No compiler, no server</h4>
     <p>
-      RSS, a sitemap, <code>llms.txt</code>, redirects, drafts, dark mode, and font
-      subsetting that cuts a typeface down to the characters your site actually uses.
+      Runs on Node, with nothing to compile and nothing to bundle. <code>./site</code>
+      builds, watches, and serves at <code>localhost:3000</code> with live reload;
+      <code>./site build</code> writes a folder of static files
+      <a href="/docs/deployment/">any host will serve</a>.
     </p>
   </div>
 
   <div class="unit">
-    <h4>Edit it like your own code</h4>
+    <h4>Written to be edited</h4>
     <p>
-      Settings are constants at the top of one file. Adding a macro means adding a
-      <code>case</code> to a switch. About 2,000 lines of commented TypeScript, run
-      directly by bun, deno or node.
+      Write a page in markdown. Change how it looks in CSS. Change what it does in
+      TypeScript — the settings are constants in one file, and there's no config file and no
+      plugin API.
     </p>
   </div>
 
 </section>
 
-<section id="thesis">
-  <p class="statement">
-    Replace a plank at a time until none of the original remains, and it's still your
-    site's build system throughout.
-  </p>
-</section>
-
-<section id="closing">
-  <h2>Build and ship with Theseus.</h2>
-  <md>
-`./site` builds the site, watches for changes, and serves it at `localhost:3000` with live
-reload. What you deploy is a folder of static files — [GitHub Pages, Cloudflare and
-Netlify](/docs/deployment/) are a build command and an output directory.
-  </md>
-  <div class="cta">
-    <a href="{{repo-url}}/generate" class="button">Use this template</a>
-    <a href="{{repo-url}}">View the source</a>
-  </div>
-</section>
