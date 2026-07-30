@@ -16,12 +16,14 @@ Every section that covers classes ends with a table of them — Grid and Text do
 
 Every region on every page of this site is a whole number of columns on the same grid, so the masthead, the navigation, the body text and the marginalia all hang off one set of vertical lines.
 
-```
-essay   1 . . . . . . . . 8        9         10 . 11 . 12
-        body                    │  space  │  marginalia
+``` wide
+essay
+|  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 |
+|                 body                  |  9 |  marginalia  |
 
-docs    1 . 2 . 3   4 . . . . . . . 9      10 . 11 . 12
-        navigation  body                   marginalia
+docs
+|  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 |
+|    nav       |           body         |  9 |  marginalia  |
 ```
 
 The numbers come out round: the page is 72rem, which is 2 × 1rem of padding plus 70rem of grid, and 70rem is twelve 4rem columns with eleven 2rem gaps. The **band** is three columns, 16rem, and it holds the marginalia on both layouts — and the navigation on this one, mirrored to the left. One `--band` token, so the two can't drift.
@@ -69,14 +71,17 @@ server.listen(3000)
 
 Line-highlight markers go in comments inside the block and are stripped from the output. `highlight-next-line` marks one line; `highlight-start` / `highlight-end` mark a range; `highlight-red-start` / `highlight-red-end` mark one for removal.
 
+Add `wide` to the fence for a block that needs the marginalia band as well as the measure — the grid diagram at the top of this page is one. It goes anywhere in the info string and composes with the rest: `` ``` wide ``, `` ```ts wide ``, `` ```ts wide title="server.ts" ``.
+
 | Class | Use case |
 | --- | --- |
+| `wide` | Gives the block the marginalia band as well as the measure, the way it does a figure. You get it from `wide` on the fence rather than writing the class. For the ones the measure actually breaks — a diagram, a wide table of output, a line of shell that would otherwise scroll. Nothing pushes out of the way of an aside, so don't put marginalia beside a wide block. |
 | `code-title` | The filename bar above a block. You get it from `title="…"` on the fence rather than writing the class — worth knowing the name only because it's what to style if you want the bar to look different. |
 | `highlighted-line` | The line a `highlight-` comment marked. Emitted, not authored. |
 
 {{caution: A fence in a language Prism hasn't loaded builds without highlighting and tells you which file to edit. Import it at the top of `system/markdown.ts`.}}
 
-Code blocks stay at the measure rather than taking the marginalia band. A block that reclaimed the band would sit underneath any aside at the same height — the gutter positions absolutely, so nothing pushes out of the way.
+Code blocks stay at the measure by default, and `wide` is the deliberate exception rather than the setting you reach for. The gutter positions absolutely, so a block that reclaims the band sits underneath any aside at the same height instead of pushing it out of the way — which is a reason to widen the few blocks the measure genuinely breaks, and to leave the rest where the prose is.
 
 ## Asides
 
@@ -190,7 +195,7 @@ Without it, a pale figure like this one has no edge at all and reads as floating
 
 Classes go between the macro name and the image, separated by spaces, and they compose — most figures on a real page carry two or three:
 
-```
+``` wide
 {{ figure wide ratio-16x9 ![A stack of index cards](/cards.webp)
 The caption, which can contain **Markdown**.
 }}
@@ -198,7 +203,7 @@ The caption, which can contain **Markdown**.
 
 which emits:
 
-```html
+```html wide
 <figure class="wide ratio-16x9">
   <img src="/cards.webp" alt="A stack of index cards">
   <figcaption>

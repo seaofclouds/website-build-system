@@ -30,10 +30,18 @@ Markdown.renderer.rules.footnote_caption = (tokens, idx) => {
 // Override the default footnote block renderer
 Markdown.renderer.rules.footnote_block_open = () => '<section class="footnotes" role="doc-endnotes"><hr><ol>\n'
 
-// Override the default fence block renderer to add title & line highlight support
+// Override the default fence block renderer to add title, line highlight & wide support
 Markdown.renderer.rules.fence = (tokens, idx) => {
   const token = tokens[idx]
-  let [langName, meta] = splitOnce(token.info.trim(), " ")
+
+  // `wide` is a layout modifier rather than a language, and it has to come out of the info string before the language does. A block that needs the room is usually a diagram or a table of output, which has no language at all — and ``` wide would otherwise read "wide" as the language and log the "add an import" warning that a genuinely unimported language is supposed to log. It composes: ``` wide, ```ts wide, ```ts wide title="server.ts".
+  //
+  // Only the words before the first `=` are modifiers, because everything after it is a quoted value that may say anything: ```js title="a wide table" is a title, not a mode.
+  let info = token.info.trim()
+  const isWide = /(^|\s)wide(\s|$)/.test(splitOnce(info, "=")[0])
+  if (isWide) info = info.replace(/(^|\s)wide(?=\s|$)/, "").trim()
+
+  let [langName, meta] = splitOnce(info, " ")
 
   // Process line highlight markers
   let lines = token.content.trim().split("\n")
@@ -82,11 +90,11 @@ Markdown.renderer.rules.fence = (tokens, idx) => {
     if (highlightedRedLines.has(i)) classes.push("highlighted-red-line")
     return `<div class="${classes.join(" ")}">${line}</div>`
   })
-  lines = [`<pre><code class="language-${langName}">`, ...lines, "</code></pre>"]
+  lines = [`<pre${isWide ? ` class="wide"` : ""}><code class="language-${langName}">`, ...lines, "</code></pre>"]
 
-  // Add title above the code block, if any
+  // Add title above the code block, if any. The title bar is a sibling of the <pre>, not a wrapper, so it's held to the measure by its own rule and has to be widened alongside it — otherwise a wide block with a title comes out with the bar covering half its top edge.
   const titleMatch = meta?.match(/title="([^"]+)"/)
-  if (titleMatch) lines.unshift(`<div class="code-title">${Markdown.utils.escapeHtml(titleMatch[1])}</div>`)
+  if (titleMatch) lines.unshift(`<div class="code-title${isWide ? " wide" : ""}">${Markdown.utils.escapeHtml(titleMatch[1])}</div>`)
 
   return trimAll(lines).join("")
 }

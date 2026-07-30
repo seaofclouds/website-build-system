@@ -382,6 +382,7 @@ figure video {
 /* WIDE — break out of the measure and take the reserved gutter as well, so the figure
    spans from the body's left edge to the grid's right edge.
      {{ figure wide ![](x.webp) A caption, below the image. }}
+     ``` wide            (on a fenced code block — see markdown.ts)
    On a layout with no gutter --content-gutter is 0, so `wide` still releases the measure
    cap and the figure fills whatever the content box gives it. */
 
@@ -389,9 +390,13 @@ figure video {
   Releasing the measure cap isn't enough on its own: <main> reserves the gutter as padding, so its content box *is* the measure and a figure can't grow past it however large a max-width you allow. The negative margin is what reclaims that padding.
 
   Expressed this way it needs no per-layout value. On the essay it reclaims columns 9-12 and the figure spans 2-12; on a nav layout --content-gutter is 0, so the figure simply fills the content box out to column 12.
+
+  One definition, three elements, on purpose. A code block is held to the measure by its own rule rather than by the figure cap, and the title bar above it is a sibling rather than a wrapper, so both have to be named here — but they want exactly the geometry a wide figure wants, and two rules that reclaim the same gutter are two rules that can drift.
+
+  Nothing pushes out of the way of an aside, which is absolutely positioned into that gutter. So `wide` is an instruction not to put marginalia beside this block, the same way .arrangement is.
 */
 @media (min-width: 46rem) {
-  :is(.layout-nav, .layout-margin) main > figure.wide {
+  :is(.layout-nav, .layout-margin) main > :is(figure, pre, .code-title).wide {
     max-width: none;
     margin-right: calc(-1 * var(--content-gutter));
   }
